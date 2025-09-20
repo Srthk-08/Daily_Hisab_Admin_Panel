@@ -6,6 +6,12 @@ const config = {
   // API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
   API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
 
+  // Special Subscription Plan Constants (these are fixed and cannot change)
+  SPECIAL_PLANS: {
+    FREE_TRIAL: 0,
+    REFERRAL_REWARD: 1
+  },
+
   // API endpoints
   API_ENDPOINTS: {
     AUTH: '/api/auth',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Pencil, Save, PlusCircle, Trash2, CreditCard, X, Check, Loader2 } from "lucide-react";
 import apiService from '../../services/api';
+import config from '../../config/config';
 
 
 const PlanManagement = () => {
@@ -29,7 +30,7 @@ const PlanManagement = () => {
   ];
 
   // Special plans that cannot be deleted and have restricted editing
-  const specialPlans = [0, 1]; // Free Trial (0) and Referral Reward (1)
+  const specialPlans = [config.SPECIAL_PLANS.FREE_TRIAL, config.SPECIAL_PLANS.REFERRAL_REWARD]; // Free Trial (0) and Referral Reward (1)
 
   // Fetch plans on component mount
   useEffect(() => {
@@ -57,8 +58,8 @@ const PlanManagement = () => {
   // Get plan type label for special plans
   const getSpecialPlanLabel = (planId) => {
     switch (planId) {
-      case 0: return "Free Trial Plan";
-      case 1: return "Referral Reward Plan";
+      case config.SPECIAL_PLANS.FREE_TRIAL: return "Free Trial Plan";
+      case config.SPECIAL_PLANS.REFERRAL_REWARD: return "Referral Reward Plan";
       default: return "Special Plan";
     }
   };

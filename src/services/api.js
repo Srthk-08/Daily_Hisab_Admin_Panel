@@ -502,7 +502,9 @@ const apiService = {
     return response.data;
   },
   activatePendingRewards: async () => {
-    const response = await api.post(config.API_ENDPOINTS.ACTIVATE_PENDING_REWARDS);
+    const response = await api.post(config.API_ENDPOINTS.ACTIVATE_PENDING_REWARDS, {
+      subscription_id: config.SPECIAL_PLANS.REFERRAL_REWARD // Referral Reward Plan (ID: 1) from subscription_master
+    });
     return response.data;
   },
 
