@@ -14,7 +14,7 @@ const ExpenseCategoryManager = () => {
   const [formData, setFormData] = useState({
     category_id: '',
     category_name: '',
-    category_type: 2, // 2 = Expense
+    category_type: 1, // 1 = Expense
   });
   const [iconFile, setIconFile] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
@@ -29,7 +29,7 @@ const ExpenseCategoryManager = () => {
       setError(null);
 
       const params = {
-        category_type: 2, // Expense
+        category_type: 1, // Expense
         include_deleted: false
       };
 
@@ -97,7 +97,7 @@ const ExpenseCategoryManager = () => {
       }
 
       // Reset form
-      setFormData({ category_id: '', category_name: '', category_type: 2 });
+      setFormData({ category_id: '', category_name: '', category_type: 1 });
       setIconFile(null);
       setIconPreview(null);
       setEditingCategory(null);
@@ -162,7 +162,7 @@ const ExpenseCategoryManager = () => {
 
   // Clear form
   const clearForm = () => {
-    setFormData({ category_id: '', category_name: '', category_type: 2 });
+    setFormData({ category_id: '', category_name: '', category_type: 1 });
     setIconFile(null);
     setIconPreview(null);
     setEditingCategory(null);

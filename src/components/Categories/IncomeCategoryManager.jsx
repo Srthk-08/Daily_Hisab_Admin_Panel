@@ -14,7 +14,7 @@ const IncomeCategoryManager = () => {
   const [formData, setFormData] = useState({
     category_id: '',
     category_name: '',
-    category_type: 1, // 1 = Income
+    category_type: 2, // 2 = Income
   });
   const [iconFile, setIconFile] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
@@ -29,7 +29,7 @@ const IncomeCategoryManager = () => {
       setError(null);
 
       const params = {
-        category_type: 1, // Income
+        category_type: 2, // Income
         include_deleted: false
       };
 
@@ -97,7 +97,7 @@ const IncomeCategoryManager = () => {
       }
 
       // Reset form
-      setFormData({ category_id: '', category_name: '', category_type: 1 });
+      setFormData({ category_id: '', category_name: '', category_type: 2 });
       setIconFile(null);
       setIconPreview(null);
       setEditingCategory(null);
@@ -162,7 +162,7 @@ const IncomeCategoryManager = () => {
 
   // Clear form
   const clearForm = () => {
-    setFormData({ category_id: '', category_name: '', category_type: 1 });
+    setFormData({ category_id: '', category_name: '', category_type: 2 });
     setIconFile(null);
     setIconPreview(null);
     setEditingCategory(null);
