@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   TrendingUp,
@@ -36,6 +37,8 @@ import apiService from '../services/api';
 const COLORS = ["#4ade80", "#3b82f6", "#6b7280", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#84cc16"];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
   // State for API data
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -177,6 +180,18 @@ export default function Dashboard() {
   const totalActiveUsers = total_active_users;
   const pendingTickets = pending_tickets;
 
+  // Navigation functions
+  const navigateToUserManagement = () => {
+    navigate('/admin/user-management');
+  };
+
+  const navigateToSubscriptionPayments = () => {
+    navigate('/admin/subscription-management');
+  };
+
+  const navigateToFeedbackSupport = () => {
+    navigate('/admin/feedback-support');
+  };
 
   const openUserModal = (type) => {
     setUserModalType(type);
@@ -233,7 +248,11 @@ export default function Dashboard() {
       {/* Top Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Total Active Users */}
-        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+        <div
+          className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+          onClick={navigateToUserManagement}
+          title="Click to view User Management"
+        >
           <Users className="w-10 h-10 text-blue-500" />
           <div>
             <p className="text-gray-500 text-sm">Total Active Users</p>
@@ -242,7 +261,11 @@ export default function Dashboard() {
         </div>
 
         {/* DAU */}
-        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+        <div
+          className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+          onClick={navigateToUserManagement}
+          title="Click to view User Management"
+        >
           <TrendingUp className="w-10 h-10 text-green-500" />
           <div>
             <p className="text-gray-500 text-sm">DAU (Daily Active)</p>
@@ -251,7 +274,11 @@ export default function Dashboard() {
         </div>
 
         {/* MAU */}
-        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+        <div
+          className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+          onClick={navigateToUserManagement}
+          title="Click to view User Management"
+        >
           <Users className="w-10 h-10 text-purple-500" />
           <div>
             <p className="text-gray-500 text-sm">MAU (Monthly Active)</p>
@@ -260,7 +287,11 @@ export default function Dashboard() {
         </div>
 
         {/* Installations */}
-        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+        <div
+          className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+          onClick={navigateToUserManagement}
+          title="Click to view User Management"
+        >
           <Download className="w-10 h-10 text-purple-500" />
           <div>
             <p className="text-gray-500 text-sm capitalize">Installs (Daily)</p>
@@ -269,7 +300,11 @@ export default function Dashboard() {
         </div>
 
         {/* Revenue */}
-        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+        <div
+          className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+          onClick={navigateToSubscriptionPayments}
+          title="Click to view Subscription Payments"
+        >
           <Wallet className="w-10 h-10 text-green-500" />
           <div>
             <p className="text-gray-500 text-sm capitalize">Revenue (daily)</p>
@@ -278,7 +313,11 @@ export default function Dashboard() {
         </div>
 
         {/* Monthly Revenue */}
-        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+        <div
+          className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+          onClick={navigateToSubscriptionPayments}
+          title="Click to view Subscription Payments"
+        >
           <TrendingUp className="w-10 h-10 text-orange-500" />
           <div>
             <p className="text-gray-500 text-sm capitalize">Revenue (Monthly)</p>
@@ -287,7 +326,11 @@ export default function Dashboard() {
         </div>
 
         {/* Pending Support Tickets */}
-        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+        <div
+          className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+          onClick={navigateToFeedbackSupport}
+          title="Click to view Feedback Support"
+        >
           <Headphones className="w-10 h-10 text-red-500" />
           <div>
             <p className="text-gray-500 text-sm">Pending Tickets</p>
@@ -296,7 +339,11 @@ export default function Dashboard() {
         </div>
 
         {/* Recent Subscribers */}
-        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+        <div
+          className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+          onClick={navigateToUserManagement}
+          title="Click to view User Management"
+        >
           <UserPlus className="w-10 h-10 text-blue-500" />
           <div>
             <p className="text-gray-500 text-sm">New Subscribers (Today)</p>

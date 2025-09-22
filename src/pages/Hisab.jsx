@@ -21,7 +21,8 @@ export default function Hisab() {
     <div className="p-6">
       {/* Tab Navigation */}
       <div className="flex justify-center mb-6">
-        <div className="bg-blue-300 p-1 rounded-full flex space-x-4">
+        <div className={`p-1 rounded-full flex space-x-4 ${activeTab === "Income" ? "bg-blue-300" : "bg-red-400"
+          }`}>
           {["Income", "Expense"].map((tab) => (
             <button
               key={tab}

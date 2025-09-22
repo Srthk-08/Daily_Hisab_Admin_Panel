@@ -15,6 +15,7 @@ const IncomeCategoryManager = () => {
     category_id: '',
     category_name: '',
     category_type: 2, // 2 = Income
+    deletable: 0, // 0 = not deletable by users, 1 = deletable by users
   });
   const [iconFile, setIconFile] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
@@ -120,6 +121,7 @@ const IncomeCategoryManager = () => {
       category_id: category.category_id,
       category_name: category.category_name,
       category_type: category.category_type,
+      deletable: category.deletable || 0,
     });
     setIconFile(null);
     setIconPreview(category.icon_url || null);
@@ -162,7 +164,12 @@ const IncomeCategoryManager = () => {
 
   // Clear form
   const clearForm = () => {
-    setFormData({ category_id: '', category_name: '', category_type: 2 });
+    setFormData({
+      category_id: '',
+      category_name: '',
+      category_type: 2, // Income
+      deletable: 0 // Default to not deletable
+    });
     setIconFile(null);
     setIconPreview(null);
     setEditingCategory(null);
@@ -263,6 +270,33 @@ const IncomeCategoryManager = () => {
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Deletable by Users
+                </label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="deletable"
+                    checked={formData.deletable === 1}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      deletable: e.target.checked ? 1 : 0
+                    }))}
+                    className="w-4 h-4 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                    style={{ accentColor: '#16a34a' }}
+                  />
+                  <label htmlFor="deletable" className="text-sm text-gray-600">
+                    Allow users to delete this category
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.deletable === 1
+                    ? "✓ Users can delete this category"
+                    : "✗ Users cannot delete this category (admin only)"
+                  }
+                </p>
+              </div>
             </div>
 
             <div>
@@ -332,6 +366,7 @@ const IncomeCategoryManager = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Icon</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deletable</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -364,6 +399,14 @@ const IncomeCategoryManager = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(category.status)}`}>
                         {category.status || 'Active'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${category.deletable === 1
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                        }`}>
+                        {category.deletable === 1 ? '✓ Yes' : '✗ No'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

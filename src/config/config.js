@@ -3,8 +3,8 @@
 
 const config = {
   // API Configuration
-  // API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
-  API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
+  // API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
   SPECIAL_PLANS: {
@@ -106,6 +106,17 @@ const config = {
     MANUAL_UPGRADE_USER: '/admin/manual_upgrade_user',
     GET_MANUAL_UPGRADE_HISTORY: '/admin/get_manual_upgrade_history',
     GET_MANUAL_UPGRADE_STATS: '/admin/get_manual_upgrade_stats',
+
+    // Admin Report System
+    GET_USER_GROWTH_REPORT: '/admin/get_user_growth_report',
+    GET_USER_ACTIVITY_REPORT: '/admin/get_user_activity_report',
+    GET_SUBSCRIPTION_REVENUE_REPORT: '/admin/get_subscription_revenue_report',
+    GET_BUSINESS_HEALTH_REPORT: '/admin/get_business_health_report',
+    GET_INCOME_EXPENSE_SUMMARY: '/admin/get_income_expense_summary',
+    GET_EXPENSE_BREAKDOWN: '/admin/get_expense_breakdown',
+    GET_INCOME_BREAKDOWN: '/admin/get_income_breakdown',
+    GET_COMPREHENSIVE_REPORT: '/admin/get_comprehensive_report',
+    EXPORT_REPORT_DATA: '/admin/export_report_data',
   },
 
   // Full API URLs (constructed from base URL and endpoints)
@@ -194,6 +205,23 @@ const config = {
       APPLY_REFERRAL_CODE: `${this.API_BASE_URL}${this.API_ENDPOINTS.APPLY_REFERRAL_CODE}`,
       GET_REFERRAL_ANALYTICS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_REFERRAL_ANALYTICS}`,
       ACTIVATE_PENDING_REWARDS: `${this.API_BASE_URL}${this.API_ENDPOINTS.ACTIVATE_PENDING_REWARDS}`,
+
+      // Manual Upgrade System URLs
+      GET_AVAILABLE_PLANS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_AVAILABLE_PLANS}`,
+      MANUAL_UPGRADE_USER: `${this.API_BASE_URL}${this.API_ENDPOINTS.MANUAL_UPGRADE_USER}`,
+      GET_MANUAL_UPGRADE_HISTORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_MANUAL_UPGRADE_HISTORY}`,
+      GET_MANUAL_UPGRADE_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_MANUAL_UPGRADE_STATS}`,
+
+      // Admin Report System URLs
+      GET_USER_GROWTH_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_GROWTH_REPORT}`,
+      GET_USER_ACTIVITY_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_ACTIVITY_REPORT}`,
+      GET_SUBSCRIPTION_REVENUE_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_SUBSCRIPTION_REVENUE_REPORT}`,
+      GET_BUSINESS_HEALTH_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_BUSINESS_HEALTH_REPORT}`,
+      GET_INCOME_EXPENSE_SUMMARY: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_INCOME_EXPENSE_SUMMARY}`,
+      GET_EXPENSE_BREAKDOWN: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_EXPENSE_BREAKDOWN}`,
+      GET_INCOME_BREAKDOWN: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_INCOME_BREAKDOWN}`,
+      GET_COMPREHENSIVE_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_COMPREHENSIVE_REPORT}`,
+      EXPORT_REPORT_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.EXPORT_REPORT_DATA}`,
     };
   },
 

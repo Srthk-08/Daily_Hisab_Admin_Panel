@@ -228,7 +228,8 @@ const apiService = {
   createAdminCategory: async (categoryData, iconFile = null) => {
     const formData = new FormData();
     formData.append('category_name', categoryData.category_name);
-    formData.append('category_type', categoryData.category_type);
+    formData.append('category_type', categoryData.category_type.toString());
+    formData.append('deletable', (categoryData.deletable || 0).toString());
 
     if (iconFile) {
       formData.append('icon', iconFile);
@@ -244,9 +245,10 @@ const apiService = {
 
   updateAdminCategory: async (categoryData, iconFile = null) => {
     const formData = new FormData();
-    formData.append('category_id', categoryData.category_id);
+    formData.append('category_id', categoryData.category_id.toString());
     formData.append('category_name', categoryData.category_name);
-    formData.append('category_type', categoryData.category_type);
+    formData.append('category_type', categoryData.category_type.toString());
+    formData.append('deletable', (categoryData.deletable || 0).toString());
 
     if (iconFile) {
       formData.append('icon', iconFile);
@@ -568,6 +570,55 @@ const apiService = {
   getManualUpgradeStats: async () => {
     const response = await api.get(config.API_ENDPOINTS.GET_MANUAL_UPGRADE_STATS);
     return response.data;
+  },
+
+  // Admin Report System
+  getUserGrowthReport: async (params = {}) => {
+    const response = await api.get(config.API_ENDPOINTS.GET_USER_GROWTH_REPORT, { params });
+    return response.data;
+  },
+
+  getUserActivityReport: async () => {
+    const response = await api.get(config.API_ENDPOINTS.GET_USER_ACTIVITY_REPORT);
+    return response.data;
+  },
+
+  getSubscriptionRevenueReport: async (params = {}) => {
+    const response = await api.get(config.API_ENDPOINTS.GET_SUBSCRIPTION_REVENUE_REPORT, { params });
+    return response.data;
+  },
+
+  getBusinessHealthReport: async () => {
+    const response = await api.get(config.API_ENDPOINTS.GET_BUSINESS_HEALTH_REPORT);
+    return response.data;
+  },
+
+  getIncomeExpenseSummary: async (params = {}) => {
+    const response = await api.get(config.API_ENDPOINTS.GET_INCOME_EXPENSE_SUMMARY, { params });
+    return response.data;
+  },
+
+  getExpenseBreakdown: async () => {
+    const response = await api.get(config.API_ENDPOINTS.GET_EXPENSE_BREAKDOWN);
+    return response.data;
+  },
+
+  getIncomeBreakdown: async (params = {}) => {
+    const response = await api.get(config.API_ENDPOINTS.GET_INCOME_BREAKDOWN, { params });
+    return response.data;
+  },
+
+  getComprehensiveReport: async (params = {}) => {
+    const response = await api.get(config.API_ENDPOINTS.GET_COMPREHENSIVE_REPORT, { params });
+    return response.data;
+  },
+
+  exportReportData: async (params = {}) => {
+    const response = await api.get(config.API_ENDPOINTS.EXPORT_REPORT_DATA, {
+      params,
+      responseType: 'blob' // Important for file downloads
+    });
+    return response;
   },
 };
 

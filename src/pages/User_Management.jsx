@@ -139,6 +139,68 @@ const UserManagement = () => {
     }
   };
 
+  // Export filtered users to CSV
+  const exportToCSV = () => {
+    if (filteredUsers.length === 0) {
+      alert('No data to export');
+      return;
+    }
+
+    // Prepare CSV data
+    const csvHeaders = [
+      'User ID',
+      'Name',
+      'Email',
+      'Mobile',
+      'Phone Code',
+      'Status',
+      'Profile Complete',
+      'Personal Accounts',
+      'Business Accounts',
+      'Freelance Accounts',
+      'Total Accounts',
+      'Created Date'
+    ];
+
+    const csvData = filteredUsers.map(user => [
+      user.user_id || '',
+      user.name || '',
+      user.email || '',
+      user.mobile || '',
+      user.phone_code || '',
+      user.active_flag === 1 ? 'Active' : 'Inactive',
+      user.profile_complete === 1 ? 'Complete' : 'Incomplete',
+      user.account_counts?.personal || 0,
+      user.account_counts?.business || 0,
+      user.account_counts?.freelance || 0,
+      user.account_counts?.total || 0,
+      formatDate(user.createtime)
+    ]);
+
+    // Create CSV content
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvData.map(row => row.map(field => `"${field}"`).join(','))
+    ].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+
+    // Generate filename based on current filter
+    const filterSuffix = filterType === 'all' ? 'all' : filterType;
+    const searchSuffix = searchQuery ? `_search_${searchQuery.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
+    const filename = `users_${filterSuffix}${searchSuffix}_${new Date().toISOString().split('T')[0]}.csv`;
+
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Loading component
   if (loading) {
     return (
@@ -271,9 +333,12 @@ const UserManagement = () => {
               <option value="accounts">Sort by Account Count</option>
             </select>
 
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+            <button
+              onClick={exportToCSV}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
               <Download className="w-4 h-4" />
-              Export
+              Export ({filteredUsers.length})
             </button>
           </div>
         </div>

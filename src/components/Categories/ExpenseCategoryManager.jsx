@@ -15,6 +15,7 @@ const ExpenseCategoryManager = () => {
     category_id: '',
     category_name: '',
     category_type: 1, // 1 = Expense
+    deletable: 0, // 0 = not deletable by users, 1 = deletable by users
   });
   const [iconFile, setIconFile] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
@@ -120,6 +121,7 @@ const ExpenseCategoryManager = () => {
       category_id: category.category_id,
       category_name: category.category_name,
       category_type: category.category_type,
+      deletable: category.deletable || 0,
     });
     setIconFile(null);
     setIconPreview(category.icon_url || null);
@@ -162,7 +164,12 @@ const ExpenseCategoryManager = () => {
 
   // Clear form
   const clearForm = () => {
-    setFormData({ category_id: '', category_name: '', category_type: 1 });
+    setFormData({
+      category_id: '',
+      category_name: '',
+      category_type: 1, // Expense
+      deletable: 0 // Default to not deletable
+    });
     setIconFile(null);
     setIconPreview(null);
     setEditingCategory(null);
@@ -187,7 +194,7 @@ const ExpenseCategoryManager = () => {
         <h2 className="text-2xl font-bold text-gray-900">Expense Categories</h2>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-blue-300 text-white px-4 py-2 rounded-lg hover:bg-blue-500 flex items-center gap-2"
+          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2"
         >
           <Plus size={20} />
           Add Expense Category
@@ -265,23 +272,51 @@ const ExpenseCategoryManager = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category Icon (Optional)
+                  Deletable by Users
                 </label>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
+                    type="checkbox"
+                    id="deletable"
+                    checked={formData.deletable === 1}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      deletable: e.target.checked ? 1 : 0
+                    }))}
+                    className="w-4 h-4 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2"
+                    style={{ accentColor: '#dc2626' }}
                   />
-                  {iconPreview && (
-                    <img
-                      src={iconPreview}
-                      alt="Icon preview"
-                      className="w-16 h-16 object-cover rounded-lg border"
-                    />
-                  )}
+                  <label htmlFor="deletable" className="text-sm text-gray-600">
+                    Allow users to delete this category
+                  </label>
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.deletable === 1
+                    ? "✓ Users can delete this category"
+                    : "✗ Users cannot delete this category (admin only)"
+                  }
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Category Icon (Optional)
+              </label>
+              <div className="flex items-center space-x-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
+                />
+                {iconPreview && (
+                  <img
+                    src={iconPreview}
+                    alt="Icon preview"
+                    className="w-16 h-16 object-cover rounded-lg border"
+                  />
+                )}
               </div>
             </div>
 
@@ -334,6 +369,7 @@ const ExpenseCategoryManager = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                   {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Type</th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deletable</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -371,6 +407,14 @@ const ExpenseCategoryManager = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(category.status)}`}>
                         {category.status || 'Active'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${category.deletable === 1
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                        }`}>
+                        {category.deletable === 1 ? '✓ Yes' : '✗ No'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
