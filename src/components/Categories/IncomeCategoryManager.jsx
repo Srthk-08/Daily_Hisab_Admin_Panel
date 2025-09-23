@@ -124,7 +124,7 @@ const IncomeCategoryManager = () => {
       deletable: category.deletable || 0,
     });
     setIconFile(null);
-    setIconPreview(category.icon_url || null);
+    setIconPreview(category.icon || null);
     setShowForm(true);
     setError(null);
     setSuccess(null);
@@ -378,9 +378,9 @@ const IncomeCategoryManager = () => {
                       {category.category_id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {category.icon_url ? (
+                      {category.icon ? (
                         <img
-                          src={category.icon_url}
+                          src={category.icon}
                           alt={category.category_name}
                           className="w-12 h-12 object-cover rounded-lg"
                           onError={(e) => {

@@ -21,7 +21,7 @@ import {
   PieChart,
   Pie,
   Cell,
-  LineChart,
+  // LineChart,
   Line,
   XAxis,
   YAxis,
@@ -44,12 +44,13 @@ export default function Report() {
   const [userActivityData, setUserActivityData] = useState([]);
   const [subscriptionRevenueData, setSubscriptionRevenueData] = useState([]);
   const [businessHealthData, setBusinessHealthData] = useState([]);
-  const [incomeExpenseData, setIncomeExpenseData] = useState([]);
+  // const [incomeExpenseData, setIncomeExpenseData] = useState([]);
   const [expenseData, setExpenseData] = useState([]);
   const [incomeData, setIncomeData] = useState([]);
 
   // State for summaries
   const [userGrowthSummary, setUserGrowthSummary] = useState({});
+  const [userActivitySummary, setUserActivitySummary] = useState({});
   const [subscriptionRevenueSummary, setSubscriptionRevenueSummary] = useState({});
   const [businessHealthSummary, setBusinessHealthSummary] = useState({});
 
@@ -60,7 +61,6 @@ export default function Report() {
 
   // State for filters
   const [selectedPeriod, setSelectedPeriod] = useState("6months");
-  const [summaryPeriod, setSummaryPeriod] = useState("monthly");
   const [customDateRange, setCustomDateRange] = useState({
     startDate: "",
     endDate: ""
@@ -89,6 +89,7 @@ export default function Report() {
 
         // Set user activity data
         setUserActivityData(data.userActivity?.userActivityData || []);
+        setUserActivitySummary(data.userActivity?.summary || {});
 
         // Set subscription revenue data
         setSubscriptionRevenueData(data.subscriptionRevenue?.subscriptionRevenueData || []);
@@ -99,7 +100,7 @@ export default function Report() {
         setBusinessHealthSummary(data.businessHealth?.summary || {});
 
         // Set income expense data
-        setIncomeExpenseData(data.incomeExpense?.summaryData || []);
+        // setIncomeExpenseData(data.incomeExpense?.summaryData || []);
 
         // Set expense breakdown
         setExpenseData(data.expenseBreakdown?.expenseData || []);
@@ -135,7 +136,7 @@ export default function Report() {
         userActivityResponse,
         subscriptionRevenueResponse,
         businessHealthResponse,
-        incomeExpenseResponse,
+        // incomeExpenseResponse,
         expenseBreakdownResponse,
         incomeBreakdownResponse
       ] = await Promise.all([
@@ -143,9 +144,9 @@ export default function Report() {
         apiService.getUserActivityReport(),
         apiService.getSubscriptionRevenueReport(params),
         apiService.getBusinessHealthReport(),
-        apiService.getIncomeExpenseSummary({ period: summaryPeriod }),
+        apiService.getIncomeExpenseSummary({ period: 'monthly' }),
         apiService.getExpenseBreakdown(),
-        apiService.getIncomeBreakdown({ period: summaryPeriod })
+        apiService.getIncomeBreakdown({ period: 'monthly' })
       ]);
 
       // Set user growth data
@@ -172,9 +173,9 @@ export default function Report() {
       }
 
       // Set income expense data
-      if (incomeExpenseResponse.success) {
-        setIncomeExpenseData(incomeExpenseResponse.data.summaryData || []);
-      }
+      // if (incomeExpenseResponse.success) {
+      //   setIncomeExpenseData(incomeExpenseResponse.data.summaryData || []);
+      // }
 
       // Set expense breakdown
       if (expenseBreakdownResponse.success) {
@@ -207,51 +208,51 @@ export default function Report() {
   };
 
   // Export data
-  const handleExportData = async (reportType) => {
-    try {
-      const params = selectedPeriod === 'custom'
-        ? {
-          reportType,
-          period: 'custom',
-          start_date: customDateRange.startDate,
-          end_date: customDateRange.endDate
-        }
-        : { reportType, period: selectedPeriod };
+  // const handleExportData = async (reportType) => {
+  //   try {
+  //     const params = selectedPeriod === 'custom'
+  //       ? {
+  //         reportType,
+  //         period: 'custom',
+  //         start_date: customDateRange.startDate,
+  //         end_date: customDateRange.endDate
+  //       }
+  //       : { reportType, period: selectedPeriod };
 
-      const response = await apiService.exportReportData(params);
+  //     const response = await apiService.exportReportData(params);
 
-      // Create blob and download
-      const blob = new Blob([response.data], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${reportType}_report_${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Error exporting data:', err);
-      setError('Failed to export data. Please try again.');
-    }
-  };
+  //     // Create blob and download
+  //     const blob = new Blob([response.data], { type: 'text/csv' });
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.download = `${reportType}_report_${new Date().toISOString().split('T')[0]}.csv`;
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     window.URL.revokeObjectURL(url);
+  //   } catch (err) {
+  //     console.error('Error exporting data:', err);
+  //     setError('Failed to export data. Please try again.');
+  //   }
+  // };
 
   // Export all data
-  const exportAllData = async () => {
-    const reportTypes = [
-      'userGrowth',
-      'userActivity',
-      'subscriptionRevenue',
-      'businessHealth',
-      'incomeExpense'
-    ];
+  // const exportAllData = async () => {
+  //   const reportTypes = [
+  //     'userGrowth',
+  //     'userActivity',
+  //     'subscriptionRevenue',
+  //     'businessHealth',
+  //     'incomeExpense'
+  //   ];
 
-    for (const reportType of reportTypes) {
-      await handleExportData(reportType);
-      // Small delay between downloads
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-  };
+  //   for (const reportType of reportTypes) {
+  //     await handleExportData(reportType);
+  //     // Small delay between downloads
+  //     await new Promise(resolve => setTimeout(resolve, 500));
+  //   }
+  // };
 
   // Handle period change
   const handlePeriodChange = (period) => {
@@ -269,14 +270,14 @@ export default function Report() {
   // Load data on component mount and when filters change
   useEffect(() => {
     fetchAllReports();
-  }, [selectedPeriod, summaryPeriod, customDateRange]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedPeriod, customDateRange]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Simulate credit score calculation
+  // Calculate credit score from business health summary
   useEffect(() => {
-    if (businessHealthSummary.overallScore) {
+    if (businessHealthSummary.overallScore !== undefined) {
       setCreditScore(businessHealthSummary.overallScore);
     } else {
-      setCreditScore(Math.floor(Math.random() * 101));
+      setCreditScore(0);
     }
   }, [businessHealthSummary]);
 
@@ -381,13 +382,7 @@ export default function Report() {
           </button>
 
           {/* Export Button */}
-          <button
-            onClick={exportAllData}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Download className="w-4 h-4" />
-            Export All
-          </button>
+
         </div>
       </div>
 
@@ -397,13 +392,13 @@ export default function Report() {
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Users className="w-6 h-6 text-blue-600" /> User Growth Report
           </h3>
-          <button
+          {/* <button
             onClick={() => handleExportData('userGrowth')}
             className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
           >
             <Download className="w-4 h-4" />
             Export
-          </button>
+          </button> */}
         </div>
 
         {/* Growth Metrics */}
@@ -462,15 +457,51 @@ export default function Report() {
       <div className="bg-white rounded-2xl shadow-md p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Activity className="w-6 h-6 text-green-600" /> Active vs Inactive Users
+            <Activity className="w-6 h-6 text-green-600" /> User Activity Report
           </h3>
-          <button
+          {/* <button
             onClick={() => handleExportData('userActivity')}
             className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
           >
             <Download className="w-4 h-4" />
             Export
-          </button>
+          </button> */}
+        </div>
+
+        {/* Activity Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-blue-50 rounded-xl p-4 text-center">
+            <p className="text-sm text-gray-600">Total Users</p>
+            <p className="text-2xl font-bold text-blue-600">
+              {userActivitySummary.totalUsers?.toLocaleString() || '0'}
+            </p>
+            <p className="text-xs text-blue-500">All registered users</p>
+          </div>
+          <div className="bg-green-50 rounded-xl p-4 text-center">
+            <p className="text-sm text-gray-600">Free Users</p>
+            <p className="text-2xl font-bold text-green-600">
+              {userActivitySummary.freeUsers?.toLocaleString() || '0'}
+            </p>
+            <p className="text-xs text-green-500">
+              {((userActivitySummary.freeUsers / userActivitySummary.totalUsers) * 100 || 0).toFixed(1)}% of total
+            </p>
+          </div>
+          <div className="bg-purple-50 rounded-xl p-4 text-center">
+            <p className="text-sm text-gray-600">Paid Users</p>
+            <p className="text-2xl font-bold text-purple-600">
+              {userActivitySummary.paidUsers?.toLocaleString() || '0'}
+            </p>
+            <p className="text-xs text-purple-500">
+              {((userActivitySummary.paidUsers / userActivitySummary.totalUsers) * 100 || 0).toFixed(1)}% of total
+            </p>
+          </div>
+          <div className="bg-gray-50 rounded-xl p-4 text-center">
+            <p className="text-sm text-gray-600">Active Users</p>
+            <p className="text-2xl font-bold text-gray-600">
+              {userActivitySummary.activePercentage || '0'}%
+            </p>
+            <p className="text-xs text-gray-500">Active percentage</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -528,41 +559,46 @@ export default function Report() {
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <DollarSign className="w-6 h-6 text-green-600" /> Subscription Revenue Report
           </h3>
-          <button
+          {/* <button
             onClick={() => handleExportData('subscriptionRevenue')}
             className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
           >
             <Download className="w-4 h-4" />
             Export
-          </button>
+          </button> */}
         </div>
 
         {/* Revenue Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-blue-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Starter Revenue</p>
+            <p className="text-sm text-gray-600">Yearly Revenue</p>
             <p className="text-2xl font-bold text-blue-600">
-              ₹{subscriptionRevenueSummary.starterRevenue?.toLocaleString() || '0'}
+              ₹{subscriptionRevenueSummary.yearlyRevenue?.toLocaleString() || '0'}
             </p>
-            <p className="text-xs text-blue-500">
-              {subscriptionRevenueSummary.starterGrowth || '+0%'} from last month
-            </p>
+            <p className="text-xs text-blue-500">From yearly plans</p>
           </div>
           <div className="bg-green-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Premium Revenue</p>
+            <p className="text-sm text-gray-600">Monthly Revenue</p>
             <p className="text-2xl font-bold text-green-600">
-              ₹{subscriptionRevenueSummary.premiumRevenue?.toLocaleString() || '0'}
+              ₹{subscriptionRevenueSummary.monthlyRevenue?.toLocaleString() || '0'}
             </p>
-            <p className="text-xs text-green-500">
-              {subscriptionRevenueSummary.premiumGrowth || '+0%'} from last month
+            <p className="text-xs text-green-500">From monthly plans</p>
+          </div>
+          <div className="bg-orange-50 rounded-xl p-4 text-center">
+            <p className="text-sm text-gray-600">Lifetime Revenue</p>
+            <p className="text-2xl font-bold text-orange-600">
+              ₹{subscriptionRevenueSummary.lifetimeRevenue?.toLocaleString() || '0'}
             </p>
+            <p className="text-xs text-orange-500">From lifetime plans</p>
           </div>
           <div className="bg-purple-50 rounded-xl p-4 text-center">
             <p className="text-sm text-gray-600">Total Revenue</p>
             <p className="text-2xl font-bold text-purple-600">
               ₹{subscriptionRevenueSummary.totalRevenue?.toLocaleString() || '0'}
             </p>
-            <p className="text-xs text-purple-500">This period</p>
+            <p className="text-xs text-purple-500">
+              {subscriptionRevenueSummary.totalPaidUsers || '0'} paid users
+            </p>
           </div>
         </div>
 
@@ -571,11 +607,13 @@ export default function Report() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
+            <Tooltip formatter={(value, name) => [
+              name === 'userCount' ? value : `₹${value?.toLocaleString() || 0}`,
+              name === 'userCount' ? 'Users' : 'Revenue'
+            ]} />
             <Legend />
-            <Bar dataKey="starter" fill="#3b82f6" name="Starter" />
-            <Bar dataKey="premium" fill="#4ade80" name="Premium" />
-            <Bar dataKey="lifetime" fill="#a78bfa" name="Lifetime" />
+            <Bar dataKey="userCount" fill="#3b82f6" name="User Count" />
+            <Bar dataKey="totalRevenue" fill="#4ade80" name="Total Revenue" />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -586,13 +624,45 @@ export default function Report() {
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Target className="w-6 h-6 text-purple-600" /> Business Health Distribution
           </h3>
-          <button
+          {/* <button
             onClick={() => handleExportData('businessHealth')}
             className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
           >
             <Download className="w-4 h-4" />
             Export
-          </button>
+          </button> */}
+        </div>
+
+        {/* Business Health Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-purple-50 rounded-xl p-4 text-center">
+            <p className="text-sm text-gray-600">Overall Score</p>
+            <p className="text-2xl font-bold text-purple-600">
+              {businessHealthSummary.overallScore || '0'}/100
+            </p>
+            <p className="text-xs text-purple-500">Business health score</p>
+          </div>
+          <div className="bg-green-50 rounded-xl p-4 text-center">
+            <p className="text-sm text-gray-600">Strong Categories</p>
+            <p className="text-2xl font-bold text-green-600">
+              {businessHealthSummary.strongCategories || '0'}
+            </p>
+            <p className="text-xs text-green-500">Performing well</p>
+          </div>
+          <div className="bg-yellow-50 rounded-xl p-4 text-center">
+            <p className="text-sm text-gray-600">Average Categories</p>
+            <p className="text-2xl font-bold text-yellow-600">
+              {businessHealthSummary.averageCategories || '0'}
+            </p>
+            <p className="text-xs text-yellow-500">Need improvement</p>
+          </div>
+          <div className="bg-red-50 rounded-xl p-4 text-center">
+            <p className="text-sm text-gray-600">Poor Categories</p>
+            <p className="text-2xl font-bold text-red-600">
+              {businessHealthSummary.poorCategories || '0'}
+            </p>
+            <p className="text-xs text-red-500">Require attention</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -627,7 +697,7 @@ export default function Report() {
       </div>
 
       {/* Income vs Expense Summary */}
-      <div className="bg-white rounded-2xl shadow-md p-6">
+      {/* <div className="bg-white rounded-2xl shadow-md p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Income vs Expense Summary</h3>
           <div className="flex gap-2">
@@ -665,16 +735,27 @@ export default function Report() {
             <Line type="monotone" dataKey="profit" stroke="#a78bfa" strokeWidth={3} name="Profit" />
           </LineChart>
         </ResponsiveContainer>
-      </div>
+      </div> */}
 
-      {/* Pie Charts */}
+      {/* Financial Breakdown */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Expenses */}
         <div className="bg-white rounded-2xl shadow-md p-6">
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
-            <PieChartIcon /> Expense Breakdown
+            <PieChartIcon className="text-red-600" /> Expense Breakdown
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
+
+          {/* Expense Summary */}
+          <div className="mb-4">
+            <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-700">Total Expenses</span>
+              <span className="text-lg font-bold text-red-600">
+                ₹{expenseData.reduce((sum, item) => sum + (item.value || 0), 0).toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
                 data={expenseData}
@@ -684,7 +765,7 @@ export default function Report() {
                 label={({ name, percent }) =>
                   `${name} ${(percent * 100).toFixed(0)}%`
                 }
-                outerRadius={100}
+                outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -692,17 +773,50 @@ export default function Report() {
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']} />
             </PieChart>
           </ResponsiveContainer>
+
+          {/* Expense Details */}
+          <div className="mt-4 space-y-2">
+            {expenseData.map((item, index) => (
+              <div key={item.name} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                  ></div>
+                  <span className="text-sm font-medium">{item.name}</span>
+                  <span className="text-xs text-gray-500">
+                    ({item.accountType === 0 ? 'Business' : 'Personal'})
+                  </span>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>
+                  <div className="text-xs text-gray-500">{item.count} transactions</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Incomes */}
         <div className="bg-white rounded-2xl shadow-md p-6">
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
-            <PieChartIcon /> Income Breakdown
+            <PieChartIcon className="text-green-600" /> Income Breakdown
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
+
+          {/* Income Summary */}
+          <div className="mb-4">
+            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-700">Total Income</span>
+              <span className="text-lg font-bold text-green-600">
+                ₹{incomeData.reduce((sum, item) => sum + (item.value || 0), 0).toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
                 data={incomeData}
@@ -712,7 +826,7 @@ export default function Report() {
                 label={({ name, percent }) =>
                   `${name} ${(percent * 100).toFixed(0)}%`
                 }
-                outerRadius={100}
+                outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -720,15 +834,37 @@ export default function Report() {
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']} />
             </PieChart>
           </ResponsiveContainer>
+
+          {/* Income Details */}
+          <div className="mt-4 space-y-2">
+            {incomeData.map((item, index) => (
+              <div key={item.name} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                  ></div>
+                  <span className="text-sm font-medium">{item.name}</span>
+                  <span className="text-xs text-gray-500">
+                    ({item.accountType === 0 ? 'Business' : 'Personal'})
+                  </span>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>
+                  <div className="text-xs text-gray-500">{item.count} transactions</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Credit Score */}
       <div className="bg-white rounded-2xl shadow-md p-6 flex flex-col items-center">
-        <h3 className="text-lg font-semibold mb-2">Business Credit Score</h3>
+        <h3 className="text-lg font-semibold mb-2">Business Health Score</h3>
         <div className="relative w-32 h-32">
           <svg className="w-32 h-32">
             <circle
@@ -743,7 +879,7 @@ export default function Report() {
               cx="64"
               cy="64"
               r="60"
-              stroke="#4ade80"
+              stroke={creditScore >= 70 ? "#4ade80" : creditScore >= 40 ? "#facc15" : "#f87171"}
               strokeWidth="8"
               fill="none"
               strokeDasharray={`${(creditScore / 100) * 377} 377`}
@@ -755,7 +891,14 @@ export default function Report() {
             {creditScore}
           </span>
         </div>
-        <p className="text-sm text-gray-500 mt-2">Overall Business Health</p>
+        <p className="text-sm text-gray-500 mt-2">
+          {creditScore >= 70 ? 'Excellent Health' : creditScore >= 40 ? 'Average Health' : 'Needs Attention'}
+        </p>
+        <div className="mt-2 text-center">
+          <p className="text-xs text-gray-400">
+            Based on {businessHealthSummary.strongCategories || 0} strong, {businessHealthSummary.averageCategories || 0} average, and {businessHealthSummary.poorCategories || 0} poor categories
+          </p>
+        </div>
       </div>
     </div>
   );
