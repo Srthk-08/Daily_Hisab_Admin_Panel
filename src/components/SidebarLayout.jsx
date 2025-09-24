@@ -1,11 +1,11 @@
 // File: admin/src/components/SidebarLayout.jsx
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { 
-  ShoppingBag, 
+import {
+  ShoppingBag,
   Package,
   PiggyBank,
-  Users, 
+  Users,
   LogOut,
   ArrowLeftRight,
   Component,
@@ -21,6 +21,7 @@ import {
   X,
   Presentation,
   MessageCircle,
+  MessageSquare,
   File,
   Settings,
   HandHelping,
@@ -44,7 +45,8 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/subscription-management', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
     // { path: '/admin/analytics-insights', icon: <Component size={20} />, label: 'Analytics Insights' },
-    { path: '/admin/feedback-support', icon: <MessageCircle size={20} />, label: 'Feedback' },
+    { path: '/admin/feedback', icon: <MessageSquare size={20} />, label: 'Feedback' },
+    { path: '/admin/feedback-support', icon: <MessageCircle size={20} />, label: 'Support Tickets' },
     { path: '/admin/content', icon: <MonitorUp size={20} />, label: 'Content' },
     { path: '/admin/tnc', icon: <HandHelping size={20} />, label: 'Terms & Conditions' },
   ];
@@ -59,7 +61,7 @@ const SidebarLayout = ({ children }) => {
     <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
@@ -75,12 +77,12 @@ const SidebarLayout = ({ children }) => {
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <Link to="/admin">
-              <div className="flex items-center space-x-3">
-                <img src="/logo.png" alt="Daily Hisab Admin Logo" className="w-10 h-10 rounded-full shadow" />
-                <h2 className="text-2xl font-extrabold  bg-blue-400 bg-clip-text text-transparent">
-                  DH Admin
-                </h2>
-              </div>
+                <div className="flex items-center space-x-3">
+                  <img src="/logo.png" alt="Daily Hisab Admin Logo" className="w-10 h-10 rounded-full shadow" />
+                  <h2 className="text-2xl font-extrabold  bg-blue-400 bg-clip-text text-transparent">
+                    DH Admin
+                  </h2>
+                </div>
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -100,8 +102,8 @@ const SidebarLayout = ({ children }) => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`
                   flex items-center px-4 py-3 rounded-lg text-gray-600 transition-all duration-200 group
-                  ${isActive(item.path) 
-                    ? ' bg-blue-400  text-white shadow-lg' 
+                  ${isActive(item.path)
+                    ? ' bg-blue-400  text-white shadow-lg'
                     : 'hover:bg-gray-100 hover:text-blue-600 hover:shadow-md'
                   }
                 `}
@@ -144,12 +146,12 @@ const SidebarLayout = ({ children }) => {
               <Menu size={20} className="text-gray-600" />
             </button>
             <Link to="/admin">
-            <div className="flex items-center space-x-2">
-             
-              <img src="/logo.png" alt="Daily Hisab Admin Logo" className="w-8 h-8 rounded-full shadow" />
-              <span className="text-lg font-semibold text-gray-800">DH Admin</span>
-             
-            </div>
+              <div className="flex items-center space-x-2">
+
+                <img src="/logo.png" alt="Daily Hisab Admin Logo" className="w-8 h-8 rounded-full shadow" />
+                <span className="text-lg font-semibold text-gray-800">DH Admin</span>
+
+              </div>
             </Link>
           </div>
         </div>

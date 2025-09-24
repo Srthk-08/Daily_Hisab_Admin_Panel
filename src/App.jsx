@@ -18,6 +18,7 @@ import Hisab from "./pages/Hisab";
 import User_Management from "./pages/User_Management";
 import Subscription_Management from "./pages/Subscription_Management";
 import Analytics_Insights from "./pages/Analytics_Insights";
+import Feedback from "./pages/Feedback";
 import Feedback_Support from "./pages/Feedback_Support";
 import Content from "./pages/Content";
 import Tandc from "./pages/Tandc";
@@ -68,7 +69,7 @@ const ProtectedRoute = ({ children }) => {
 const PublicRoute = ({ children }) => {
   const [isChecking, setIsChecking] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  useEffect(() => { const checkAuth = async () => { if (apiService.isAuthenticated()) { try { await apiService.verifyToken(); setIsAuthenticated(true); } catch (error) { await apiService.logout(); setIsAuthenticated(false); } } else { setIsAuthenticated(false); } setIsChecking(false); }; checkAuth(); }, []);
+  useEffect(() => { const checkAuth = async () => { if (apiService.isAuthenticated()) { try { await apiService.verifyToken(); setIsAuthenticated(true); } catch { await apiService.logout(); setIsAuthenticated(false); } } else { setIsAuthenticated(false); } setIsChecking(false); }; checkAuth(); }, []);
   if (isChecking) return <LoadingSpinner message="Checking authentication..." />;
   if (isAuthenticated) return <Navigate to="/admin/dashboard" replace />;
   return children;
@@ -105,6 +106,7 @@ const App = () => {
           <Route path="/admin/user-management" element={<ProtectedRoute><User_Management /></ProtectedRoute>} />
           <Route path="/admin/subscription-management" element={<ProtectedRoute><Subscription_Management /></ProtectedRoute>} />
           <Route path="/admin/analytics-insights" element={<ProtectedRoute><Analytics_Insights /></ProtectedRoute>} />
+          <Route path="/admin/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
           <Route path="/admin/feedback-support" element={<ProtectedRoute><Feedback_Support /></ProtectedRoute>} />
           <Route path="/admin/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
           <Route path="/admin/view-user" element={<ProtectedRoute><ViewUser /></ProtectedRoute>} />

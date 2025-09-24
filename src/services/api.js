@@ -647,6 +647,83 @@ const apiService = {
     });
     return response;
   },
+
+  // Feedback Management
+  createFeedback: async (feedbackData) => {
+    try {
+      console.log('Creating feedback with data:', feedbackData);
+      const response = await api.post(config.API_ENDPOINTS.CREATE_FEEDBACK, feedbackData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating feedback:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getUserFeedback: async (userId, params = {}) => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_USER_FEEDBACK, {
+        params: { user_id: userId, ...params }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user feedback:', error);
+      throw error;
+    }
+  },
+
+  getAllFeedback: async (params = {}) => {
+    try {
+      console.log('Fetching all feedback with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_ALL_FEEDBACK, { params });
+      console.log('All feedback API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching all feedback:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  updateFeedbackResponse: async (feedbackId, adminResponse) => {
+    try {
+      console.log('Updating feedback response:', { feedbackId, adminResponse });
+      const response = await api.put(config.API_ENDPOINTS.UPDATE_FEEDBACK_RESPONSE, {
+        feedback_id: feedbackId,
+        admin_response: adminResponse
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating feedback response:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  deleteFeedback: async (feedbackId) => {
+    try {
+      console.log('Deleting feedback:', feedbackId);
+      const response = await api.delete(config.API_ENDPOINTS.DELETE_FEEDBACK, {
+        data: { feedback_id: feedbackId }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getFeedbackStats: async () => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_FEEDBACK_STATS);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching feedback stats:', error);
+      throw error;
+    }
+  },
 };
 
 // Initialize token management when module loads

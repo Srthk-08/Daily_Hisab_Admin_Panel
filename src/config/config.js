@@ -65,6 +65,14 @@ const config = {
     DELETE_ADMIN_CATEGORY: '/admin/delete_category',
     GET_ALL_ADMIN_CATEGORIES: '/admin/get_all_categories',
 
+    // Feedback Management
+    CREATE_FEEDBACK: '/create_feedback',
+    GET_USER_FEEDBACK: '/get_user_feedback',
+    GET_ALL_FEEDBACK: '/admin/get_all_feedback',
+    UPDATE_FEEDBACK_RESPONSE: '/admin/update_feedback_response',
+    DELETE_FEEDBACK: '/admin/delete_feedback',
+    GET_FEEDBACK_STATS: '/admin/get_feedback_stats',
+
     // Support Ticket Management
     GET_ALL_SUPPORT_TICKETS: '/admin/get_all_support_tickets',
     UPDATE_SUPPORT_TICKET_STATUS: '/admin/update_support_ticket_status',
