@@ -2,34 +2,21 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   Plus,
   Trash2,
-  ToggleRight,
-  ToggleLeft,
-  Edit,
-  Eye,
-  Calendar,
-  Target,
   Star,
-  Globe,
   Play,
   BarChart3,
   RefreshCw,
   AlertCircle,
   CheckCircle,
   X,
-  Filter,
   Search,
-  Image,
-  Link,
-  Clock,
-  Users,
-  TrendingUp,
   Settings,
+  TrendingUp,
 } from "lucide-react";
 import apiService from "../services/api";
 
 const Content = () => {
   // State management
-  const [banners, setBanners] = useState([]);
   const [tutorials, setTutorials] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -38,22 +25,9 @@ const Content = () => {
   const [loadingImages, setLoadingImages] = useState(new Set());
 
   // Form states
-  const [showBannerModal, setShowBannerModal] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   const [showAnalyticsModal, setShowAnalyticsModal] = useState(false);
   const [selectedTutorial, setSelectedTutorial] = useState(null);
-
-  // Banner form data
-  const [bannerData, setBannerData] = useState({
-    banner_text: "",
-    banner_url: "",
-    banner_link: "",
-    banner_type: "announcement",
-    priority: 1,
-    start_date: "",
-    end_date: "",
-    target_audience: "all_users",
-  });
 
   // Tutorial form data
   const [tutorialData, setTutorialData] = useState({
@@ -70,12 +44,6 @@ const Content = () => {
   });
 
   // Filters and pagination
-  const [bannerFilters, setBannerFilters] = useState({
-    banner_type: "all",
-    is_active: "all",
-    target_audience: "all",
-    search: "",
-  });
   const [tutorialFilters, setTutorialFilters] = useState({
     language: "all",
     category: "all",
@@ -90,20 +58,6 @@ const Content = () => {
     limit: 10,
   });
 
-  // Banner types configuration
-  const bannerTypes = {
-    promotion: { label: "Promotion", color: "text-orange-600 bg-orange-50" },
-    announcement: { label: "Announcement", color: "text-blue-600 bg-blue-50" },
-    feature: { label: "Feature", color: "text-green-600 bg-green-50" },
-    festival: { label: "Festival", color: "text-purple-600 bg-purple-50" },
-  };
-
-  // Target audience configuration
-  const targetAudiences = {
-    all_users: { label: "All Users", icon: Users, color: "text-blue-600" },
-    premium_users: { label: "Premium Users", icon: Star, color: "text-yellow-600" },
-    free_users: { label: "Free Users", icon: Users, color: "text-gray-600" },
-  };
 
   // Tutorial categories
   const tutorialCategories = {
@@ -127,46 +81,6 @@ const Content = () => {
     english: { label: "English", flag: "🇺🇸" },
   };
 
-  // Fetch banners
-  const fetchBanners = useCallback(async (params = {}) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const queryParams = {
-        page: pagination.current_page,
-        limit: pagination.limit,
-        ...bannerFilters,
-        ...params,
-      };
-
-      // Remove 'all' values from query params
-      Object.keys(queryParams).forEach(key => {
-        if (queryParams[key] === 'all' || queryParams[key] === '') {
-          delete queryParams[key];
-        }
-      });
-
-      const response = await apiService.getAllBanners(queryParams);
-      console.log('Banners API Response:', response);
-
-      if (response && response.success) {
-        setBanners(response.data.banners || []);
-        if (response.data.pagination) {
-          setPagination(response.data.pagination);
-        }
-      } else {
-        setError('Failed to fetch banners');
-        setBanners([]);
-      }
-    } catch (err) {
-      console.error('Error fetching banners:', err);
-      setError(err.message || 'Failed to fetch banners');
-      setBanners([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [bannerFilters, pagination.current_page, pagination.limit]);
 
   // Fetch tutorials
   const fetchTutorials = useCallback(async (params = {}) => {
@@ -216,15 +130,6 @@ const Content = () => {
         setLoading(true);
         setError(null);
 
-        // Fetch banners with default filters
-        const bannerResponse = await apiService.getAllBanners({ page: 1, limit: 10 });
-        if (bannerResponse && bannerResponse.success) {
-          setBanners(bannerResponse.data.banners || []);
-          if (bannerResponse.data.pagination) {
-            setPagination(bannerResponse.data.pagination);
-          }
-        }
-
         // Fetch tutorials with default filters
         const tutorialResponse = await apiService.getAllTutorials({ page: 1, limit: 10 });
         if (tutorialResponse && tutorialResponse.success) {
@@ -259,14 +164,6 @@ const Content = () => {
     }
   }, [error]);
 
-  // Debounced search effect for banners
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      fetchBanners();
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [bannerFilters.search, bannerFilters.banner_type, bannerFilters.is_active, bannerFilters.target_audience, fetchBanners]);
 
   // Debounced search effect for tutorials
   useEffect(() => {
@@ -277,38 +174,6 @@ const Content = () => {
     return () => clearTimeout(timeoutId);
   }, [tutorialFilters.search, tutorialFilters.language, tutorialFilters.category, tutorialFilters.difficulty_level, tutorialFilters.is_featured, fetchTutorials]);
 
-  // Handle banner creation
-  const handleCreateBanner = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await apiService.createBanner(bannerData);
-
-      if (response && response.success) {
-        setSuccess('Banner created successfully');
-        setShowBannerModal(false);
-        setBannerData({
-          banner_text: "",
-          banner_url: "",
-          banner_link: "",
-          banner_type: "announcement",
-          priority: 1,
-          start_date: "",
-          end_date: "",
-          target_audience: "all_users",
-        });
-        fetchBanners();
-      } else {
-        setError('Failed to create banner');
-      }
-    } catch (err) {
-      console.error('Error creating banner:', err);
-      setError(err.response?.data?.msg?.[0] || err.message || 'Failed to create banner');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Handle tutorial creation
   const handleCreateTutorial = async () => {
@@ -345,48 +210,8 @@ const Content = () => {
     }
   };
 
-  // Handle banner update
-  const handleUpdateBanner = async (bannerId, updateData) => {
-    try {
-      setLoading(true);
-      const response = await apiService.updateBanner(bannerId, updateData);
-
-      if (response && response.success) {
-        setSuccess('Banner updated successfully');
-        fetchBanners();
-      } else {
-        setError('Failed to update banner');
-      }
-    } catch (err) {
-      console.error('Error updating banner:', err);
-      setError(err.response?.data?.msg?.[0] || err.message || 'Failed to update banner');
-    } finally {
-      setLoading(false);
-    }
-  };
 
 
-  // Handle banner deletion
-  const handleDeleteBanner = async (bannerId) => {
-    if (!window.confirm('Are you sure you want to delete this banner?')) return;
-
-    try {
-      setLoading(true);
-      const response = await apiService.deleteBanner(bannerId);
-
-      if (response && response.success) {
-        setSuccess('Banner deleted successfully');
-        fetchBanners();
-      } else {
-        setError('Failed to delete banner');
-      }
-    } catch (err) {
-      console.error('Error deleting banner:', err);
-      setError(err.response?.data?.msg?.[0] || err.message || 'Failed to delete banner');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Handle tutorial deletion
   const handleDeleteTutorial = async (tutorialId) => {
@@ -410,10 +235,6 @@ const Content = () => {
     }
   };
 
-  // Handle banner toggle
-  const handleToggleBanner = async (bannerId, isActive) => {
-    await handleUpdateBanner(bannerId, { is_active: !isActive });
-  };
 
   // Handle tutorial analytics
   const handleViewAnalytics = async (tutorialId) => {
@@ -435,27 +256,12 @@ const Content = () => {
     }
   };
 
-  // Handle filter change
-  const handleBannerFilterChange = (key, value) => {
-    setBannerFilters(prev => ({ ...prev, [key]: value }));
-    setPagination(prev => ({ ...prev, current_page: 1 }));
-  };
 
   const handleTutorialFilterChange = (key, value) => {
     setTutorialFilters(prev => ({ ...prev, [key]: value }));
     setPagination(prev => ({ ...prev, current_page: 1 }));
   };
 
-  // Clear filters
-  const clearBannerFilters = () => {
-    setBannerFilters({
-      banner_type: "all",
-      is_active: "all",
-      target_audience: "all",
-      search: "",
-    });
-    setPagination(prev => ({ ...prev, current_page: 1 }));
-  };
 
   const clearTutorialFilters = () => {
     setTutorialFilters({
@@ -481,29 +287,6 @@ const Content = () => {
     return `${Math.floor(diffInMinutes / 1440)}d ago`;
   };
 
-  // Render banner type badge
-  const renderBannerTypeBadge = (type) => {
-    const config = bannerTypes[type];
-    if (!config) return null;
-    return (
-      <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
-        {config.label}
-      </span>
-    );
-  };
-
-  // Render target audience badge
-  const renderTargetAudienceBadge = (audience) => {
-    const config = targetAudiences[audience];
-    if (!config) return null;
-    const IconComponent = config.icon;
-    return (
-      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
-        <IconComponent size={12} />
-        {config.label}
-      </span>
-    );
-  };
 
   // Render tutorial category badge
   const renderTutorialCategoryBadge = (category) => {
@@ -619,7 +402,7 @@ const Content = () => {
         <h2 className="text-2xl font-bold">Content Management</h2>
         <div className="flex gap-2">
           <button
-            onClick={() => fetchBanners()}
+            onClick={() => fetchTutorials()}
             disabled={loading}
             className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-50"
           >
@@ -629,185 +412,6 @@ const Content = () => {
         </div>
       </div>
 
-      {/* Banner Management */}
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
-        <div className="p-6 border-b">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold flex items-center gap-2">
-              📢 In-App Banners
-            </h3>
-            <button
-              onClick={() => setShowBannerModal(true)}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center gap-2"
-            >
-              <Plus size={16} />
-              Create Banner
-            </button>
-          </div>
-
-          {/* Banner Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search banners..."
-                value={bannerFilters.search}
-                onChange={(e) => handleBannerFilterChange('search', e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Banner Type Filter */}
-            <select
-              value={bannerFilters.banner_type}
-              onChange={(e) => handleBannerFilterChange('banner_type', e.target.value)}
-              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Types</option>
-              <option value="promotion">Promotion</option>
-              <option value="announcement">Announcement</option>
-              <option value="feature">Feature</option>
-              <option value="festival">Festival</option>
-            </select>
-
-            {/* Status Filter */}
-            <select
-              value={bannerFilters.is_active}
-              onChange={(e) => handleBannerFilterChange('is_active', e.target.value)}
-              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Status</option>
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
-            </select>
-
-            {/* Target Audience Filter */}
-            <select
-              value={bannerFilters.target_audience}
-              onChange={(e) => handleBannerFilterChange('target_audience', e.target.value)}
-              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Audiences</option>
-              <option value="all_users">All Users</option>
-              <option value="premium_users">Premium Users</option>
-              <option value="free_users">Free Users</option>
-            </select>
-
-            {/* Clear Filters */}
-            <button
-              onClick={clearBannerFilters}
-              className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
-            >
-              Clear Filters
-            </button>
-          </div>
-        </div>
-
-        {/* Banners Table */}
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <span className="ml-2 text-gray-600">Loading banners...</span>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Banner</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Type</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Target</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Priority</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Created</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {banners.map((banner) => (
-                  <tr key={banner.banner_id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-16 h-12 rounded overflow-hidden">
-                          {loadingImages.has(banner.banner_url) && (
-                            <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                              <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                            </div>
-                          )}
-                          <img
-                            src={banner.banner_url}
-                            alt="banner"
-                            className="w-16 h-12 rounded object-cover"
-                            onLoadStart={() => handleImageLoadStart(banner.banner_url)}
-                            onLoad={() => handleImageLoad(banner.banner_url)}
-                            onError={(e) => handleImageError(e, banner.banner_url)}
-                          />
-                        </div>
-                        <div>
-                          <div className="font-medium text-gray-900">{banner.banner_text}</div>
-                          {banner.banner_link && (
-                            <div className="text-sm text-blue-600">
-                              <Link size={12} className="inline mr-1" />
-                              {banner.banner_link}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      {renderBannerTypeBadge(banner.banner_type)}
-                    </td>
-                    <td className="px-4 py-3">
-                      {renderTargetAudienceBadge(banner.target_audience)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {banner.priority}
-                    </td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => handleToggleBanner(banner.banner_id, banner.is_active)}
-                        className="flex items-center"
-                      >
-                        {banner.is_active ? (
-                          <ToggleRight className="text-green-600" size={20} />
-                        ) : (
-                          <ToggleLeft className="text-gray-400" size={20} />
-                        )}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
-                      {formatTimeAgo(banner.created_at)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleDeleteBanner(banner.banner_id)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete Banner"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {banners.length === 0 && !loading && (
-          <div className="text-center py-8">
-            <div className="w-12 h-12 text-gray-400 mx-auto mb-4">
-              <Image size={48} />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No banners found</h3>
-            <p className="text-gray-500">Create your first banner to get started.</p>
-          </div>
-        )}
-      </div>
 
       {/* Tutorial Management */}
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -1011,160 +615,6 @@ const Content = () => {
         )}
       </div>
 
-      {/* Create Banner Modal */}
-      {showBannerModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Create New Banner</h3>
-              <button
-                onClick={() => setShowBannerModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {/* Banner Text */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Banner Text *
-                </label>
-                <input
-                  type="text"
-                  value={bannerData.banner_text}
-                  onChange={(e) => setBannerData({ ...bannerData, banner_text: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter banner text"
-                />
-              </div>
-
-              {/* Banner URL */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Banner Image URL *
-                </label>
-                <input
-                  type="url"
-                  value={bannerData.banner_url}
-                  onChange={(e) => setBannerData({ ...bannerData, banner_url: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://example.com/banner-image.jpg"
-                />
-              </div>
-
-              {/* Banner Link */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Banner Link (Optional)
-                </label>
-                <input
-                  type="url"
-                  value={bannerData.banner_link}
-                  onChange={(e) => setBannerData({ ...bannerData, banner_link: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://example.com/landing-page"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Banner Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Banner Type
-                  </label>
-                  <select
-                    value={bannerData.banner_type}
-                    onChange={(e) => setBannerData({ ...bannerData, banner_type: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="announcement">Announcement</option>
-                    <option value="promotion">Promotion</option>
-                    <option value="feature">Feature</option>
-                    <option value="festival">Festival</option>
-                  </select>
-                </div>
-
-                {/* Priority */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Priority (1-10)
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={bannerData.priority}
-                    onChange={(e) => setBannerData({ ...bannerData, priority: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Start Date */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Start Date (Optional)
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={bannerData.start_date}
-                    onChange={(e) => setBannerData({ ...bannerData, start_date: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                {/* End Date */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    End Date (Optional)
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={bannerData.end_date}
-                    onChange={(e) => setBannerData({ ...bannerData, end_date: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              {/* Target Audience */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Target Audience
-                </label>
-                <select
-                  value={bannerData.target_audience}
-                  onChange={(e) => setBannerData({ ...bannerData, target_audience: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all_users">All Users</option>
-                  <option value="premium_users">Premium Users</option>
-                  <option value="free_users">Free Users</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => setShowBannerModal(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateBanner}
-                disabled={loading || !bannerData.banner_text || !bannerData.banner_url}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg disabled:opacity-50"
-              >
-                {loading ? 'Creating...' : 'Create Banner'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Create Tutorial Modal */}
       {showTutorialModal && (
