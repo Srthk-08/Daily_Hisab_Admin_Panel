@@ -221,26 +221,51 @@ const apiService = {
 
   // Admin Category Management
   getAllAdminCategories: async (params = {}) => {
-    const response = await api.get(config.API_ENDPOINTS.GET_ALL_ADMIN_CATEGORIES, { params });
-    return response.data;
+    try {
+      console.log('Fetching admin categories with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_ALL_ADMIN_CATEGORIES, { params });
+      console.log('Admin categories API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching admin categories:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
   },
 
   createAdminCategory: async (categoryData, iconFile = null) => {
-    const formData = new FormData();
-    formData.append('category_name', categoryData.category_name);
-    formData.append('category_type', categoryData.category_type.toString());
-    formData.append('deletable', (categoryData.deletable || 0).toString());
+    try {
+      const formData = new FormData();
+      formData.append('category_name', categoryData.category_name);
+      formData.append('category_type', categoryData.category_type.toString());
+      formData.append('account_type', (categoryData.account_type || 1).toString());
+      formData.append('deletable', (categoryData.deletable || 0).toString());
 
-    if (iconFile) {
-      formData.append('icon', iconFile);
+      // Add icon file - either uploaded file or converted emoji
+      if (iconFile) {
+        formData.append('icon', iconFile);
+      }
+
+      console.log('Creating admin category with data:', {
+        category_name: categoryData.category_name,
+        category_type: categoryData.category_type,
+        account_type: categoryData.account_type,
+        deletable: categoryData.deletable,
+        hasIcon: !!iconFile
+      });
+
+      const response = await api.post(config.API_ENDPOINTS.CREATE_ADMIN_CATEGORY, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error creating admin category:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      throw error;
     }
-
-    const response = await api.post(config.API_ENDPOINTS.CREATE_ADMIN_CATEGORY, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
   },
 
   updateAdminCategory: async (categoryData, iconFile = null) => {
@@ -248,8 +273,10 @@ const apiService = {
     formData.append('category_id', categoryData.category_id.toString());
     formData.append('category_name', categoryData.category_name);
     formData.append('category_type', categoryData.category_type.toString());
+    formData.append('account_type', (categoryData.account_type || 1).toString());
     formData.append('deletable', (categoryData.deletable || 0).toString());
 
+    // Add icon file - either uploaded file or converted emoji
     if (iconFile) {
       formData.append('icon', iconFile);
     }

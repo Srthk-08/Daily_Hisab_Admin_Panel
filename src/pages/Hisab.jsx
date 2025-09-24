@@ -40,6 +40,7 @@ export default function Hisab() {
 
 
 
+
       {/* Content Area */}
       <div className="bg-white rounded-2xl shadow-md p-4">{renderContent()}</div>
     </div>

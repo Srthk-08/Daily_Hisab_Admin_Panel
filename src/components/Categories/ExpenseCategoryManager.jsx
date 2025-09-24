@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Upload, X, Search, Filter } from 'lucide-react';
 import apiService from '../../services/api';
+import IconSelector from '../IconSelector';
+import config from '../../config/config';
 
 const ExpenseCategoryManager = () => {
   const [categories, setCategories] = useState([]);
@@ -14,11 +16,14 @@ const ExpenseCategoryManager = () => {
   const [formData, setFormData] = useState({
     category_id: '',
     category_name: '',
-    category_type: 1, // 1 = Expense
+    category_type: 2, // 2 = Expense
+    account_type: 1, // 1 = Personal, 2 = Business, 3 = Freelance
     deletable: 0, // 0 = not deletable by users, 1 = deletable by users
   });
   const [iconFile, setIconFile] = useState(null);
   const [iconPreview, setIconPreview] = useState(null);
+  const [selectedIcon, setSelectedIcon] = useState(null);
+  const [showIconSelector, setShowIconSelector] = useState(false);
 
   // Search filter
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,7 +35,7 @@ const ExpenseCategoryManager = () => {
       setError(null);
 
       const params = {
-        category_type: 1, // Expense
+        category_type: 2, // Expense
         include_deleted: false
       };
 
@@ -39,6 +44,13 @@ const ExpenseCategoryManager = () => {
 
       if (response && response.success) {
         let filteredCategories = response.data.categories || [];
+
+        // Debug: Log the first category to see its structure
+        if (filteredCategories.length > 0) {
+          console.log('Sample category data:', filteredCategories[0]);
+          console.log('Account type value:', filteredCategories[0].account_type);
+          console.log('Account type label:', config.getAccountTypeLabel(filteredCategories[0].account_type));
+        }
 
         // Client-side search filter
         if (searchTerm) {
@@ -90,17 +102,21 @@ const ExpenseCategoryManager = () => {
       };
 
       if (editingCategory) {
+        // Send iconFile (either uploaded file or converted emoji PNG)
         await apiService.updateAdminCategory(categoryData, iconFile);
         setSuccess('Expense category updated successfully');
       } else {
+        // Send iconFile (either uploaded file or converted emoji PNG)
         await apiService.createAdminCategory(categoryData, iconFile);
         setSuccess('Expense category created successfully');
       }
 
       // Reset form
-      setFormData({ category_id: '', category_name: '', category_type: 1 });
+      setFormData({ category_id: '', category_name: '', category_type: 2, account_type: 1 });
       setIconFile(null);
       setIconPreview(null);
+      setSelectedIcon(null);
+      setShowIconSelector(false);
       setEditingCategory(null);
       setShowForm(false);
 
@@ -121,10 +137,13 @@ const ExpenseCategoryManager = () => {
       category_id: category.category_id,
       category_name: category.category_name,
       category_type: category.category_type,
+      account_type: category.account_type || 1,
       deletable: category.deletable || 0,
     });
     setIconFile(null);
     setIconPreview(category.icon || null);
+    setSelectedIcon(null);
+    setShowIconSelector(false);
     setShowForm(true);
     setError(null);
     setSuccess(null);
@@ -162,16 +181,87 @@ const ExpenseCategoryManager = () => {
     }
   };
 
+  // Convert emoji to PNG file
+  const emojiToPng = async (emoji) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const size = 128; // High resolution for better quality
+
+      canvas.width = size;
+      canvas.height = size;
+
+      // Set background to transparent
+      ctx.clearRect(0, 0, size, size);
+
+      // Set font size and style
+      ctx.font = `${size * 0.8}px Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Draw the emoji
+      ctx.fillText(emoji, size / 2, size / 2);
+
+      // Convert to blob
+      canvas.toBlob((blob) => {
+        if (blob) {
+          // Create a File object from the blob
+          const file = new File([blob], `emoji_${Date.now()}.png`, {
+            type: 'image/png'
+          });
+          resolve(file);
+        } else {
+          resolve(null);
+        }
+      }, 'image/png');
+    });
+  };
+
+  // Handle icon selection from IconSelector
+  const handleIconSelect = async (iconEmoji) => {
+    setSelectedIcon(iconEmoji);
+    setShowIconSelector(false);
+
+    // Convert emoji to PNG file
+    const emojiFile = await emojiToPng(iconEmoji);
+    if (emojiFile) {
+      setIconFile(emojiFile);
+
+      // Create preview from the emoji file
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setIconPreview(e.target.result);
+      };
+      reader.readAsDataURL(emojiFile);
+    }
+  };
+
+  // Handle custom file upload from IconSelector
+  const handleCustomIconUpload = (file) => {
+    setIconFile(file);
+    setSelectedIcon(null); // Clear emoji selection when file is uploaded
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setIconPreview(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   // Clear form
   const clearForm = () => {
     setFormData({
       category_id: '',
       category_name: '',
-      category_type: 1, // Expense
+      category_type: 2, // Expense
+      account_type: 1, // Personal
       deletable: 0 // Default to not deletable
     });
     setIconFile(null);
     setIconPreview(null);
+    setSelectedIcon(null);
+    setShowIconSelector(false);
     setEditingCategory(null);
     setShowForm(false);
     setError(null);
@@ -255,7 +345,7 @@ const ExpenseCategoryManager = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Category Name *
@@ -268,6 +358,24 @@ const ExpenseCategoryManager = () => {
                   placeholder="Enter expense category name"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Account Type *
+                </label>
+                <select
+                  value={formData.account_type}
+                  onChange={(e) => setFormData(prev => ({ ...prev, account_type: parseInt(e.target.value) }))}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  required
+                >
+                  {config.getAccountTypeOptions().map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -303,21 +411,71 @@ const ExpenseCategoryManager = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Category Icon (Optional)
               </label>
-              <div className="flex items-center space-x-4">
+
+              {/* Current Selection Display */}
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
+                <div className="flex items-center gap-3">
+                  {selectedIcon ? (
+                    <div className="text-3xl">{selectedIcon}</div>
+                  ) : iconPreview ? (
+                    <img
+                      src={iconPreview}
+                      alt="Icon preview"
+                      className="w-12 h-12 object-cover rounded-lg border"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                      <span className="text-gray-400 text-xs">No Icon</span>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">
+                      {selectedIcon ? 'Emoji Icon Selected (will be converted to PNG)' : iconPreview ? 'Custom Icon Selected' : 'No Icon Selected'}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Click "Select Icon" to choose from predefined icons or upload your own
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Icon Selection Button */}
+              <div className="flex gap-2 mb-4">
+                <button
+                  type="button"
+                  onClick={() => setShowIconSelector(!showIconSelector)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Plus size={16} />
+                  {showIconSelector ? 'Hide Icon Selector' : 'Select Icon'}
+                </button>
+
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
+                  className="hidden"
+                  id="icon-file-input"
                 />
-                {iconPreview && (
-                  <img
-                    src={iconPreview}
-                    alt="Icon preview"
-                    className="w-16 h-16 object-cover rounded-lg border"
-                  />
-                )}
+                <label
+                  htmlFor="icon-file-input"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
+                >
+                  <Upload size={16} />
+                  Upload Custom
+                </label>
               </div>
+
+              {/* Icon Selector */}
+              {showIconSelector && (
+                <IconSelector
+                  selectedIcon={selectedIcon}
+                  onIconSelect={handleIconSelect}
+                  onFileUpload={handleCustomIconUpload}
+                  categoryType="expense"
+                  className="mb-4"
+                />
+              )}
             </div>
 
 
@@ -367,7 +525,7 @@ const ExpenseCategoryManager = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Icon</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Type</th> */}
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deletable</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
@@ -399,11 +557,11 @@ const ExpenseCategoryManager = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {category.category_name}
                     </td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getAccountTypeColor(category.account_type)}`}>
-                        {getAccountTypeLabel(category.account_type)}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.getAccountTypeColor(category.account_type || 1)}`}>
+                        {config.getAccountTypeLabel(category.account_type || 1)}
                       </span>
-                    </td> */}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(category.status)}`}>
                         {category.status || 'Active'}

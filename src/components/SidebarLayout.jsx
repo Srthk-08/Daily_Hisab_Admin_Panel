@@ -43,7 +43,7 @@ const SidebarLayout = ({ children }) => {
     // { path: '/admin/view-user', icon: <Command size={20} />, label: 'Inspect User' },
     { path: '/admin/subscription-management', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
-    { path: '/admin/analytics-insights', icon: <Component size={20} />, label: 'Analytics Insights' },
+    // { path: '/admin/analytics-insights', icon: <Component size={20} />, label: 'Analytics Insights' },
     { path: '/admin/feedback-support', icon: <MessageCircle size={20} />, label: 'Feedback' },
     { path: '/admin/content', icon: <MonitorUp size={20} />, label: 'Content' },
     { path: '/admin/tnc', icon: <HandHelping size={20} />, label: 'Terms & Conditions' },

@@ -3,13 +3,31 @@
 
 const config = {
   // API Configuration
-  // API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
-  API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
+  // API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
   SPECIAL_PLANS: {
     FREE_TRIAL: 0,
     REFERRAL_REWARD: 1
+  },
+
+  // Account Type Constants
+  ACCOUNT_TYPES: {
+    PERSONAL: 1,
+    BUSINESS: 2
+  },
+
+  // Account Type Labels
+  ACCOUNT_TYPE_LABELS: {
+    1: 'Personal',
+    2: 'Business'
+  },
+
+  // Account Type Colors for UI
+  ACCOUNT_TYPE_COLORS: {
+    1: 'bg-blue-100 text-blue-800',
+    2: 'bg-green-100 text-green-800'
   },
 
   // API endpoints
@@ -241,6 +259,22 @@ const config = {
     }
 
     return `/${cleanPath}`;
+  },
+
+  // Helper functions for account types
+  getAccountTypeLabel: (accountType) => {
+    return config.ACCOUNT_TYPE_LABELS[accountType] || 'Unknown';
+  },
+
+  getAccountTypeColor: (accountType) => {
+    return config.ACCOUNT_TYPE_COLORS[accountType] || 'bg-gray-100 text-gray-800';
+  },
+
+  getAccountTypeOptions: () => {
+    return Object.entries(config.ACCOUNT_TYPE_LABELS).map(([value, label]) => ({
+      value: parseInt(value),
+      label: label
+    }));
   },
 
   // Environment settings
