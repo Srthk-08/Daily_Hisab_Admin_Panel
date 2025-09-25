@@ -16,7 +16,7 @@ const ExpenseCategoryManager = () => {
   const [formData, setFormData] = useState({
     category_id: '',
     category_name: '',
-    category_type: 2, // 2 = Expense
+    category_type: 1, // 1 = Expense
     account_type: 1, // 1 = Personal, 2 = Business, 3 = Freelance
     deletable: 0, // 0 = not deletable by users, 1 = deletable by users
   });
@@ -35,7 +35,7 @@ const ExpenseCategoryManager = () => {
       setError(null);
 
       const params = {
-        category_type: 2, // Expense
+        category_type: 1, // Expense
         include_deleted: false
       };
 
