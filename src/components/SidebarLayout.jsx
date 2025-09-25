@@ -46,7 +46,7 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/subscription-management', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
     { path: '/admin/analytics-insights', icon: <Component size={20} />, label: 'Analytics Insights' },
-    { path: '/admin/feedback', icon: <MessageSquare size={20} />, label: 'App Ratings' },
+    { path: '/admin/feedback', icon: <MessageSquare size={20} />, label: 'App Feedback' },
     { path: '/admin/feedback-support', icon: <MessageCircle size={20} />, label: 'Support Tickets' },
     { path: '/admin/contact-us', icon: <Phone size={20} />, label: 'Contact Us' },
     { path: '/admin/content', icon: <MonitorUp size={20} />, label: 'Content' },
