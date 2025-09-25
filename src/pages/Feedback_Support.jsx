@@ -27,6 +27,7 @@ import {
   Image,
 } from "lucide-react";
 import apiService from "../services/api";
+import { formatDate } from "../utils/dateUtils";
 
 const Feedback_Support = () => {
   // State management
@@ -258,18 +259,6 @@ const Feedback_Support = () => {
     setShowStatusModal(true);
   };
 
-  // Format time ago
-  const formatTimeAgo = (timestamp) => {
-    if (!timestamp) return 'N/A';
-    const now = new Date();
-    const time = new Date(timestamp);
-    const diffInMinutes = Math.floor((now - time) / (1000 * 60));
-
-    if (diffInMinutes < 1) return "Just now";
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-    return `${Math.floor(diffInMinutes / 1440)}d ago`;
-  };
 
   // Render priority badge
   const renderPriorityBadge = (priority) => {
@@ -309,7 +298,7 @@ const Feedback_Support = () => {
         priorityConfig[ticket.priority]?.label || 'N/A',
         statusConfig[ticket.status]?.label || 'N/A',
         categoryConfig[ticket.category_id] || 'N/A',
-        ticket.created_at || 'N/A'
+        formatDate(ticket.createtime)
       ])
     ].map(row => row.join(',')).join('\n');
 
@@ -536,7 +525,8 @@ const Feedback_Support = () => {
                     </td>
                     <td className="px-4 py-3">
                       <div className="text-sm text-gray-500">
-                        {formatTimeAgo(ticket.created_at)}
+                        <div className="font-medium">{formatDate(ticket.createtime)}</div>
+                        <div className="text-xs text-gray-400">{ticket.created_ago}</div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -738,7 +728,7 @@ const Feedback_Support = () => {
                     </div>
                     <div>
                       <span className="text-gray-600">Created:</span>
-                      <div className="mt-1 text-sm">{selectedTicket.timestamps?.created_at || 'N/A'}</div>
+                      <div className="mt-1 text-sm">{formatDate(selectedTicket.createtime)}</div>
                     </div>
                   </div>
                 </div>

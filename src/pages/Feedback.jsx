@@ -1,511 +1,524 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  MessageCircle,
+  Star,
+  StarHalf,
+  MessageSquare,
   Search,
   Filter,
+  Download,
   Eye,
+  EyeOff,
   Edit,
   Trash2,
-  Reply,
-  X,
-  CheckCircle,
+  RefreshCw,
+  TrendingUp,
+  TrendingDown,
+  Users,
+  ThumbsUp,
+  ThumbsDown,
   AlertCircle,
-  Clock,
-  User,
-  Mail,
-  Phone,
+  CheckCircle,
+  XCircle,
   Calendar,
-  Tag,
-  MessageSquare
+  Smartphone,
+  Monitor,
+  BarChart3,
+  PieChart,
+  Activity
 } from 'lucide-react';
 import apiService from '../services/api';
+import { formatDate } from '../utils/dateUtils';
 
 const Feedback = () => {
-  const [feedback, setFeedback] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // State management
+  const [ratings, setRatings] = useState([]);
+  const [stats, setStats] = useState({});
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [selectedFeedback, setSelectedFeedback] = useState(null);
-  const [showResponseModal, setShowResponseModal] = useState(false);
-  const [responseText, setResponseText] = useState('');
-  const [stats, setStats] = useState(null);
 
-  // Filters
-  const [filters, setFilters] = useState({
-    feedback_type: 'all',
-    search: '',
-    page: 1,
-    limit: 10
-  });
+  // UI states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterRating, setFilterRating] = useState('all');
+  const [filterFeedback, setFilterFeedback] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(20);
+  const [showStats, setShowStats] = useState(true);
 
-  // Fetch feedback data
-  const fetchFeedback = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
       const params = {
-        page: filters.page,
-        limit: filters.limit
+        page: currentPage,
+        limit: itemsPerPage,
+        ...(filterRating !== 'all' && { rating: filterRating }),
+        ...(filterFeedback !== 'all' && { has_feedback: filterFeedback }),
+        ...(searchQuery && { search: searchQuery })
       };
 
-      if (filters.feedback_type !== 'all') {
-        params.feedback_type = filters.feedback_type;
+      const [ratingsResponse, statsResponse] = await Promise.all([
+        apiService.getAllAppRatings(params),
+        apiService.getAppRatingStats()
+      ]);
+
+      if (ratingsResponse.success) {
+        setRatings(ratingsResponse.data?.ratings || []);
       }
 
-      const response = await apiService.getAllFeedback(params);
-      console.log('Feedback API Response:', response);
-
-      if (response && response.success) {
-        let filteredFeedback = response.data.feedback || [];
-
-        // Client-side search filter
-        if (filters.search) {
-          filteredFeedback = filteredFeedback.filter(item =>
-            item.subject.toLowerCase().includes(filters.search.toLowerCase()) ||
-            item.message.toLowerCase().includes(filters.search.toLowerCase()) ||
-            item.user_name.toLowerCase().includes(filters.search.toLowerCase())
-          );
-        }
-
-        setFeedback(filteredFeedback);
-      } else {
-        setError('Failed to fetch feedback');
-        setFeedback([]);
+      if (statsResponse.success) {
+        setStats(statsResponse.data || {});
       }
     } catch (err) {
-      console.error('Error fetching feedback:', err);
-      setError(err.message || 'Failed to fetch feedback');
-      setFeedback([]);
+      console.error('Error fetching app rating data:', err);
+      setError(err.message || 'Failed to fetch app rating data');
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [currentPage, filterRating, filterFeedback, searchQuery, itemsPerPage]);
 
-  // Fetch feedback statistics
-  const fetchStats = useCallback(async () => {
-    try {
-      const response = await apiService.getFeedbackStats();
-      if (response && response.success) {
-        setStats(response.data);
-      }
-    } catch (err) {
-      console.error('Error fetching feedback stats:', err);
-    }
-  }, []);
-
-  // Initial fetch
+  // Fetch data on component mount
   useEffect(() => {
-    fetchFeedback();
-    fetchStats();
-  }, [fetchFeedback, fetchStats]);
+    fetchData();
+  }, [fetchData]);
 
-  // Handle response submission
-  const handleSubmitResponse = async () => {
-    if (!selectedFeedback || !responseText.trim()) return;
+  const handleDeleteRating = async (ratingId) => {
+    if (!window.confirm('Are you sure you want to delete this rating?')) {
+      return;
+    }
 
     try {
-      setLoading(true);
-      await apiService.updateFeedbackResponse(selectedFeedback.feedback_id, responseText);
-      setSuccess('Response submitted successfully');
-      setShowResponseModal(false);
-      setResponseText('');
-      setSelectedFeedback(null);
-      fetchFeedback(); // Refresh the list
-    } catch (err) {
-      console.error('Error submitting response:', err);
-      setError(err.response?.data?.msg?.[0] || err.message || 'Error submitting response');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle delete feedback
-  const handleDeleteFeedback = async (feedbackId) => {
-    if (window.confirm('Are you sure you want to delete this feedback?')) {
-      try {
-        setLoading(true);
-        await apiService.deleteFeedback(feedbackId);
-        setSuccess('Feedback deleted successfully');
-        fetchFeedback(); // Refresh the list
-      } catch (err) {
-        console.error('Error deleting feedback:', err);
-        setError(err.response?.data?.msg?.[0] || err.message || 'Error deleting feedback');
-      } finally {
-        setLoading(false);
+      const response = await apiService.deleteAppRating(ratingId);
+      if (response.success) {
+        await fetchData();
       }
+    } catch (err) {
+      console.error('Error deleting rating:', err);
+      setError(err.message || 'Failed to delete rating');
     }
   };
 
-  // Handle view feedback
-  const handleViewFeedback = (item) => {
-    setSelectedFeedback(item);
-    setResponseText(item.admin_response || '');
+  const exportToCSV = () => {
+    if (ratings.length === 0) {
+      alert('No data to export');
+      return;
+    }
+
+    const csvHeaders = [
+      'Rating ID',
+      'User Name',
+      'User Mobile',
+      'User Email',
+      'Rating',
+      'Rating Stars',
+      'Feedback Message',
+      'Device Info',
+      'Submitted At',
+      'Has Feedback'
+    ];
+
+    const csvData = ratings.map(rating => [
+      rating.rating_id || '',
+      rating.user_name || '',
+      rating.user_mobile || '',
+      rating.user_email || '',
+      rating.rating || '',
+      rating.rating_stars || '',
+      rating.feedback_message || '',
+      rating.device_info ? JSON.stringify(rating.device_info) : '',
+      formatDate(rating.submitted_at),
+      rating.has_feedback ? 'Yes' : 'No'
+    ]);
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvData.map(row => row.map(field => `"${field}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `app_ratings_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  // Get feedback type color
-  const getFeedbackTypeColor = (type) => {
-    const colors = {
-      bug_report: 'bg-red-100 text-red-800',
-      feature_request: 'bg-blue-100 text-blue-800',
-      general_feedback: 'bg-green-100 text-green-800',
-      complaint: 'bg-orange-100 text-orange-800',
-      suggestion: 'bg-purple-100 text-purple-800'
-    };
-    return colors[type] || 'bg-gray-100 text-gray-800';
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />);
+    }
+
+    if (hasHalfStar) {
+      stars.push(<StarHalf key="half" className="w-4 h-4 text-yellow-400 fill-current" />);
+    }
+
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<Star key={`empty-${i}`} className="w-4 h-4 text-gray-300" />);
+    }
+
+    return stars;
   };
 
-  // Get feedback type label
-  const getFeedbackTypeLabel = (type) => {
-    const labels = {
-      bug_report: 'Bug Report',
-      feature_request: 'Feature Request',
-      general_feedback: 'General Feedback',
-      complaint: 'Complaint',
-      suggestion: 'Suggestion'
-    };
-    return labels[type] || type;
+  const getRatingColor = (rating) => {
+    if (rating >= 4) return 'text-green-600 bg-green-100';
+    if (rating >= 3) return 'text-yellow-600 bg-yellow-100';
+    if (rating >= 2) return 'text-orange-600 bg-orange-100';
+    return 'text-red-600 bg-red-100';
   };
 
-  // Format date
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const getDeviceIcon = (deviceInfo) => {
+    if (!deviceInfo) return <Monitor className="w-4 h-4 text-gray-400" />;
+
+    const device = deviceInfo.device?.toLowerCase();
+    if (device === 'android' || device === 'ios') {
+      return <Smartphone className="w-4 h-4 text-blue-500" />;
+    }
+    return <Monitor className="w-4 h-4 text-gray-400" />;
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Feedback Management</h1>
-          <p className="text-gray-600 mt-1">Manage user feedback, bug reports, and feature requests</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <MessageCircle className="w-8 h-8 text-blue-600" />
+  // Loading component
+  if (loading) {
+    return (
+      <div className="p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading app ratings...</p>
+          </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Statistics Cards */}
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+  // Error component
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-red-800 mb-2">Error Loading Data</h3>
+          <p className="text-red-600">{error}</p>
+          <button
+            onClick={fetchData}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">App Rating System</h1>
+        <p className="text-gray-600">Manage and analyze user ratings and feedback for the Daily Hisab app</p>
+      </div>
+
+      {/* Stats Cards */}
+      {showStats && stats && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <MessageCircle className="w-6 h-6 text-blue-600" />
-              </div>
+              <Star className="w-8 h-8 text-yellow-500" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Feedback</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total_feedback}</p>
+                <p className="text-sm font-medium text-gray-600">Total Ratings</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total_ratings || 0}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
+              <TrendingUp className="w-8 h-8 text-green-500" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Responded</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.responded_feedback}</p>
+                <p className="text-sm font-medium text-gray-600">Average Rating</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.average_rating || '0.0'}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Clock className="w-6 h-6 text-orange-600" />
-              </div>
+              <MessageSquare className="w-8 h-8 text-blue-500" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.pending_response}</p>
+                <p className="text-sm font-medium text-gray-600">With Feedback</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.feedback_count || 0}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <AlertCircle className="w-6 h-6 text-purple-600" />
-              </div>
+              <ThumbsUp className="w-8 h-8 text-purple-500" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Bug Reports</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.type_breakdown?.bug_reports || 0}</p>
+                <p className="text-sm font-medium text-gray-600">Satisfaction Rate</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.rating_distribution ?
+                    Math.round(((stats.rating_distribution.five_star + stats.rating_distribution.four_star) / stats.total_ratings) * 100) || 0
+                    : 0}%
+                </p>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Error/Success Messages */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex">
-            <AlertCircle className="w-5 h-5 text-red-400" />
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <div className="mt-2 text-sm text-red-700">{error}</div>
-            </div>
+      {/* Rating Distribution Chart */}
+      {showStats && stats.rating_distribution && (
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Rating Distribution</h3>
+          <div className="grid grid-cols-5 gap-4">
+            {[5, 4, 3, 2, 1].map((star) => {
+              const count = stats.rating_distribution[`${star}_star`] || 0;
+              const percentage = stats.total_ratings ? Math.round((count / stats.total_ratings) * 100) : 0;
+              return (
+                <div key={star} className="text-center">
+                  <div className="flex justify-center mb-2">
+                    {renderStars(star)}
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{count}</p>
+                  <p className="text-sm text-gray-600">{percentage}%</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex">
-            <CheckCircle className="w-5 h-5 text-green-400" />
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">Success</h3>
-              <div className="mt-2 text-sm text-green-700">{success}</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+      {/* Search and Filter Bar */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search feedback..."
-                value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Search by user name, mobile, email, or feedback..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Feedback Type</label>
+          <div className="flex gap-4">
             <select
-              value={filters.feedback_type}
-              onChange={(e) => setFilters(prev => ({ ...prev, feedback_type: e.target.value }))}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value={filterRating}
+              onChange={(e) => setFilterRating(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">All Types</option>
-              <option value="bug_report">Bug Report</option>
-              <option value="feature_request">Feature Request</option>
-              <option value="general_feedback">General Feedback</option>
-              <option value="complaint">Complaint</option>
-              <option value="suggestion">Suggestion</option>
+              <option value="all">All Ratings</option>
+              <option value="5">5 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="2">2 Stars</option>
+              <option value="1">1 Star</option>
             </select>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Items per page</label>
             <select
-              value={filters.limit}
-              onChange={(e) => setFilters(prev => ({ ...prev, limit: parseInt(e.target.value) }))}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value={filterFeedback}
+              onChange={(e) => setFilterFeedback(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value={10}>10 per page</option>
-              <option value={20}>20 per page</option>
-              <option value={50}>50 per page</option>
-              <option value={100}>100 per page</option>
+              <option value="all">All Feedback</option>
+              <option value="true">With Feedback</option>
+              <option value="false">Without Feedback</option>
             </select>
+
+            <button
+              onClick={() => setShowStats(!showStats)}
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+              {showStats ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showStats ? 'Hide Stats' : 'Show Stats'}
+            </button>
+
+            <button
+              onClick={exportToCSV}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Export ({ratings.length})
+            </button>
+
+            <button
+              onClick={fetchData}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Feedback Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-        {loading && feedback.length === 0 ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <span className="ml-2 text-gray-600">Loading feedback...</span>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {Array.isArray(feedback) && feedback.map((item) => (
-                  <tr key={item.feedback_id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      #{item.feedback_id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            <User className="h-5 w-5 text-blue-600" />
-                          </div>
+      {/* Ratings List */}
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  User Info
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Rating
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Feedback
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Device
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Submitted
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {ratings.map((rating) => (
+                <tr key={rating.rating_id} className="hover:bg-gray-50">
+                  {/* User Info */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                          <span className="text-white font-medium text-sm">
+                            {(rating.user_name || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
+                          </span>
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{item.user_name}</div>
-                          <div className="text-sm text-gray-500">{item.user_mobile}</div>
-                        </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getFeedbackTypeColor(item.feedback_type)}`}>
-                        {getFeedbackTypeLabel(item.feedback_type)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 max-w-xs truncate" title={item.subject}>
-                        {item.subject}
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{rating.user_name || 'Unknown User'}</div>
+                        <div className="text-sm text-gray-500">{rating.user_mobile || 'No mobile'}</div>
+                        <div className="text-sm text-gray-500">{rating.user_email || 'No email'}</div>
                       </div>
-                      <div className="text-sm text-gray-500 max-w-xs truncate" title={item.message}>
-                        {item.message}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${item.admin_response
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-orange-100 text-orange-800'
-                        }`}>
-                        {item.admin_response ? 'Responded' : 'Pending'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(item.submitted_at)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleViewFeedback(item)}
-                          className="text-blue-600 hover:text-blue-900 p-1"
-                          title="View Details"
-                        >
-                          <Eye size={16} />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedFeedback(item);
-                            setShowResponseModal(true);
-                          }}
-                          className="text-green-600 hover:text-green-900 p-1"
-                          title="Respond"
-                        >
-                          <Reply size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteFeedback(item.feedback_id)}
-                          className="text-red-600 hover:text-red-900 p-1"
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                    </div>
+                  </td>
 
-        {feedback.length === 0 && !loading && (
-          <div className="text-center py-8">
-            <div className="w-12 h-12 text-gray-400 mx-auto mb-4">
-              <MessageCircle size={48} />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No feedback found</h3>
-            <p className="text-gray-500">Try adjusting your search criteria.</p>
+                  {/* Rating */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex space-x-1 mr-3">
+                        {renderStars(rating.rating)}
+                      </div>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRatingColor(rating.rating)}`}>
+                        {rating.rating}/5
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Feedback */}
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900 max-w-xs">
+                      {rating.feedback_message ? (
+                        <div>
+                          <p className="truncate">{rating.feedback_message}</p>
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
+                            <MessageSquare className="w-3 h-3 mr-1" />
+                            Has Feedback
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-gray-500 italic">No feedback provided</span>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Device */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      {getDeviceIcon(rating.device_info)}
+                      <div className="ml-2">
+                        <div className="text-sm text-gray-900">
+                          {rating.device_info?.device || 'Unknown'}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {rating.device_info?.version || 'N/A'}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Submitted */}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4 text-gray-400" />
+                      {formatDate(rating.submitted_at)}
+                    </div>
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button className="text-blue-600 hover:text-blue-900 p-1">
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button className="text-green-600 hover:text-green-900 p-1">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteRating(rating.rating_id)}
+                        className="text-red-600 hover:text-red-900 p-1"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {ratings.length === 0 && (
+          <div className="text-center py-12">
+            <Star className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No ratings found</h3>
+            <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
           </div>
         )}
       </div>
 
-      {/* Response Modal */}
-      {showResponseModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Respond to Feedback</h3>
-                <button
-                  onClick={() => {
-                    setShowResponseModal(false);
-                    setSelectedFeedback(null);
-                    setResponseText('');
-                  }}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              {selectedFeedback && (
-                <div className="space-y-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-gray-900 mb-2">Original Feedback</h4>
-                    <p className="text-sm text-gray-600 mb-2">
-                      <strong>Subject:</strong> {selectedFeedback.subject}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-2">
-                      <strong>Type:</strong> {getFeedbackTypeLabel(selectedFeedback.feedback_type)}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      <strong>Message:</strong> {selectedFeedback.message}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Admin Response
-                    </label>
-                    <textarea
-                      value={responseText}
-                      onChange={(e) => setResponseText(e.target.value)}
-                      rows={4}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter your response to the user..."
-                    />
-                  </div>
-
-                  <div className="flex justify-end space-x-3">
-                    <button
-                      onClick={() => {
-                        setShowResponseModal(false);
-                        setSelectedFeedback(null);
-                        setResponseText('');
-                      }}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSubmitResponse}
-                      disabled={loading || !responseText.trim()}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
-                    >
-                      {loading ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          <Reply size={16} />
-                          Submit Response
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              )}
+      {/* Pagination */}
+      {ratings.length > 0 && (
+        <div className="bg-white rounded-lg shadow-md p-6 mt-6">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-700">
+              Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, ratings.length)} of {ratings.length} ratings
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                Previous
+              </button>
+              <span className="px-3 py-1 bg-blue-500 text-white rounded-md text-sm">
+                {currentPage}
+              </span>
+              <button
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                disabled={ratings.length < itemsPerPage}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                Next
+              </button>
             </div>
           </div>
         </div>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FileText, Shield, ReceiptText, History, Save, AlertCircle } from 'lucide-react';
+import { FileText, Shield, ReceiptText, History, Save, AlertCircle, HelpCircle } from 'lucide-react';
 import TermsAndConditions from '../components/TandC/TermsAndConditions';
 import PrivacyPolicy from '../components/TandC/PrivacyPolicy';
 import AboutUs from '../components/TandC/AboutUs';
+import FAQManagement from '../components/TandC/FAQManagement';
 import apiService from '../services/api';
 
 const TandCManager = () => {
@@ -428,6 +429,16 @@ const TandCManager = () => {
           <ReceiptText size={18} className="mr-2" />
           About Us
         </button>
+        <button
+          className={`flex items-center px-4 py-3 font-medium border-b-2 transition-colors ${activeTab === 'faq'
+            ? 'border-blue-500 text-blue-600'
+            : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          onClick={() => handleTabChange('faq')}
+        >
+          <HelpCircle size={18} className="mr-2" />
+          FAQ Management
+        </button>
       </div>
 
       {/* Render Active Component */}
@@ -492,6 +503,10 @@ const TandCManager = () => {
           editingPoint={editingPoint}
           setEditingPoint={setEditingPoint}
         />
+      )}
+
+      {activeTab === 'faq' && (
+        <FAQManagement />
       )}
 
       {/* Version Creation Modal */}

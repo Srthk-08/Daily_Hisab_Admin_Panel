@@ -17,9 +17,17 @@ import {
   Briefcase,
   User,
   TrendingUp,
-  DollarSign
+  DollarSign,
+  X,
+  AlertTriangle,
+  Shield,
+  ShieldOff,
+  Save,
+  UserCheck,
+  UserX
 } from 'lucide-react';
 import apiService from '../services/api';
+import { formatDate } from '../utils/dateUtils';
 
 const UserManagement = () => {
   // API data states
@@ -32,6 +40,15 @@ const UserManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('name');
+
+  // Modal states
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
+  const [suspensionReason, setSuspensionReason] = useState('');
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Fetch users data from API
   useEffect(() => {
@@ -125,19 +142,6 @@ const UserManagement = () => {
     }
   };
 
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch {
-      return 'Invalid Date';
-    }
-  };
 
   // Export filtered users to CSV
   const exportToCSV = () => {
@@ -199,6 +203,91 @@ const UserManagement = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  // Handler functions
+  const handleViewUser = async (user) => {
+    try {
+      setIsLoadingDetails(true);
+      setSelectedUser(user);
+      setShowViewModal(true);
+
+      // Fetch detailed user information
+      const response = await apiService.getUserDetails(user.user_id);
+      if (response.success) {
+        setUserDetails(response.data);
+      } else {
+        setUserDetails(user); // Fallback to basic user data
+      }
+    } catch (err) {
+      console.error('Error fetching user details:', err);
+      setUserDetails(user); // Fallback to basic user data
+    } finally {
+      setIsLoadingDetails(false);
+    }
+  };
+
+  const handleSuspendUser = (user) => {
+    setSelectedUser(user);
+    setSuspensionReason('');
+    setShowSuspendModal(true);
+  };
+
+  const handleUnsuspendUser = async (user) => {
+    if (!window.confirm(`Are you sure you want to unsuspend ${user.name || 'this user'}?`)) {
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      const response = await apiService.activateUser(user.user_id, 'User reactivated by admin');
+      if (response.success) {
+        // Refresh the users list
+        const usersResponse = await apiService.getAllUsersWithAccounts();
+        if (usersResponse && usersResponse.success) {
+          setUsers(Array.isArray(usersResponse.users) ? usersResponse.users : []);
+        }
+        alert('User activated successfully');
+      }
+    } catch (err) {
+      console.error('Error activating user:', err);
+      alert('Failed to activate user');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleConfirmSuspend = async () => {
+    if (!selectedUser) return;
+
+    try {
+      setIsProcessing(true);
+      const response = await apiService.suspendUser(selectedUser.user_id, suspensionReason);
+      if (response.success) {
+        // Refresh the users list
+        const usersResponse = await apiService.getAllUsersWithAccounts();
+        if (usersResponse && usersResponse.success) {
+          setUsers(Array.isArray(usersResponse.users) ? usersResponse.users : []);
+        }
+        setShowSuspendModal(false);
+        setSelectedUser(null);
+        setSuspensionReason('');
+        alert('User suspended successfully');
+      }
+    } catch (err) {
+      console.error('Error suspending user:', err);
+      alert('Failed to suspend user');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const closeModals = () => {
+    setShowViewModal(false);
+    setShowSuspendModal(false);
+    setSelectedUser(null);
+    setUserDetails(null);
+    setSuspensionReason('');
   };
 
   // Loading component
@@ -451,15 +540,30 @@ const UserManagement = () => {
                   {/* Actions */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900 p-1">
+                      <button
+                        onClick={() => handleViewUser(user)}
+                        className="text-blue-600 hover:text-blue-900 p-1"
+                        title="View User Details"
+                      >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="text-green-600 hover:text-green-900 p-1">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="text-red-600 hover:text-red-900 p-1">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {user.active_flag === 1 ? (
+                        <button
+                          onClick={() => handleSuspendUser(user)}
+                          className="text-orange-600 hover:text-orange-900 p-1"
+                          title="Suspend User"
+                        >
+                          <UserX className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleUnsuspendUser(user)}
+                          className="text-green-600 hover:text-green-900 p-1"
+                          title="Unsuspend User"
+                        >
+                          <UserCheck className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -476,6 +580,314 @@ const UserManagement = () => {
           </div>
         )}
       </div>
+
+      {/* View User Modal */}
+      {showViewModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">User Details</h3>
+                <button
+                  onClick={closeModals}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {isLoadingDetails ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="ml-2 text-gray-600">Loading user details...</span>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Personal Information */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="text-md font-semibold text-gray-900 mb-3">Personal Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">User ID</label>
+                        <p className="text-sm text-gray-900">{userDetails?.user_id || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.name || userDetails?.name || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Email</label>
+                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.email || userDetails?.email || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Mobile</label>
+                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.mobile || userDetails?.mobile || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Phone Code</label>
+                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.phone_code || userDetails?.phone_code || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Username</label>
+                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.username || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.dob || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Age</label>
+                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.age || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Gender</label>
+                        <p className="text-sm text-gray-900">
+                          {userDetails?.personal_info?.gender === 1 ? 'Male' :
+                            userDetails?.personal_info?.gender === 2 ? 'Female' :
+                              userDetails?.personal_info?.gender === 3 ? 'Other' : 'Not specified'}
+                        </p>
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700">Address</label>
+                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.address || 'Not provided'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Account Information */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="text-md font-semibold text-gray-900 mb-3">Account Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">User Type</label>
+                        <p className="text-sm text-gray-900">{userDetails?.account_info?.user_type_label || userDetails?.user_type_label || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Login Type</label>
+                        <p className="text-sm text-gray-900">{userDetails?.account_info?.login_type_label || 'App'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Profile Complete</label>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${(userDetails?.account_info?.profile_complete || userDetails?.profile_complete) === 1
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                          {(userDetails?.account_info?.profile_complete || userDetails?.profile_complete) === 1 ? 'Complete' : 'Incomplete'}
+                        </span>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Google ID</label>
+                        <p className="text-sm text-gray-900">{userDetails?.account_info?.google_id || 'Not linked'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Status Information */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="text-md font-semibold text-gray-900 mb-3">Status Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Active Status</label>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${(userDetails?.status_info?.active_flag || userDetails?.active_flag) === 1
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}>
+                          {userDetails?.status_info?.active_status ||
+                            ((userDetails?.status_info?.active_flag || userDetails?.active_flag) === 1 ? 'Active' : 'Suspended')}
+                        </span>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Notifications</label>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.status_info?.notification_status === 1
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
+                          }`}>
+                          {userDetails?.status_info?.notification_status_label ||
+                            (userDetails?.status_info?.notification_status === 1 ? 'Enabled' : 'Disabled')}
+                        </span>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">App Lock</label>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.status_info?.app_lock_status === 1
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-gray-100 text-gray-800'
+                          }`}>
+                          {userDetails?.status_info?.app_lock_status_label ||
+                            (userDetails?.status_info?.app_lock_status === 1 ? 'Enabled' : 'Disabled')}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Subscription Information */}
+                  {userDetails?.current_subscription && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="text-md font-semibold text-gray-900 mb-3">Current Subscription</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Plan Name</label>
+                          <p className="text-sm text-gray-900">{userDetails.current_subscription.plan_name}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Amount Paid</label>
+                          <p className="text-sm text-gray-900">₹{userDetails.current_subscription.amount_paid}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                          <p className="text-sm text-gray-900">{userDetails.current_subscription.start_date}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">End Date</label>
+                          <p className="text-sm text-gray-900">{userDetails.current_subscription.end_date}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Days Remaining</label>
+                          <p className="text-sm text-gray-900">{userDetails.current_subscription.days_remaining} days</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Status</label>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails.current_subscription.status === 'Active'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                            }`}>
+                            {userDetails.current_subscription.status}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* User Statistics */}
+                  {userDetails?.statistics && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="text-md font-semibold text-gray-900 mb-3">User Statistics</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-blue-600">{userDetails.statistics.total_transactions || 0}</div>
+                          <div className="text-xs text-gray-600">Transactions</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-600">{userDetails.statistics.total_customers || 0}</div>
+                          <div className="text-xs text-gray-600">Customers</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-purple-600">{userDetails.statistics.total_team_members || 0}</div>
+                          <div className="text-xs text-gray-600">Team Members</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-orange-600">{userDetails.statistics.total_feedback || 0}</div>
+                          <div className="text-xs text-gray-600">Feedback</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-red-600">{userDetails.statistics.total_ratings || 0}</div>
+                          <div className="text-xs text-gray-600">Ratings</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* User Accounts */}
+                  {userDetails?.accounts && userDetails.accounts.length > 0 && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="text-md font-semibold text-gray-900 mb-3">User Accounts</h4>
+                      <div className="space-y-2">
+                        {userDetails.accounts.map((account, index) => (
+                          <div key={index} className="flex justify-between items-center p-2 bg-white rounded border">
+                            <div>
+                              <span className="font-medium">{account.account_name}</span>
+                              <span className="ml-2 text-sm text-gray-600">({account.account_type_label})</span>
+                            </div>
+                            <span className="text-sm text-gray-500">{account.created_at}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+
+
+                </div>
+              )}
+
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={closeModals}
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Suspend User Modal */}
+      {showSuspendModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Suspend User</h3>
+                <button
+                  onClick={closeModals}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 mb-2">
+                  Are you sure you want to suspend <strong>{selectedUser?.name || selectedUser?.personal_info?.name || 'this user'}</strong>?
+                </p>
+                <p className="text-xs text-gray-500">
+                  User ID: {selectedUser?.user_id} | Mobile: {selectedUser?.mobile || selectedUser?.personal_info?.mobile || 'N/A'}
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Suspension Reason (Optional)
+                </label>
+                <textarea
+                  value={suspensionReason}
+                  onChange={(e) => setSuspensionReason(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  rows="3"
+                  placeholder="Enter reason for suspension..."
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={closeModals}
+                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmSuspend}
+                  disabled={isProcessing}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isProcessing ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Suspending...
+                    </>
+                  ) : (
+                    <>
+                      <UserX className="w-4 h-4" />
+                      Suspend User
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

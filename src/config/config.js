@@ -3,8 +3,8 @@
 
 const config = {
   // API Configuration
-  // API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
-  API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
+  // API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
   SPECIAL_PLANS: {
@@ -64,14 +64,6 @@ const config = {
     UPDATE_ADMIN_CATEGORY: '/admin/update_category',
     DELETE_ADMIN_CATEGORY: '/admin/delete_category',
     GET_ALL_ADMIN_CATEGORIES: '/admin/get_all_categories',
-
-    // Feedback Management
-    CREATE_FEEDBACK: '/create_feedback',
-    GET_USER_FEEDBACK: '/get_user_feedback',
-    GET_ALL_FEEDBACK: '/admin/get_all_feedback',
-    UPDATE_FEEDBACK_RESPONSE: '/admin/update_feedback_response',
-    DELETE_FEEDBACK: '/admin/delete_feedback',
-    GET_FEEDBACK_STATS: '/admin/get_feedback_stats',
 
     // Support Ticket Management
     GET_ALL_SUPPORT_TICKETS: '/admin/get_all_support_tickets',
@@ -143,6 +135,41 @@ const config = {
     GET_INCOME_BREAKDOWN: '/admin/get_income_breakdown',
     GET_COMPREHENSIVE_REPORT: '/admin/get_comprehensive_report',
     EXPORT_REPORT_DATA: '/admin/export_report_data',
+
+    GET_CONTACT_US_DATA: '/admin/get_contact_us_data',
+    GET_ALL_CONTACT_CONFIGS: '/admin/get_all_contact_configs',
+    UPDATE_CONTACT_CONFIG: '/admin/update_contact_config',
+    DELETE_CONTACT_CONFIG: '/admin/delete_contact_config',
+    GET_ALL_APP_DOWNLOAD_LINKS: '/admin/get_all_app_download_links',
+    CREATE_APP_DOWNLOAD_LINK: '/admin/create_app_download_link',
+    UPDATE_APP_DOWNLOAD_LINK: '/admin/update_app_download_link',
+    DELETE_APP_DOWNLOAD_LINK: '/admin/delete_app_download_link',
+
+    SUBMIT_APP_RATING: '/rate_app',
+    GET_ALL_APP_RATINGS: '/admin/get_app_rating_feedback',
+    GET_APP_RATING_STATS: '/admin/get_app_rating_stats',
+    GET_APP_RATING_HISTORY: '/admin/get_app_rating_history',
+    UPDATE_APP_RATING: '/admin/update_app_rating',
+    DELETE_APP_RATING: '/admin/delete_app_rating',
+    GET_APP_RATING_ANALYTICS: '/admin/get_app_rating_analytics',
+    GET_USER_DETAILS: '/admin/get_user_details',
+    GET_DETAILED_USER_INFO: '/admin/get_detailed_user_info',
+    SUSPEND_USER: '/admin/suspend_user',
+    UNSUSPEND_USER: '/admin/unsuspend_user',
+    MANAGE_USER_STATUS: '/admin/manage_user_status',
+
+    // FAQ System Endpoints
+    GET_FAQ_CATEGORIES: '/get_faq_categories',
+    GET_FAQS_BY_CATEGORY: '/get_faqs_by_category',
+    GET_FAQ_BY_ID: '/get_faq_by_id',
+    SEARCH_FAQS: '/search_faqs',
+    GET_ALL_FAQ_CATEGORIES: '/admin/get_all_faq_categories',
+    GET_ALL_FAQS: '/admin/get_all_faqs',
+    CREATE_FAQ_CATEGORY: '/admin/create_faq_category',
+    CREATE_FAQ_ITEM: '/admin/create_faq_item',
+    UPDATE_FAQ_ITEM: '/admin/update_faq_item',
+    DELETE_FAQ_ITEM: '/admin/delete_faq_item',
+    GET_FAQ_ANALYTICS: '/admin/get_faq_analytics',
   },
 
   // Full API URLs (constructed from base URL and endpoints)
@@ -248,6 +275,43 @@ const config = {
       GET_INCOME_BREAKDOWN: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_INCOME_BREAKDOWN}`,
       GET_COMPREHENSIVE_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_COMPREHENSIVE_REPORT}`,
       EXPORT_REPORT_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.EXPORT_REPORT_DATA}`,
+
+      // Contact Us Management URLs
+      GET_CONTACT_US_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_CONTACT_US_DATA}`,
+      GET_ALL_CONTACT_CONFIGS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_CONTACT_CONFIGS}`,
+      UPDATE_CONTACT_CONFIG: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_CONTACT_CONFIG}`,
+      DELETE_CONTACT_CONFIG: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_CONTACT_CONFIG}`,
+      GET_ALL_APP_DOWNLOAD_LINKS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_APP_DOWNLOAD_LINKS}`,
+      CREATE_APP_DOWNLOAD_LINK: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_APP_DOWNLOAD_LINK}`,
+      UPDATE_APP_DOWNLOAD_LINK: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_APP_DOWNLOAD_LINK}`,
+      DELETE_APP_DOWNLOAD_LINK: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_APP_DOWNLOAD_LINK}`,
+
+      // App Rating System URLs
+      SUBMIT_APP_RATING: `${this.API_BASE_URL}${this.API_ENDPOINTS.SUBMIT_APP_RATING}`,
+      GET_ALL_APP_RATINGS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_APP_RATINGS}`,
+      GET_APP_RATING_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_APP_RATING_STATS}`,
+      GET_APP_RATING_HISTORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_APP_RATING_HISTORY}`,
+      UPDATE_APP_RATING: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_APP_RATING}`,
+      DELETE_APP_RATING: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_APP_RATING}`,
+      GET_APP_RATING_ANALYTICS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_APP_RATING_ANALYTICS}`,
+      GET_USER_DETAILS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_DETAILS}`,
+      GET_DETAILED_USER_INFO: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_DETAILED_USER_INFO}`,
+      SUSPEND_USER: `${this.API_BASE_URL}${this.API_ENDPOINTS.SUSPEND_USER}`,
+      UNSUSPEND_USER: `${this.API_BASE_URL}${this.API_ENDPOINTS.UNSUSPEND_USER}`,
+      MANAGE_USER_STATUS: `${this.API_BASE_URL}${this.API_ENDPOINTS.MANAGE_USER_STATUS}`,
+
+      // FAQ System URLs
+      GET_FAQ_CATEGORIES: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_FAQ_CATEGORIES}`,
+      GET_FAQS_BY_CATEGORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_FAQS_BY_CATEGORY}`,
+      GET_FAQ_BY_ID: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_FAQ_BY_ID}`,
+      SEARCH_FAQS: `${this.API_BASE_URL}${this.API_ENDPOINTS.SEARCH_FAQS}`,
+      GET_ALL_FAQ_CATEGORIES: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_FAQ_CATEGORIES}`,
+      GET_ALL_FAQS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_FAQS}`,
+      CREATE_FAQ_CATEGORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_FAQ_CATEGORY}`,
+      CREATE_FAQ_ITEM: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_FAQ_ITEM}`,
+      UPDATE_FAQ_ITEM: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_FAQ_ITEM}`,
+      DELETE_FAQ_ITEM: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_FAQ_ITEM}`,
+      GET_FAQ_ANALYTICS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_FAQ_ANALYTICS}`,
     };
   },
 

@@ -648,79 +648,376 @@ const apiService = {
     return response;
   },
 
-  // Feedback Management
-  createFeedback: async (feedbackData) => {
+  // App Rating System Management
+  submitAppRating: async (ratingData) => {
     try {
-      console.log('Creating feedback with data:', feedbackData);
-      const response = await api.post(config.API_ENDPOINTS.CREATE_FEEDBACK, feedbackData);
+      console.log('Submitting app rating with data:', ratingData);
+      const response = await api.post(config.API_ENDPOINTS.SUBMIT_APP_RATING, ratingData);
       return response.data;
     } catch (error) {
-      console.error('Error creating feedback:', error);
+      console.error('Error submitting app rating:', error);
       console.error('Error response:', error.response?.data);
       throw error;
     }
   },
 
-  getUserFeedback: async (userId, params = {}) => {
+  getAllAppRatings: async (params = {}) => {
     try {
-      const response = await api.get(config.API_ENDPOINTS.GET_USER_FEEDBACK, {
-        params: { user_id: userId, ...params }
+      console.log('Fetching all app ratings with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_ALL_APP_RATINGS, { params });
+      console.log('All app ratings API response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching all app ratings:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getAppRatingStats: async () => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_APP_RATING_STATS);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching app rating stats:', error);
+      throw error;
+    }
+  },
+
+  getAppRatingHistory: async (params = {}) => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_APP_RATING_HISTORY, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching app rating history:', error);
+      throw error;
+    }
+  },
+
+  updateAppRating: async (ratingId, updateData) => {
+    try {
+      console.log('Updating app rating:', { ratingId, updateData });
+      const response = await api.put(config.API_ENDPOINTS.UPDATE_APP_RATING, {
+        rating_id: ratingId,
+        ...updateData
       });
       return response.data;
     } catch (error) {
-      console.error('Error fetching user feedback:', error);
-      throw error;
-    }
-  },
-
-  getAllFeedback: async (params = {}) => {
-    try {
-      console.log('Fetching all feedback with params:', params);
-      const response = await api.get(config.API_ENDPOINTS.GET_ALL_FEEDBACK, { params });
-      console.log('All feedback API response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching all feedback:', error);
+      console.error('Error updating app rating:', error);
       console.error('Error response:', error.response?.data);
       throw error;
     }
   },
 
-  updateFeedbackResponse: async (feedbackId, adminResponse) => {
+  deleteAppRating: async (ratingId) => {
     try {
-      console.log('Updating feedback response:', { feedbackId, adminResponse });
-      const response = await api.put(config.API_ENDPOINTS.UPDATE_FEEDBACK_RESPONSE, {
-        feedback_id: feedbackId,
-        admin_response: adminResponse
+      console.log('Deleting app rating:', ratingId);
+      const response = await api.delete(config.API_ENDPOINTS.DELETE_APP_RATING, {
+        data: { rating_id: ratingId }
       });
       return response.data;
     } catch (error) {
-      console.error('Error updating feedback response:', error);
+      console.error('Error deleting app rating:', error);
       console.error('Error response:', error.response?.data);
       throw error;
     }
   },
 
-  deleteFeedback: async (feedbackId) => {
+  getAppRatingAnalytics: async (params = {}) => {
     try {
-      console.log('Deleting feedback:', feedbackId);
-      const response = await api.delete(config.API_ENDPOINTS.DELETE_FEEDBACK, {
-        data: { feedback_id: feedbackId }
+      const response = await api.get(config.API_ENDPOINTS.GET_APP_RATING_ANALYTICS, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching app rating analytics:', error);
+      throw error;
+    }
+  },
+
+  // Contact Us Management APIs
+  getContactUsData: async () => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_CONTACT_US_DATA);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching contact us data:', error);
+      throw error;
+    }
+  },
+
+  // Contact Config Management
+  getAllContactConfigs: async (params = {}) => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_ALL_CONTACT_CONFIGS, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching contact configs:', error);
+      throw error;
+    }
+  },
+
+  createContactConfig: async (configData) => {
+    try {
+      const response = await api.post(config.API_ENDPOINTS.CREATE_CONTACT_CONFIG, configData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating contact config:', error);
+      throw error;
+    }
+  },
+
+  updateContactConfig: async (configId, updateData) => {
+    try {
+      const response = await api.put(config.API_ENDPOINTS.UPDATE_CONTACT_CONFIG, {
+        config_id: configId,
+        ...updateData
       });
       return response.data;
     } catch (error) {
-      console.error('Error deleting feedback:', error);
-      console.error('Error response:', error.response?.data);
+      console.error('Error updating contact config:', error);
       throw error;
     }
   },
 
-  getFeedbackStats: async () => {
+  deleteContactConfig: async (configId) => {
     try {
-      const response = await api.get(config.API_ENDPOINTS.GET_FEEDBACK_STATS);
+      const response = await api.delete(config.API_ENDPOINTS.DELETE_CONTACT_CONFIG, {
+        data: { config_id: configId }
+      });
       return response.data;
     } catch (error) {
-      console.error('Error fetching feedback stats:', error);
+      console.error('Error deleting contact config:', error);
+      throw error;
+    }
+  },
+
+  // App Download Links Management
+  getAllAppDownloadLinks: async (params = {}) => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_ALL_APP_DOWNLOAD_LINKS, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching app download links:', error);
+      throw error;
+    }
+  },
+
+  createAppDownloadLink: async (linkData) => {
+    try {
+      const response = await api.post(config.API_ENDPOINTS.CREATE_APP_DOWNLOAD_LINK, linkData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating app download link:', error);
+      throw error;
+    }
+  },
+
+  updateAppDownloadLink: async (linkId, updateData) => {
+    try {
+      const response = await api.put(config.API_ENDPOINTS.UPDATE_APP_DOWNLOAD_LINK, {
+        link_id: linkId,
+        ...updateData
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating app download link:', error);
+      throw error;
+    }
+  },
+
+  deleteAppDownloadLink: async (linkId) => {
+    try {
+      const response = await api.delete(config.API_ENDPOINTS.DELETE_APP_DOWNLOAD_LINK, {
+        data: { link_id: linkId }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting app download link:', error);
+      throw error;
+    }
+  },
+
+  // User Management APIs
+  getUserDetails: async (userId) => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_DETAILED_USER_INFO, {
+        params: { user_id: userId }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      throw error;
+    }
+  },
+
+  manageUserStatus: async (userId, action, reason = '') => {
+    try {
+      const response = await api.post(config.API_ENDPOINTS.MANAGE_USER_STATUS, {
+        user_id: userId,
+        action: action, // 'suspend' or 'activate'
+        reason: reason
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error managing user status:', error);
+      throw error;
+    }
+  },
+
+  suspendUser: async (userId, reason = '') => {
+    try {
+      const response = await api.post(config.API_ENDPOINTS.MANAGE_USER_STATUS, {
+        user_id: userId,
+        action: 'suspend',
+        reason: reason
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error suspending user:', error);
+      throw error;
+    }
+  },
+
+  activateUser: async (userId, reason = '') => {
+    try {
+      const response = await api.post(config.API_ENDPOINTS.MANAGE_USER_STATUS, {
+        user_id: userId,
+        action: 'activate',
+        reason: reason
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error activating user:', error);
+      throw error;
+    }
+  },
+
+  unsuspendUser: async (userId, reason = '') => {
+    try {
+      const response = await api.put(config.API_ENDPOINTS.UNSUSPEND_USER, {
+        user_id: userId,
+        reason: reason
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error unsuspending user:', error);
+      throw error;
+    }
+  },
+
+  // FAQ System APIs
+  getFaqCategories: async () => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_FAQ_CATEGORIES);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching FAQ categories:', error);
+      throw error;
+    }
+  },
+
+  getFaqsByCategory: async (categoryName, userId = null) => {
+    try {
+      const params = userId ? { user_id: userId } : {};
+      const response = await api.get(`${config.API_ENDPOINTS.GET_FAQS_BY_CATEGORY}/${categoryName}`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching FAQs by category:', error);
+      throw error;
+    }
+  },
+
+  getFaqById: async (faqId, userId = null) => {
+    try {
+      const params = userId ? { user_id: userId } : {};
+      const response = await api.get(`${config.API_ENDPOINTS.GET_FAQ_BY_ID}/${faqId}`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching FAQ by ID:', error);
+      throw error;
+    }
+  },
+
+  searchFaqs: async (searchQuery, categoryName = null, userId = null) => {
+    try {
+      const params = { search_query: searchQuery };
+      if (categoryName) params.category_name = categoryName;
+      if (userId) params.user_id = userId;
+
+      const response = await api.get(config.API_ENDPOINTS.SEARCH_FAQS, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error searching FAQs:', error);
+      throw error;
+    }
+  },
+
+  // Admin FAQ Management APIs
+  getAllFaqCategories: async () => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_ALL_FAQ_CATEGORIES);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching all FAQ categories:', error);
+      throw error;
+    }
+  },
+
+  getAllFaqs: async (params = {}) => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_ALL_FAQS, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching all FAQs:', error);
+      throw error;
+    }
+  },
+
+  createFaqCategory: async (categoryData) => {
+    try {
+      const response = await api.post(config.API_ENDPOINTS.CREATE_FAQ_CATEGORY, categoryData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating FAQ category:', error);
+      throw error;
+    }
+  },
+
+  createFaqItem: async (faqData) => {
+    try {
+      const response = await api.post(config.API_ENDPOINTS.CREATE_FAQ_ITEM, faqData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating FAQ item:', error);
+      throw error;
+    }
+  },
+
+  updateFaqItem: async (faqId, updateData) => {
+    try {
+      const response = await api.put(`${config.API_ENDPOINTS.UPDATE_FAQ_ITEM}/${faqId}`, updateData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating FAQ item:', error);
+      throw error;
+    }
+  },
+
+  deleteFaqItem: async (faqId) => {
+    try {
+      const response = await api.delete(`${config.API_ENDPOINTS.DELETE_FAQ_ITEM}/${faqId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting FAQ item:', error);
+      throw error;
+    }
+  },
+
+  getFaqAnalytics: async (params = {}) => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_FAQ_ANALYTICS, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching FAQ analytics:', error);
       throw error;
     }
   },
