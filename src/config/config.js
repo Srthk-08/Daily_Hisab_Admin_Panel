@@ -3,9 +3,9 @@
 
 const config = {
   // API Configuration
-  API_BASE_URL: 'http://127.0.0.1:3000/dailyhisab/server',
-  // API_BASE_URL: 'https://appzetoapp.com/dailyhisab/server',
-  // API_BASE_URL: 'http://localhost:3000/dailyhisab/server',
+  API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
+  // API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  // API_BASE_URL: 'http://localhost:3000/daliyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
   SPECIAL_PLANS: {
@@ -180,6 +180,11 @@ const config = {
     GET_OVERALL_PERFORMANCE_STATS: '/admin/get_overall_performance_stats',
     GET_USER_PERFORMANCE_REPORT: '/admin/get_user_performance_report',
     GET_PERFORMANCE_COMPARISON: '/admin/get_performance_comparison',
+
+    // Performance Visualization System Endpoints
+    GET_PERFORMANCE_BAR_GRAPH_DATA: '/admin/get_performance_bar_graph_data',
+    GET_PERFORMANCE_TRENDS: '/admin/get_performance_trends',
+    GET_USER_PERFORMANCE_COMPARISON: '/admin/get_user_performance_comparison',
   },
 
   // Full API URLs (constructed from base URL and endpoints)
@@ -331,6 +336,11 @@ const config = {
       GET_OVERALL_PERFORMANCE_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_OVERALL_PERFORMANCE_STATS}`,
       GET_USER_PERFORMANCE_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_PERFORMANCE_REPORT}`,
       GET_PERFORMANCE_COMPARISON: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_PERFORMANCE_COMPARISON}`,
+
+      // Performance Visualization System URLs
+      GET_PERFORMANCE_BAR_GRAPH_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_PERFORMANCE_BAR_GRAPH_DATA}`,
+      GET_PERFORMANCE_TRENDS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_PERFORMANCE_TRENDS}`,
+      GET_USER_PERFORMANCE_COMPARISON: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_PERFORMANCE_COMPARISON}`,
     };
   },
 

@@ -1113,6 +1113,46 @@ const apiService = {
       throw error;
     }
   },
+
+  // Performance Visualization System API Functions
+  getPerformanceBarGraphData: async (params = {}) => {
+    try {
+      console.log('Fetching performance bar graph data with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_PERFORMANCE_BAR_GRAPH_DATA, { params });
+      console.log('Performance bar graph data response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching performance bar graph data:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getPerformanceTrends: async (params = {}) => {
+    try {
+      console.log('Fetching performance trends with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_PERFORMANCE_TRENDS, { params });
+      console.log('Performance trends response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching performance trends:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getUserPerformanceComparison: async (params = {}) => {
+    try {
+      console.log('Fetching user performance comparison with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_USER_PERFORMANCE_COMPARISON, { params });
+      console.log('User performance comparison response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user performance comparison:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
 };
 
 // Initialize token management when module loads
