@@ -3,8 +3,9 @@
 
 const config = {
   // API Configuration
-  // API_BASE_URL: 'http://127.0.0.1:3000/dailyhisab/server',
-  API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  API_BASE_URL: 'http://127.0.0.1:3000/dailyhisab/server',
+  // API_BASE_URL: 'https://appzetoapp.com/dailyhisab/server',
+  // API_BASE_URL: 'http://localhost:3000/dailyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
   SPECIAL_PLANS: {
@@ -170,6 +171,15 @@ const config = {
     UPDATE_FAQ_ITEM: '/admin/update_faq_item',
     DELETE_FAQ_ITEM: '/admin/delete_faq_item',
     GET_FAQ_ANALYTICS: '/admin/get_faq_analytics',
+
+    // Performance Tracking System Endpoints
+    CALCULATE_PERFORMANCE_SCORE: '/calculate_performance_score',
+    GET_USER_PERFORMANCE_SCORE: '/get_user_performance_score',
+    GET_USER_PERFORMANCE_HISTORY: '/get_user_performance_history',
+    GET_USER_PERFORMANCE_ALERTS: '/get_user_performance_alerts',
+    GET_OVERALL_PERFORMANCE_STATS: '/admin/get_overall_performance_stats',
+    GET_USER_PERFORMANCE_REPORT: '/admin/get_user_performance_report',
+    GET_PERFORMANCE_COMPARISON: '/admin/get_performance_comparison',
   },
 
   // Full API URLs (constructed from base URL and endpoints)
@@ -312,6 +322,15 @@ const config = {
       UPDATE_FAQ_ITEM: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_FAQ_ITEM}`,
       DELETE_FAQ_ITEM: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_FAQ_ITEM}`,
       GET_FAQ_ANALYTICS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_FAQ_ANALYTICS}`,
+
+      // Performance Tracking System URLs
+      CALCULATE_PERFORMANCE_SCORE: `${this.API_BASE_URL}${this.API_ENDPOINTS.CALCULATE_PERFORMANCE_SCORE}`,
+      GET_USER_PERFORMANCE_SCORE: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_PERFORMANCE_SCORE}`,
+      GET_USER_PERFORMANCE_HISTORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_PERFORMANCE_HISTORY}`,
+      GET_USER_PERFORMANCE_ALERTS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_PERFORMANCE_ALERTS}`,
+      GET_OVERALL_PERFORMANCE_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_OVERALL_PERFORMANCE_STATS}`,
+      GET_USER_PERFORMANCE_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_PERFORMANCE_REPORT}`,
+      GET_PERFORMANCE_COMPARISON: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_PERFORMANCE_COMPARISON}`,
     };
   },
 

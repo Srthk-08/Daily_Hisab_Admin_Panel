@@ -1021,6 +1021,98 @@ const apiService = {
       throw error;
     }
   },
+
+  // Performance Tracking System API Functions
+  calculatePerformanceScore: async (data) => {
+    try {
+      console.log('Calculating performance score with data:', data);
+      const response = await api.post(config.API_ENDPOINTS.CALCULATE_PERFORMANCE_SCORE, data);
+      console.log('Performance score calculation response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error calculating performance score:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getUserPerformanceScore: async (params = {}) => {
+    try {
+      console.log('Fetching user performance score with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_USER_PERFORMANCE_SCORE, { params });
+      console.log('User performance score response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user performance score:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getUserPerformanceHistory: async (params = {}) => {
+    try {
+      console.log('Fetching user performance history with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_USER_PERFORMANCE_HISTORY, { params });
+      console.log('User performance history response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user performance history:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getUserPerformanceAlerts: async (params = {}) => {
+    try {
+      console.log('Fetching user performance alerts with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_USER_PERFORMANCE_ALERTS, { params });
+      console.log('User performance alerts response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user performance alerts:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getOverallPerformanceStats: async (params = {}) => {
+    try {
+      console.log('Fetching overall performance stats with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_OVERALL_PERFORMANCE_STATS, { params });
+      console.log('Overall performance stats response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching overall performance stats:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getUserPerformanceReport: async (params = {}) => {
+    try {
+      console.log('Fetching user performance report with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_USER_PERFORMANCE_REPORT, { params });
+      console.log('User performance report response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user performance report:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getPerformanceComparison: async (params = {}) => {
+    try {
+      console.log('Fetching performance comparison with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_PERFORMANCE_COMPARISON, { params });
+      console.log('Performance comparison response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching performance comparison:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
 };
 
 // Initialize token management when module loads

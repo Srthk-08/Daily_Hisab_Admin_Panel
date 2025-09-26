@@ -69,6 +69,10 @@ export default function Report() {
   // State for credit score (simulated)
   const [creditScore, setCreditScore] = useState(0);
 
+  // State for performance tracking data
+  const [performanceStats, setPerformanceStats] = useState({});
+  const [performanceLoading, setPerformanceLoading] = useState(false);
+
   // Fetch all report data
   const fetchAllReports = async () => {
     try {
@@ -195,11 +199,26 @@ export default function Report() {
     }
   };
 
+  // Fetch performance statistics
+  const fetchPerformanceStats = async () => {
+    try {
+      setPerformanceLoading(true);
+      const response = await apiService.getOverallPerformanceStats();
+      if (response.success) {
+        setPerformanceStats(response.data);
+      }
+    } catch (err) {
+      console.error('Error fetching performance stats:', err);
+    } finally {
+      setPerformanceLoading(false);
+    }
+  };
+
   // Refresh data
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await fetchAllReports();
+      await Promise.all([fetchAllReports(), fetchPerformanceStats()]);
     } catch (err) {
       console.error('Error refreshing data:', err);
     } finally {
@@ -270,6 +289,7 @@ export default function Report() {
   // Load data on component mount and when filters change
   useEffect(() => {
     fetchAllReports();
+    fetchPerformanceStats();
   }, [selectedPeriod, customDateRange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Calculate credit score from business health summary
@@ -694,6 +714,194 @@ export default function Report() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Overall System Statistics - Performance Tracking */}
+      <div className="bg-white rounded-2xl shadow-md p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <Target className="w-6 h-6 text-indigo-600" /> Overall System Statistics
+          </h3>
+          {performanceLoading && (
+            <RefreshCw className="w-4 h-4 animate-spin text-indigo-600" />
+          )}
+        </div>
+
+        {performanceLoading ? (
+          <div className="flex items-center justify-center h-32">
+            <div className="flex items-center space-x-2">
+              <RefreshCw className="w-5 h-5 animate-spin text-indigo-600" />
+              <span className="text-gray-600">Loading performance statistics...</span>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Performance Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-indigo-50 rounded-xl p-4 text-center">
+                <p className="text-sm text-gray-600">Total Users</p>
+                <p className="text-2xl font-bold text-indigo-600">
+                  {performanceStats.overview?.totalUsers?.toLocaleString() || '0'}
+                </p>
+                <p className="text-xs text-indigo-500">All users in system</p>
+              </div>
+              <div className="bg-green-50 rounded-xl p-4 text-center">
+                <p className="text-sm text-gray-600">Average Score</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {performanceStats.overview?.averageScore?.toFixed(1) || '0'}/100
+                </p>
+                <p className="text-xs text-green-500">Overall performance</p>
+              </div>
+              <div className="bg-blue-50 rounded-xl p-4 text-center">
+                <p className="text-sm text-gray-600">Excellent Users</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {performanceStats.overview?.scoreDistribution?.excellent || '0'}
+                </p>
+                <p className="text-xs text-blue-500">80-100 points</p>
+              </div>
+              <div className="bg-yellow-50 rounded-xl p-4 text-center">
+                <p className="text-sm text-gray-600">Good Users</p>
+                <p className="text-2xl font-bold text-yellow-600">
+                  {performanceStats.overview?.scoreDistribution?.good || '0'}
+                </p>
+                <p className="text-xs text-yellow-500">60-79 points</p>
+              </div>
+            </div>
+
+            {/* Performance Distribution Chart */}
+            {performanceStats.overview?.scoreDistribution && (
+              <div className="mb-6">
+                <h4 className="text-md font-semibold mb-4 text-gray-800">Performance Score Distribution</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-green-50 rounded-lg p-4 text-center">
+                    <div className="text-3xl font-bold text-green-600 mb-1">
+                      {performanceStats.overview.scoreDistribution.excellent || 0}
+                    </div>
+                    <div className="text-sm text-green-700 font-medium">Excellent</div>
+                    <div className="text-xs text-green-600">80-100 points</div>
+                    <div className="w-full bg-green-200 rounded-full h-2 mt-2">
+                      <div
+                        className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${((performanceStats.overview.scoreDistribution.excellent || 0) / (performanceStats.overview.totalUsers || 1)) * 100}%`
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                    <div className="text-3xl font-bold text-yellow-600 mb-1">
+                      {performanceStats.overview.scoreDistribution.good || 0}
+                    </div>
+                    <div className="text-sm text-yellow-700 font-medium">Good</div>
+                    <div className="text-xs text-yellow-600">60-79 points</div>
+                    <div className="w-full bg-yellow-200 rounded-full h-2 mt-2">
+                      <div
+                        className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${((performanceStats.overview.scoreDistribution.good || 0) / (performanceStats.overview.totalUsers || 1)) * 100}%`
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="bg-orange-50 rounded-lg p-4 text-center">
+                    <div className="text-3xl font-bold text-orange-600 mb-1">
+                      {performanceStats.overview.scoreDistribution.fair || 0}
+                    </div>
+                    <div className="text-sm text-orange-700 font-medium">Fair</div>
+                    <div className="text-xs text-orange-600">40-59 points</div>
+                    <div className="w-full bg-orange-200 rounded-full h-2 mt-2">
+                      <div
+                        className="bg-orange-500 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${((performanceStats.overview.scoreDistribution.fair || 0) / (performanceStats.overview.totalUsers || 1)) * 100}%`
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="bg-red-50 rounded-lg p-4 text-center">
+                    <div className="text-3xl font-bold text-red-600 mb-1">
+                      {performanceStats.overview.scoreDistribution.poor || 0}
+                    </div>
+                    <div className="text-sm text-red-700 font-medium">Poor</div>
+                    <div className="text-xs text-red-600">0-39 points</div>
+                    <div className="w-full bg-red-200 rounded-full h-2 mt-2">
+                      <div
+                        className="bg-red-500 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${((performanceStats.overview.scoreDistribution.poor || 0) / (performanceStats.overview.totalUsers || 1)) * 100}%`
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Performance Metrics */}
+            {performanceStats.metrics && (
+              <div className="mb-6">
+                <h4 className="text-md font-semibold mb-4 text-gray-800">Key Performance Metrics</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.entries(performanceStats.metrics).map(([metric, value]) => (
+                    <div key={metric} className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700 capitalize">
+                          {metric.replace(/([A-Z])/g, ' $1').trim()}
+                        </span>
+                        <span className="text-lg font-bold text-gray-900">
+                          {typeof value === 'number' ? value.toFixed(1) : value}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${Math.min((typeof value === 'number' ? value : 0) * 10, 100)}%`
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Performance Trends */}
+            {performanceStats.trends && (
+              <div>
+                <h4 className="text-md font-semibold mb-4 text-gray-800">Performance Trends</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-blue-700">Monthly Improvement</span>
+                      <span className="text-lg font-bold text-blue-600">
+                        {performanceStats.trends.monthlyImprovement || 0}%
+                      </span>
+                    </div>
+                    <div className="text-xs text-blue-600 mt-1">
+                      Average score improvement this month
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-green-700">Top Performers</span>
+                      <span className="text-lg font-bold text-green-600">
+                        {performanceStats.trends.topPerformers || 0}
+                      </span>
+                    </div>
+                    <div className="text-xs text-green-600 mt-1">
+                      Users with scores above 80
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Income vs Expense Summary */}
