@@ -1153,6 +1153,33 @@ const apiService = {
       throw error;
     }
   },
+
+  // Feature Usage Analytics API Functions
+  getFeatureUsageAnalytics: async (params = {}) => {
+    try {
+      console.log('Fetching feature usage analytics with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_FEATURE_USAGE_ANALYTICS, { params });
+      console.log('Feature usage analytics response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching feature usage analytics:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
+
+  getFeatureUsageTrends: async (params = {}) => {
+    try {
+      console.log('Fetching feature usage trends with params:', params);
+      const response = await api.get(config.API_ENDPOINTS.GET_FEATURE_USAGE_TRENDS, { params });
+      console.log('Feature usage trends response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching feature usage trends:', error);
+      console.error('Error response:', error.response?.data);
+      throw error;
+    }
+  },
 };
 
 // Initialize token management when module loads

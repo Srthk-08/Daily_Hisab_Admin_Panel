@@ -3,8 +3,8 @@
 
 const config = {
   // API Configuration
-  // API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
-  API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
+  // API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
   // API_BASE_URL: 'http://localhost:3000/daliyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
@@ -185,6 +185,8 @@ const config = {
     GET_PERFORMANCE_BAR_GRAPH_DATA: '/admin/get_performance_bar_graph_data',
     GET_PERFORMANCE_TRENDS: '/admin/get_performance_trends',
     GET_USER_PERFORMANCE_COMPARISON: '/admin/get_user_performance_comparison',
+    GET_FEATURE_USAGE_ANALYTICS: '/admin/feature_usage_analytics',
+    GET_FEATURE_USAGE_TRENDS: '/admin/feature_usage_trends',
   },
 
   // Full API URLs (constructed from base URL and endpoints)

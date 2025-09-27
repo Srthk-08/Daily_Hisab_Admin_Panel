@@ -54,6 +54,13 @@ export default function AnalyticsInsights() {
   const [performanceError, setPerformanceError] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM format
 
+  // Feature usage analytics state
+  const [featureUsageData, setFeatureUsageData] = useState(null);
+  const [featureUsageLoading, setFeatureUsageLoading] = useState(true);
+  const [featureUsageError, setFeatureUsageError] = useState(null);
+  const [featureTrendsData, setFeatureTrendsData] = useState(null);
+  const [featureTrendsLoading, setFeatureTrendsLoading] = useState(false);
+
   // Fetch performance bar graph data
   const fetchPerformanceData = async () => {
     try {
@@ -76,9 +83,49 @@ export default function AnalyticsInsights() {
     }
   };
 
+  // Fetch feature usage analytics data
+  const fetchFeatureUsageData = async () => {
+    try {
+      setFeatureUsageLoading(true);
+      setFeatureUsageError(null);
+      const response = await apiService.getFeatureUsageAnalytics({
+        month_year: selectedMonth
+      });
+      if (response.success) {
+        setFeatureUsageData(response.data);
+      } else {
+        setFeatureUsageError('Failed to fetch feature usage data');
+      }
+    } catch (error) {
+      console.error('Error fetching feature usage data:', error);
+      setFeatureUsageError('Error loading feature usage data');
+    } finally {
+      setFeatureUsageLoading(false);
+    }
+  };
+
+  // Fetch feature usage trends data
+  const fetchFeatureTrendsData = async () => {
+    try {
+      setFeatureTrendsLoading(true);
+      const response = await apiService.getFeatureUsageTrends({
+        months: 6
+      });
+      if (response.success) {
+        setFeatureTrendsData(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching feature trends data:', error);
+    } finally {
+      setFeatureTrendsLoading(false);
+    }
+  };
+
   // Load performance data on component mount and when month changes
   useEffect(() => {
     fetchPerformanceData();
+    fetchFeatureUsageData();
+    fetchFeatureTrendsData();
   }, [selectedMonth]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // eslint-disable-next-line no-unused-vars
@@ -99,7 +146,7 @@ export default function AnalyticsInsights() {
           <div>
             <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
               <Target className="w-6 h-6 text-indigo-600" />
-              Performance Tracking 
+              Performance Tracking
             </h2>
             <p className="text-gray-600">User performance analysis across key financial health metrics</p>
           </div>
@@ -388,6 +435,232 @@ export default function AnalyticsInsights() {
               <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No Performance Data</h3>
               <p className="text-gray-600">No performance data available for the selected month.</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Feature Usage Analytics */}
+      <div className="bg-white shadow rounded-lg p-6 mb-6">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+          <div>
+            <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
+              <Users className="w-6 h-6 text-blue-600" />
+              Feature Usage Analytics
+            </h2>
+            <p className="text-gray-600">Track usage of key features across all users for trend analysis</p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                fetchFeatureUsageData();
+                fetchFeatureTrendsData();
+              }}
+              disabled={featureUsageLoading || featureTrendsLoading}
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${featureUsageLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        {featureUsageLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="flex items-center space-x-2">
+              <RefreshCw className="w-6 h-6 animate-spin text-blue-600" />
+              <span className="text-lg text-gray-600">Loading feature usage data...</span>
+            </div>
+          </div>
+        ) : featureUsageError ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Feature Usage Data</h3>
+              <p className="text-gray-600 mb-4">{featureUsageError}</p>
+              <button
+                onClick={fetchFeatureUsageData}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        ) : featureUsageData ? (
+          <>
+            {/* Feature Usage Overview Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-blue-50 rounded-xl p-4 text-center">
+                <p className="text-sm text-gray-600">Total Active Users</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {featureUsageData.total_active_users?.toLocaleString() || '0'}
+                </p>
+                <p className="text-xs text-blue-500">Across all features</p>
+              </div>
+              <div className="bg-green-50 rounded-xl p-4 text-center">
+                <p className="text-sm text-gray-600">Most Used Feature</p>
+                <p className="text-lg font-bold text-green-600">
+                  {featureUsageData.insights?.most_used_feature?.feature || 'N/A'}
+                </p>
+                <p className="text-xs text-green-500">
+                  {featureUsageData.insights?.most_used_feature?.stats?.unique_users || 0} users
+                </p>
+              </div>
+              <div className="bg-purple-50 rounded-xl p-4 text-center">
+                <p className="text-sm text-gray-600">Fastest Growing</p>
+                <p className="text-lg font-bold text-purple-600">
+                  {featureUsageData.insights?.fastest_growing_feature?.feature || 'N/A'}
+                </p>
+                <p className="text-xs text-purple-500">
+                  {featureUsageData.insights?.fastest_growing_feature?.growth_rate || 0}% growth
+                </p>
+              </div>
+              <div className="bg-orange-50 rounded-xl p-4 text-center">
+                <p className="text-sm text-gray-600">Engagement Score</p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {featureUsageData.insights?.engagement_score?.toFixed(1) || '0'}/10
+                </p>
+                <p className="text-xs text-orange-500">Overall engagement</p>
+              </div>
+            </div>
+
+            {/* Feature Usage Chart */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-4 text-gray-800">Feature Usage Comparison</h3>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={featureUsageData.feature_usage || []} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="feature"
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    interval={0}
+                    fontSize={12}
+                  />
+                  <YAxis
+                    label={{ value: 'Active Users', angle: -90, position: 'insideLeft' }}
+                    fontSize={12}
+                  />
+                  <Tooltip
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
+                            <p className="font-semibold text-gray-800 mb-2">{label}</p>
+                            <div className="space-y-1 text-sm">
+                              <p><span className="font-medium">Active Users:</span> {data.stats?.unique_users || 0}</p>
+                              <p><span className="font-medium">Total Entries:</span> {data.stats?.total_entries || data.stats?.total_budgets || data.stats?.total_referrals || data.stats?.total_regular_transactions || 0}</p>
+                              <p><span className="font-medium">Active Days:</span> {data.stats?.active_days || 0}</p>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="stats.unique_users"
+                    fill="#3B82F6"
+                    radius={[4, 4, 0, 0]}
+                    name="Active Users"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Trend Analysis */}
+            {featureUsageData.trend_analysis && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">Feature Growth Trends</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {featureUsageData.trend_analysis.map((trend, index) => (
+                    <div key={index} className={`rounded-lg p-4 ${trend.trend === 'increasing' ? 'bg-green-50' :
+                      trend.trend === 'decreasing' ? 'bg-red-50' : 'bg-gray-50'
+                      }`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-gray-900">{trend.feature}</span>
+                        <span className={`text-sm font-bold ${trend.trend === 'increasing' ? 'text-green-600' :
+                          trend.trend === 'decreasing' ? 'text-red-600' : 'text-gray-600'
+                          }`}>
+                          {trend.growth_rate > 0 ? '+' : ''}{trend.growth_rate}%
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <p>Current: {trend.current_users} users</p>
+                        <p>Previous: {trend.previous_users} users</p>
+                      </div>
+                      <div className={`text-xs font-medium mt-2 ${trend.trend === 'increasing' ? 'text-green-700' :
+                        trend.trend === 'decreasing' ? 'text-red-700' : 'text-gray-700'
+                        }`}>
+                        {trend.trend === 'increasing' ? '📈 Growing' :
+                          trend.trend === 'decreasing' ? '📉 Declining' : '📊 Stable'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Feature Usage Trends Chart */}
+            {featureTrendsData && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">Feature Usage Trends (Last 6 Months)</h3>
+                <ResponsiveContainer width="100%" height={400}>
+                  <LineChart data={featureTrendsData.trends || []} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="month_year"
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                      fontSize={12}
+                    />
+                    <YAxis
+                      label={{ value: 'Active Users', angle: -90, position: 'insideLeft' }}
+                      fontSize={12}
+                    />
+                    <Tooltip
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
+                              <p className="font-semibold text-gray-800 mb-2">{label}</p>
+                              <div className="space-y-1 text-sm">
+                                <p><span className="font-medium">Total Active Users:</span> {payload[0].payload.total_active_users}</p>
+                                {payload[0].payload.feature_summary?.map((feature, index) => (
+                                  <p key={index}><span className="font-medium">{feature.feature}:</span> {feature.unique_users} users</p>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="total_active_users"
+                      stroke="#3B82F6"
+                      strokeWidth={3}
+                      name="Total Active Users"
+                      dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Feature Usage Data</h3>
+              <p className="text-gray-600">No feature usage data available for the selected month.</p>
             </div>
           </div>
         )}
