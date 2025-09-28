@@ -362,8 +362,8 @@ const ContactUs = () => {
             <button
               onClick={() => setActiveTab('contact-configs')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'contact-configs'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
             >
               Contact Configurations
@@ -371,8 +371,8 @@ const ContactUs = () => {
             <button
               onClick={() => setActiveTab('app-downloads')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'app-downloads'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
             >
               App Download Links
@@ -495,8 +495,8 @@ const ContactUs = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.is_active === 1
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
                         }`}>
                         {config.is_active === 1 ? 'Active' : 'Inactive'}
                       </span>
@@ -589,8 +589,8 @@ const ContactUs = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${link.is_active === 1
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
                         }`}>
                         {link.is_active === 1 ? 'Active' : 'Inactive'}
                       </span>
@@ -656,38 +656,84 @@ const ContactUs = () => {
               {activeTab === 'contact-configs' ? (
                 <form onSubmit={showCreateModal ? handleCreateConfig : handleUpdateConfig}>
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Config Type
-                      </label>
-                      <select
-                        value={formData.config_type}
-                        onChange={(e) => setFormData({ ...formData, config_type: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        required
-                      >
-                        <option value="whatsapp">WhatsApp</option>
-                        <option value="phone">Phone</option>
-                        <option value="email">Email</option>
-                        <option value="website">Website</option>
-                        <option value="support_hours">Support Hours</option>
-                      </select>
-                    </div>
+                    {/* Show all fields for create mode */}
+                    {showCreateModal && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Config Type
+                          </label>
+                          <select
+                            value={formData.config_type}
+                            onChange={(e) => setFormData({ ...formData, config_type: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
+                          >
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="phone">Phone</option>
+                            <option value="email">Email</option>
+                            <option value="website">Website</option>
+                            <option value="support_hours">Support Hours</option>
+                          </select>
+                        </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Config Key
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.config_key}
-                        onChange={(e) => setFormData({ ...formData, config_key: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="e.g., whatsapp_number"
-                        required
-                      />
-                    </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Config Key
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.config_key}
+                            onChange={(e) => setFormData({ ...formData, config_key: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="e.g., whatsapp_number"
+                            required
+                          />
+                        </div>
 
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Icon Name
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.icon_name}
+                            onChange={(e) => setFormData({ ...formData, icon_name: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="e.g., whatsapp"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Sort Order
+                          </label>
+                          <input
+                            type="number"
+                            value={formData.sort_order}
+                            onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            min="0"
+                          />
+                        </div>
+
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="is_active"
+                            checked={formData.is_active}
+                            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label htmlFor="is_active" className="ml-2 block text-sm text-gray-700">
+                            Active
+                          </label>
+                        </div>
+                      </>
+                    )}
+
+
+                    {/* Always show these fields for both create and edit */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Config Value
@@ -713,45 +759,6 @@ const ContactUs = () => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="e.g., WhatsApp Support"
                       />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Icon Name
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.icon_name}
-                        onChange={(e) => setFormData({ ...formData, icon_name: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="e.g., whatsapp"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Sort Order
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.sort_order}
-                        onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        min="0"
-                      />
-                    </div>
-
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="is_active"
-                        checked={formData.is_active}
-                        onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      />
-                      <label htmlFor="is_active" className="ml-2 block text-sm text-gray-700">
-                        Active
-                      </label>
                     </div>
                   </div>
 

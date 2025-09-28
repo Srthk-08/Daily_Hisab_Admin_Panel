@@ -241,7 +241,7 @@ const apiService = {
       formData.append('account_type', (categoryData.account_type || 1).toString());
       formData.append('deletable', (categoryData.deletable || 0).toString());
 
-      // Add icon file - either uploaded file or converted emoji
+      // Add icon file - either uploaded file or converted Material Icon PNG
       if (iconFile) {
         formData.append('icon', iconFile);
       }
@@ -276,7 +276,7 @@ const apiService = {
     formData.append('account_type', (categoryData.account_type || 1).toString());
     formData.append('deletable', (categoryData.deletable || 0).toString());
 
-    // Add icon file - either uploaded file or converted emoji
+    // Add icon file - either uploaded file or converted Material Icon PNG
     if (iconFile) {
       formData.append('icon', iconFile);
     }

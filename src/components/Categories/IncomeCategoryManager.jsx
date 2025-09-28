@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Upload, X, Search, Filter } from 'lucide-react';
 import apiService from '../../services/api';
-import IconSelector from '../IconSelector';
+import MaterialIconSelector from '../MaterialIconSelector';
 import config from '../../config/config';
 
 const IncomeCategoryManager = () => {
@@ -102,11 +102,11 @@ const IncomeCategoryManager = () => {
       };
 
       if (editingCategory) {
-        // Send iconFile (either uploaded file or converted emoji PNG)
+        // Send iconFile (either uploaded file or converted Material Icon PNG)
         await apiService.updateAdminCategory(categoryData, iconFile);
         setSuccess('Income category updated successfully');
       } else {
-        // Send iconFile (either uploaded file or converted emoji PNG)
+        // Send iconFile (either uploaded file or converted Material Icon PNG)
         await apiService.createAdminCategory(categoryData, iconFile);
         setSuccess('Income category created successfully');
       }
@@ -131,7 +131,7 @@ const IncomeCategoryManager = () => {
   };
 
   // Handle edit
-  const handleEdit = (category) => {
+  const handleEdit = async (category) => {
     setEditingCategory(category);
     setFormData({
       category_id: category.category_id,
@@ -140,9 +140,27 @@ const IncomeCategoryManager = () => {
       account_type: category.account_type || 1,
       deletable: category.deletable || 0,
     });
-    setIconFile(null);
-    setIconPreview(category.icon || null);
-    setSelectedIcon(null);
+
+    // Check if icon is a Material Icon name or uploaded image
+    if (category.icon && !category.icon.startsWith('data:') && !category.icon.startsWith('http')) {
+      // It's a Material Icon name - convert to file for editing
+      setSelectedIcon(category.icon);
+      const iconFile = await materialIconToPng(category.icon);
+      if (iconFile) {
+        setIconFile(iconFile);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setIconPreview(e.target.result);
+        };
+        reader.readAsDataURL(iconFile);
+      }
+    } else {
+      // It's an uploaded image
+      setSelectedIcon(null);
+      setIconPreview(category.icon || null);
+      setIconFile(null);
+    }
+
     setShowIconSelector(false);
     setShowForm(true);
     setError(null);
@@ -181,8 +199,8 @@ const IncomeCategoryManager = () => {
     }
   };
 
-  // Convert emoji to PNG file
-  const emojiToPng = async (emoji) => {
+  // Convert Material Icon to PNG file
+  const materialIconToPng = async (iconName) => {
     return new Promise((resolve) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -194,19 +212,38 @@ const IncomeCategoryManager = () => {
       // Set background to transparent
       ctx.clearRect(0, 0, size, size);
 
-      // Set font size and style
-      ctx.font = `${size * 0.8}px Arial, sans-serif`;
+      // Create a temporary element to render the Material Icon
+      const tempElement = document.createElement('span');
+      tempElement.className = 'material-icons';
+      tempElement.style.fontSize = `${size * 0.8}px`;
+      tempElement.style.position = 'absolute';
+      tempElement.style.left = '-9999px';
+      tempElement.style.top = '-9999px';
+      tempElement.textContent = iconName;
+
+      document.body.appendChild(tempElement);
+
+      // Get the computed style to measure the icon
+      const computedStyle = window.getComputedStyle(tempElement);
+      const fontSize = parseFloat(computedStyle.fontSize);
+
+      // Set font properties
+      ctx.font = `${fontSize}px 'Material Icons'`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#000000';
 
-      // Draw the emoji
-      ctx.fillText(emoji, size / 2, size / 2);
+      // Draw the Material Icon
+      ctx.fillText(iconName, size / 2, size / 2);
+
+      // Clean up temporary element
+      document.body.removeChild(tempElement);
 
       // Convert to blob
       canvas.toBlob((blob) => {
         if (blob) {
           // Create a File object from the blob
-          const file = new File([blob], `emoji_${Date.now()}.png`, {
+          const file = new File([blob], `material_icon_${iconName}_${Date.now()}.png`, {
             type: 'image/png'
           });
           resolve(file);
@@ -217,22 +254,22 @@ const IncomeCategoryManager = () => {
     });
   };
 
-  // Handle icon selection from IconSelector
-  const handleIconSelect = async (iconEmoji) => {
-    setSelectedIcon(iconEmoji);
+  // Handle icon selection from MaterialIconSelector
+  const handleIconSelect = async (iconName) => {
+    setSelectedIcon(iconName);
     setShowIconSelector(false);
 
-    // Convert emoji to PNG file
-    const emojiFile = await emojiToPng(iconEmoji);
-    if (emojiFile) {
-      setIconFile(emojiFile);
+    // Convert Material Icon to PNG file
+    const iconFile = await materialIconToPng(iconName);
+    if (iconFile) {
+      setIconFile(iconFile);
 
-      // Create preview from the emoji file
+      // Create preview from the icon file
       const reader = new FileReader();
       reader.onload = (e) => {
         setIconPreview(e.target.result);
       };
-      reader.readAsDataURL(emojiFile);
+      reader.readAsDataURL(iconFile);
     }
   };
 
@@ -416,7 +453,7 @@ const IncomeCategoryManager = () => {
               <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
                 <div className="flex items-center gap-3">
                   {selectedIcon ? (
-                    <div className="text-3xl">{selectedIcon}</div>
+                    <span className="material-icons text-3xl text-gray-700">{selectedIcon}</span>
                   ) : iconPreview ? (
                     <img
                       src={iconPreview}
@@ -430,7 +467,7 @@ const IncomeCategoryManager = () => {
                   )}
                   <div>
                     <p className="text-sm font-medium text-gray-700">
-                      {selectedIcon ? 'Emoji Icon Selected (will be converted to PNG)' : iconPreview ? 'Custom Icon Selected' : 'No Icon Selected'}
+                      {selectedIcon ? 'Material Icon Selected' : iconPreview ? 'Custom Icon Selected' : 'No Icon Selected'}
                     </p>
                     <p className="text-xs text-gray-500">
                       Click "Select Icon" to choose from predefined icons or upload your own
@@ -468,7 +505,7 @@ const IncomeCategoryManager = () => {
 
               {/* Icon Selector */}
               {showIconSelector && (
-                <IconSelector
+                <MaterialIconSelector
                   selectedIcon={selectedIcon}
                   onIconSelect={handleIconSelect}
                   onFileUpload={handleCustomIconUpload}
@@ -538,14 +575,18 @@ const IncomeCategoryManager = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {category.icon ? (
-                        <img
-                          src={category.icon}
-                          alt={category.category_name}
-                          className="w-12 h-12 object-cover rounded-lg"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
-                        />
+                        category.icon.startsWith('data:') || category.icon.startsWith('http') ? (
+                          <img
+                            src={category.icon}
+                            alt={category.category_name}
+                            className="w-12 h-12 object-cover rounded-lg"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <span className="material-icons text-3xl text-gray-700">{category.icon}</span>
+                        )
                       ) : (
                         <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
                           <span className="text-gray-400 text-xs">No Icon</span>

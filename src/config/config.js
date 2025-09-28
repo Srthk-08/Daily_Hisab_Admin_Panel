@@ -3,8 +3,8 @@
 
 const config = {
   // API Configuration
-  // API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
-  API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
+  // API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
   // API_BASE_URL: 'http://localhost:3000/daliyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
@@ -138,6 +138,7 @@ const config = {
     EXPORT_REPORT_DATA: '/admin/export_report_data',
 
     GET_CONTACT_US_DATA: '/admin/get_contact_us_data',
+    CREATE_CONTACT_CONFIG: '/admin/create_contact_config',
     GET_ALL_CONTACT_CONFIGS: '/admin/get_all_contact_configs',
     UPDATE_CONTACT_CONFIG: '/admin/update_contact_config',
     DELETE_CONTACT_CONFIG: '/admin/delete_contact_config',
@@ -294,6 +295,7 @@ const config = {
       EXPORT_REPORT_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.EXPORT_REPORT_DATA}`,
 
       // Contact Us Management URLs
+      CREATE_CONTACT_CONFIG: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_CONTACT_CONFIG}`,
       GET_CONTACT_US_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_CONTACT_US_DATA}`,
       GET_ALL_CONTACT_CONFIGS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_CONTACT_CONFIGS}`,
       UPDATE_CONTACT_CONFIG: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_CONTACT_CONFIG}`,
