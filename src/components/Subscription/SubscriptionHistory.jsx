@@ -262,8 +262,8 @@ const SubscriptionHistory = () => {
   if (loading && subscriptions.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader className="w-8 h-8 animate-spin text-blue-600" />
-        <span className="ml-2 text-gray-600">Loading subscription history...</span>
+        <Loader className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-blue-600" />
+        <span className="ml-2 text-sm sm:text-base text-gray-600">Loading subscription history...</span>
       </div>
     );
   }

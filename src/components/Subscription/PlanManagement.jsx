@@ -213,29 +213,30 @@ const PlanManagement = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Plan Management</h2>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold">Plan Management</h2>
         <button
           onClick={() => setIsCreating(true)}
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2"
+          className="bg-green-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-green-600 flex items-center justify-center gap-2 text-sm sm:text-base"
           disabled={loading}
         >
-          <PlusCircle size={16} />
-          Create New Plan
+          <PlusCircle size={14} className="sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Create New Plan</span>
+          <span className="sm:hidden">Create Plan</span>
         </button>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
           <div className="flex">
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <div className="mt-2 text-sm text-red-700">{error}</div>
+              <h3 className="text-xs sm:text-sm font-medium text-red-800">Error</h3>
+              <div className="mt-2 text-xs sm:text-sm text-red-700">{error}</div>
               <div className="mt-4">
                 <button
                   onClick={() => setError(null)}
-                  className="bg-red-100 px-3 py-1 rounded text-sm text-red-800 hover:bg-red-200"
+                  className="bg-red-100 px-3 py-1 rounded text-xs sm:text-sm text-red-800 hover:bg-red-200"
                 >
                   Dismiss
                 </button>
@@ -247,10 +248,10 @@ const PlanManagement = () => {
 
       {/* Create New Plan Modal */}
       {isCreating && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md mx-2 sm:mx-0">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Create New Plan</h2>
+              <h2 className="text-lg sm:text-xl font-bold">Create New Plan</h2>
               <button
                 onClick={() => {
                   setIsCreating(false);
@@ -268,12 +269,12 @@ const PlanManagement = () => {
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Plan Description</label>
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Plan Description</label>
                 <input
                   type="text"
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="e.g., Premium Monthly Plan"
                   value={newPlan.description}
                   onChange={(e) => setNewPlan({ ...newPlan, description: e.target.value })}
@@ -281,9 +282,9 @@ const PlanManagement = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Plan Text</label>
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Plan Text</label>
                 <textarea
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="e.g., Get premium features for one month"
                   value={newPlan.text}
                   onChange={(e) => setNewPlan({ ...newPlan, text: e.target.value })}
@@ -292,11 +293,11 @@ const PlanManagement = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Amount (₹)</label>
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Amount (₹)</label>
                 <input
                   type="number"
                   step="0.01"
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="299.00"
                   value={newPlan.amount}
                   onChange={(e) => setNewPlan({ ...newPlan, amount: parseFloat(e.target.value) || 0 })}
@@ -304,9 +305,9 @@ const PlanManagement = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Subscription Type</label>
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Subscription Type</label>
                 <select
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   value={newPlan.subscription_type}
                   onChange={(e) => handleSubscriptionTypeChange(parseInt(e.target.value))}
                 >
@@ -321,10 +322,10 @@ const PlanManagement = () => {
                 </p>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4">
                 <button
                   onClick={handleCreatePlan}
-                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
+                  className="flex-1 bg-blue-600 text-white py-2 sm:py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 text-sm sm:text-base"
                   disabled={loading}
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
@@ -340,7 +341,7 @@ const PlanManagement = () => {
                       subscription_type: 1
                     });
                   }}
-                  className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 sm:px-6 py-2 sm:py-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm sm:text-base"
                   disabled={loading}
                 >
                   Cancel
@@ -352,11 +353,11 @@ const PlanManagement = () => {
       )}
 
       {/* Plans Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {Array.isArray(plans) && plans.map((plan) => (
-          <div key={plan.subscription_id} className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6">
+          <div key={plan.subscription_id} className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-4 sm:p-6">
             <div className="text-center mb-4">
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">
                 {plan.description || plan.text || 'Unnamed Plan'}
               </h3>
               {isSpecialPlan(plan.subscription_id) && (
@@ -367,8 +368,8 @@ const PlanManagement = () => {
                 </div>
               )}
               <div className="mt-2">
-                <span className="text-3xl font-bold text-gray-900">₹{plan.amount}</span>
-                <span className="text-gray-500 ml-2">
+                <span className="text-2xl sm:text-3xl font-bold text-gray-900">₹{plan.amount}</span>
+                <span className="text-xs sm:text-sm text-gray-500 ml-2">
                   /{isSpecialPlan(plan.subscription_id)
                     ? 'special'
                     : (plan.subscription_type_label ? plan.subscription_type_label.toLowerCase() : getSubscriptionTypeLabel(plan.subscription_type).toLowerCase())
@@ -376,7 +377,7 @@ const PlanManagement = () => {
                 </span>
               </div>
               <div className="mt-2">
-                <span className="text-sm text-gray-600">
+                <span className="text-xs sm:text-sm text-gray-600">
                   Validity: {plan.validity_days || getDefaultValidityDays(plan.subscription_type)} days
                 </span>
               </div>
@@ -611,13 +612,13 @@ const PlanManagement = () => {
       )}
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-sm border">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border">
           <div className="flex items-center">
-            <CreditCard className="w-8 h-8 text-blue-500" />
+            <CreditCard className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-500">Total Plans</p>
-              <p className="text-2xl font-semibold text-gray-900">{Array.isArray(plans) ? plans.length : 0}</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-500">Total Plans</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900">{Array.isArray(plans) ? plans.length : 0}</p>
             </div>
           </div>
         </div>

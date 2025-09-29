@@ -377,37 +377,38 @@ const Content = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-3 sm:p-4 lg:p-6 bg-gray-50 min-h-screen">
       {/* Toast Notifications */}
       {error && (
-        <div className="fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg bg-red-500 text-white transition-all duration-300">
-          <div className="flex items-center gap-2">
-            <AlertCircle size={16} />
+        <div className="fixed top-4 right-4 z-50 px-4 sm:px-6 py-3 rounded-lg shadow-lg bg-red-500 text-white transition-all duration-300">
+          <div className="flex items-center gap-2 text-sm sm:text-base">
+            <AlertCircle size={14} className="sm:w-4 sm:h-4" />
             {error}
           </div>
         </div>
       )}
 
       {success && (
-        <div className="fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg bg-green-500 text-white transition-all duration-300">
-          <div className="flex items-center gap-2">
-            <CheckCircle size={16} />
+        <div className="fixed top-4 right-4 z-50 px-4 sm:px-6 py-3 rounded-lg shadow-lg bg-green-500 text-white transition-all duration-300">
+          <div className="flex items-center gap-2 text-sm sm:text-base">
+            <CheckCircle size={14} className="sm:w-4 sm:h-4" />
             {success}
           </div>
         </div>
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Content Management</h2>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold">Content Management</h2>
         <div className="flex gap-2">
           <button
             onClick={() => fetchTutorials()}
             disabled={loading}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-50"
+            className="px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center gap-2 disabled:opacity-50 text-sm sm:text-base"
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-            Refresh
+            <RefreshCw size={14} className={`sm:w-4 sm:h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Refresh</span>
+            <span className="sm:hidden">Ref</span>
           </button>
         </div>
       </div>
@@ -415,31 +416,32 @@ const Content = () => {
 
       {/* Tutorial Management */}
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="p-6 border-b">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold flex items-center gap-2">
+        <div className="p-4 sm:p-6 border-b">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4 mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
               🎥 Tutorials
             </h3>
             <button
               onClick={() => setShowTutorialModal(true)}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center gap-2"
+              className="px-3 sm:px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-              <Plus size={16} />
-              Create Tutorial
+              <Plus size={14} className="sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Create Tutorial</span>
+              <span className="sm:hidden">Create</span>
             </button>
           </div>
 
           {/* Tutorial Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
             {/* Search */}
-            <div className="relative">
+            <div className="relative lg:col-span-2">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search tutorials..."
                 value={tutorialFilters.search}
                 onChange={(e) => handleTutorialFilterChange('search', e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
               />
             </div>
 
@@ -447,7 +449,7 @@ const Content = () => {
             <select
               value={tutorialFilters.language}
               onChange={(e) => handleTutorialFilterChange('language', e.target.value)}
-              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             >
               <option value="all">All Languages</option>
               <option value="hindi">Hindi</option>
@@ -459,7 +461,7 @@ const Content = () => {
             <select
               value={tutorialFilters.category}
               onChange={(e) => handleTutorialFilterChange('category', e.target.value)}
-              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             >
               <option value="all">All Categories</option>
               <option value="getting_started">Getting Started</option>
@@ -472,7 +474,7 @@ const Content = () => {
             <select
               value={tutorialFilters.difficulty_level}
               onChange={(e) => handleTutorialFilterChange('difficulty_level', e.target.value)}
-              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             >
               <option value="all">All Levels</option>
               <option value="beginner">Beginner</option>
@@ -484,7 +486,7 @@ const Content = () => {
             <select
               value={tutorialFilters.is_featured}
               onChange={(e) => handleTutorialFilterChange('is_featured', e.target.value)}
-              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             >
               <option value="all">All</option>
               <option value="true">Featured</option>
@@ -494,9 +496,10 @@ const Content = () => {
             {/* Clear Filters */}
             <button
               onClick={clearTutorialFilters}
-              className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
+              className="px-3 sm:px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm sm:text-base"
             >
-              Clear Filters
+              <span className="hidden sm:inline">Clear Filters</span>
+              <span className="sm:hidden">Clear</span>
             </button>
           </div>
         </div>
@@ -504,113 +507,193 @@ const Content = () => {
         {/* Tutorials Table */}
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <span className="ml-2 text-gray-600">Loading tutorials...</span>
+            <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <span className="ml-2 text-sm sm:text-base text-gray-600">Loading tutorials...</span>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Tutorial</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Language</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Category</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Difficulty</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Duration</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Views</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Created</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {tutorials.map((tutorial) => (
-                  <tr key={tutorial.tutorial_id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        {tutorial.thumbnail_url ? (
-                          <div className="relative w-16 h-12 rounded overflow-hidden">
-                            {loadingImages.has(tutorial.thumbnail_url) && (
-                              <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                              </div>
-                            )}
-                            <img
-                              src={tutorial.thumbnail_url}
-                              alt="tutorial"
-                              className="w-16 h-12 rounded object-cover"
-                              onLoadStart={() => handleImageLoadStart(tutorial.thumbnail_url)}
-                              onLoad={() => handleImageLoad(tutorial.thumbnail_url)}
-                              onError={(e) => handleImageError(e, tutorial.thumbnail_url)}
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-16 h-12 bg-gray-200 rounded flex items-center justify-center">
-                            <Play size={20} className="text-gray-400" />
-                          </div>
-                        )}
-                        <div>
-                          <div className="font-medium text-gray-900 flex items-center gap-2">
-                            {tutorial.tutorial_title}
-                            {tutorial.is_featured && <Star size={16} className="text-yellow-500" />}
-                          </div>
-                          {tutorial.tutorial_description && (
-                            <div className="text-sm text-gray-500 truncate max-w-xs">
-                              {tutorial.tutorial_description}
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Tutorial</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Language</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Category</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Difficulty</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Duration</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Views</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Created</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {tutorials.map((tutorial) => (
+                    <tr key={tutorial.tutorial_id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          {tutorial.thumbnail_url ? (
+                            <div className="relative w-16 h-12 rounded overflow-hidden">
+                              {loadingImages.has(tutorial.thumbnail_url) && (
+                                <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
+                                  <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                                </div>
+                              )}
+                              <img
+                                src={tutorial.thumbnail_url}
+                                alt="tutorial"
+                                className="w-16 h-12 rounded object-cover"
+                                onLoadStart={() => handleImageLoadStart(tutorial.thumbnail_url)}
+                                onLoad={() => handleImageLoad(tutorial.thumbnail_url)}
+                                onError={(e) => handleImageError(e, tutorial.thumbnail_url)}
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-16 h-12 bg-gray-200 rounded flex items-center justify-center">
+                              <Play size={20} className="text-gray-400" />
                             </div>
                           )}
+                          <div>
+                            <div className="font-medium text-gray-900 flex items-center gap-2">
+                              {tutorial.tutorial_title}
+                              {tutorial.is_featured && <Star size={16} className="text-yellow-500" />}
+                            </div>
+                            {tutorial.tutorial_description && (
+                              <div className="text-sm text-gray-500 truncate max-w-xs">
+                                {tutorial.tutorial_description}
+                              </div>
+                            )}
+                          </div>
                         </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {renderLanguageBadge(tutorial.language)}
+                      </td>
+                      <td className="px-4 py-3">
+                        {renderTutorialCategoryBadge(tutorial.category)}
+                      </td>
+                      <td className="px-4 py-3">
+                        {renderDifficultyBadge(tutorial.difficulty_level)}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {tutorial.duration_minutes ? `${tutorial.duration_minutes}m` : 'N/A'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {tutorial.view_count || 0}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500">
+                        {formatTimeAgo(tutorial.created_at)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleViewAnalytics(tutorial.tutorial_id)}
+                            className="text-blue-600 hover:text-blue-900"
+                            title="View Analytics"
+                          >
+                            <BarChart3 size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTutorial(tutorial.tutorial_id)}
+                            className="text-red-600 hover:text-red-900"
+                            title="Delete Tutorial"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="lg:hidden">
+              {tutorials.map((tutorial) => (
+                <div key={tutorial.tutorial_id} className="border-b border-gray-200 p-4 sm:p-6 hover:bg-gray-50">
+                  <div className="space-y-3">
+                    {/* Header with thumbnail and title */}
+                    <div className="flex items-start gap-3">
+                      {tutorial.thumbnail_url ? (
+                        <div className="relative w-16 h-12 rounded overflow-hidden flex-shrink-0">
+                          {loadingImages.has(tutorial.thumbnail_url) && (
+                            <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
+                              <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                          )}
+                          <img
+                            src={tutorial.thumbnail_url}
+                            alt="tutorial"
+                            className="w-16 h-12 rounded object-cover"
+                            onLoadStart={() => handleImageLoadStart(tutorial.thumbnail_url)}
+                            onLoad={() => handleImageLoad(tutorial.thumbnail_url)}
+                            onError={(e) => handleImageError(e, tutorial.thumbnail_url)}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-16 h-12 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
+                          <Play size={20} className="text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-gray-900 flex items-center gap-2">
+                          <span className="truncate">{tutorial.tutorial_title}</span>
+                          {tutorial.is_featured && <Star size={16} className="text-yellow-500 flex-shrink-0" />}
+                        </div>
+                        {tutorial.tutorial_description && (
+                          <div className="text-sm text-gray-500 mt-1 line-clamp-2">
+                            {tutorial.tutorial_description}
+                          </div>
+                        )}
                       </div>
-                    </td>
-                    <td className="px-4 py-3">
+                    </div>
+
+                    {/* Badges */}
+                    <div className="flex flex-wrap gap-2">
                       {renderLanguageBadge(tutorial.language)}
-                    </td>
-                    <td className="px-4 py-3">
                       {renderTutorialCategoryBadge(tutorial.category)}
-                    </td>
-                    <td className="px-4 py-3">
                       {renderDifficultyBadge(tutorial.difficulty_level)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {tutorial.duration_minutes ? `${tutorial.duration_minutes}m` : 'N/A'}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {tutorial.view_count || 0}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
-                      {formatTimeAgo(tutorial.created_at)}
-                    </td>
-                    <td className="px-4 py-3">
+                    </div>
+
+                    {/* Stats and actions */}
+                    <div className="flex items-center justify-between pt-2">
+                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <span>Duration: {tutorial.duration_minutes ? `${tutorial.duration_minutes}m` : 'N/A'}</span>
+                        <span>Views: {tutorial.view_count || 0}</span>
+                        <span>Created: {formatTimeAgo(tutorial.created_at)}</span>
+                      </div>
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleViewAnalytics(tutorial.tutorial_id)}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-blue-600 hover:text-blue-900 p-1"
                           title="View Analytics"
                         >
                           <BarChart3 size={16} />
                         </button>
                         <button
                           onClick={() => handleDeleteTutorial(tutorial.tutorial_id)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 p-1"
                           title="Delete Tutorial"
                         >
                           <Trash2 size={16} />
                         </button>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {tutorials.length === 0 && !loading && (
           <div className="text-center py-8">
-            <div className="w-12 h-12 text-gray-400 mx-auto mb-4">
-              <Play size={48} />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-4">
+              <Play size={40} className="sm:w-12 sm:h-12" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No tutorials found</h3>
-            <p className="text-gray-500">Create your first tutorial to get started.</p>
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No tutorials found</h3>
+            <p className="text-sm text-gray-500">Create your first tutorial to get started.</p>
           </div>
         )}
       </div>
@@ -618,15 +701,15 @@ const Content = () => {
 
       {/* Create Tutorial Modal */}
       {showTutorialModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Create New Tutorial</h3>
+              <h3 className="text-lg sm:text-xl font-semibold">Create New Tutorial</h3>
               <button
                 onClick={() => setShowTutorialModal(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <X size={24} />
+                <X size={20} className="sm:w-6 sm:h-6" />
               </button>
             </div>
 
@@ -640,7 +723,7 @@ const Content = () => {
                   type="text"
                   value={tutorialData.tutorial_title}
                   onChange={(e) => setTutorialData({ ...tutorialData, tutorial_title: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="Enter tutorial title"
                 />
               </div>
@@ -653,7 +736,7 @@ const Content = () => {
                 <textarea
                   value={tutorialData.tutorial_description}
                   onChange={(e) => setTutorialData({ ...tutorialData, tutorial_description: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   rows="3"
                   placeholder="Enter tutorial description"
                 />
@@ -668,7 +751,7 @@ const Content = () => {
                   type="url"
                   value={tutorialData.video_url}
                   onChange={(e) => setTutorialData({ ...tutorialData, video_url: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="https://youtube.com/watch?v=tutorial-id"
                 />
               </div>
@@ -682,12 +765,12 @@ const Content = () => {
                   type="url"
                   value={tutorialData.thumbnail_url}
                   onChange={(e) => setTutorialData({ ...tutorialData, thumbnail_url: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="https://example.com/thumbnail.jpg"
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Language */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -696,7 +779,7 @@ const Content = () => {
                   <select
                     value={tutorialData.language}
                     onChange={(e) => setTutorialData({ ...tutorialData, language: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   >
                     <option value="hindi">Hindi</option>
                     <option value="marathi">Marathi</option>
@@ -712,7 +795,7 @@ const Content = () => {
                   <select
                     value={tutorialData.category}
                     onChange={(e) => setTutorialData({ ...tutorialData, category: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   >
                     <option value="getting_started">Getting Started</option>
                     <option value="advanced_features">Advanced Features</option>
@@ -722,7 +805,7 @@ const Content = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Difficulty Level */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -731,7 +814,7 @@ const Content = () => {
                   <select
                     value={tutorialData.difficulty_level}
                     onChange={(e) => setTutorialData({ ...tutorialData, difficulty_level: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   >
                     <option value="beginner">Beginner</option>
                     <option value="intermediate">Intermediate</option>
@@ -750,13 +833,13 @@ const Content = () => {
                     max="300"
                     value={tutorialData.duration_minutes}
                     onChange={(e) => setTutorialData({ ...tutorialData, duration_minutes: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                     placeholder="5"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Sort Order */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -767,7 +850,7 @@ const Content = () => {
                     min="0"
                     value={tutorialData.sort_order}
                     onChange={(e) => setTutorialData({ ...tutorialData, sort_order: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                     placeholder="0"
                   />
                 </div>
@@ -788,17 +871,17 @@ const Content = () => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowTutorialModal(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateTutorial}
                 disabled={loading || !tutorialData.tutorial_title || !tutorialData.video_url}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 text-sm sm:text-base"
               >
                 {loading ? 'Creating...' : 'Create Tutorial'}
               </button>
@@ -809,24 +892,24 @@ const Content = () => {
 
       {/* Tutorial Analytics Modal */}
       {showAnalyticsModal && selectedTutorial && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Tutorial Analytics</h3>
+              <h3 className="text-lg sm:text-xl font-semibold">Tutorial Analytics</h3>
               <button
                 onClick={() => setShowAnalyticsModal(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <X size={24} />
+                <X size={20} className="sm:w-6 sm:h-6" />
               </button>
             </div>
 
             {selectedTutorial.tutorial && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Tutorial Info */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="text-lg font-medium mb-2">{selectedTutorial.tutorial.tutorial_title}</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <h4 className="text-base sm:text-lg font-medium mb-2">{selectedTutorial.tutorial.tutorial_title}</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm">
                     <div>
                       <span className="text-gray-500">Language:</span>
                       <div className="font-medium">{renderLanguageBadge(selectedTutorial.tutorial.language)}</div>
@@ -848,40 +931,40 @@ const Content = () => {
 
                 {/* Analytics Stats */}
                 {selectedTutorial.analytics && (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-blue-50 p-4 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-blue-600">{selectedTutorial.analytics.total_views}</div>
-                      <div className="text-sm text-gray-600">Total Views</div>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div className="bg-blue-50 p-3 sm:p-4 rounded-lg text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-blue-600">{selectedTutorial.analytics.total_views}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Total Views</div>
                     </div>
-                    <div className="bg-green-50 p-4 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-green-600">{selectedTutorial.analytics.unique_viewers}</div>
-                      <div className="text-sm text-gray-600">Unique Viewers</div>
+                    <div className="bg-green-50 p-3 sm:p-4 rounded-lg text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-green-600">{selectedTutorial.analytics.unique_viewers}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Unique Viewers</div>
                     </div>
-                    <div className="bg-purple-50 p-4 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-purple-600">{selectedTutorial.analytics.authenticated_views}</div>
-                      <div className="text-sm text-gray-600">Authenticated Views</div>
+                    <div className="bg-purple-50 p-3 sm:p-4 rounded-lg text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-purple-600">{selectedTutorial.analytics.authenticated_views}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Authenticated Views</div>
                     </div>
-                    <div className="bg-orange-50 p-4 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-orange-600">{selectedTutorial.analytics.anonymous_views}</div>
-                      <div className="text-sm text-gray-600">Anonymous Views</div>
+                    <div className="bg-orange-50 p-3 sm:p-4 rounded-lg text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-orange-600">{selectedTutorial.analytics.anonymous_views}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Anonymous Views</div>
                     </div>
                   </div>
                 )}
 
                 {/* Device Analytics */}
                 {selectedTutorial.analytics && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-gray-50 p-4 rounded-lg text-center">
-                      <div className="text-xl font-bold text-gray-800">{selectedTutorial.analytics.mobile_views}</div>
-                      <div className="text-sm text-gray-600">Mobile Views</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg text-center">
+                      <div className="text-lg sm:text-xl font-bold text-gray-800">{selectedTutorial.analytics.mobile_views}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Mobile Views</div>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg text-center">
-                      <div className="text-xl font-bold text-gray-800">{selectedTutorial.analytics.desktop_views}</div>
-                      <div className="text-sm text-gray-600">Desktop Views</div>
+                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg text-center">
+                      <div className="text-lg sm:text-xl font-bold text-gray-800">{selectedTutorial.analytics.desktop_views}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Desktop Views</div>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg text-center">
-                      <div className="text-xl font-bold text-gray-800">{selectedTutorial.analytics.tablet_views}</div>
-                      <div className="text-sm text-gray-600">Tablet Views</div>
+                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg text-center">
+                      <div className="text-lg sm:text-xl font-bold text-gray-800">{selectedTutorial.analytics.tablet_views}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Tablet Views</div>
                     </div>
                   </div>
                 )}
@@ -889,15 +972,15 @@ const Content = () => {
                 {/* Recent Views */}
                 {selectedTutorial.recent_views && selectedTutorial.recent_views.length > 0 && (
                   <div>
-                    <h4 className="text-lg font-medium mb-3">Recent Views</h4>
+                    <h4 className="text-base sm:text-lg font-medium mb-3">Recent Views</h4>
                     <div className="space-y-2">
                       {selectedTutorial.recent_views.map((view, index) => (
-                        <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <div key={index} className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded-lg gap-2 sm:gap-0">
                           <div>
-                            <div className="font-medium">{view.user_name || 'Anonymous User'}</div>
-                            <div className="text-sm text-gray-500">{view.device_type}</div>
+                            <div className="font-medium text-sm sm:text-base">{view.user_name || 'Anonymous User'}</div>
+                            <div className="text-xs sm:text-sm text-gray-500">{view.device_type}</div>
                           </div>
-                          <div className="text-sm text-gray-500">{formatTimeAgo(view.viewed_at)}</div>
+                          <div className="text-xs sm:text-sm text-gray-500">{formatTimeAgo(view.viewed_at)}</div>
                         </div>
                       ))}
                     </div>

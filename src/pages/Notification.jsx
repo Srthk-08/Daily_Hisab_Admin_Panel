@@ -368,84 +368,86 @@ export default function Notification() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 bg-gray-50 min-h-screen">
       {/* Toast Notifications */}
       {error && (
-        <div className="fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg bg-red-500 text-white transition-all duration-300">
-          <div className="flex items-center gap-2">
-            <AlertCircle size={16} />
+        <div className="fixed top-4 right-4 z-50 px-4 sm:px-6 py-3 rounded-lg shadow-lg bg-red-500 text-white transition-all duration-300">
+          <div className="flex items-center gap-2 text-sm sm:text-base">
+            <AlertCircle size={14} className="sm:w-4 sm:h-4" />
             {error}
           </div>
         </div>
       )}
 
       {success && (
-        <div className="fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg bg-green-500 text-white transition-all duration-300">
-          <div className="flex items-center gap-2">
-            <CheckCircle size={16} />
+        <div className="fixed top-4 right-4 z-50 px-4 sm:px-6 py-3 rounded-lg shadow-lg bg-green-500 text-white transition-all duration-300">
+          <div className="flex items-center gap-2 text-sm sm:text-base">
+            <CheckCircle size={14} className="sm:w-4 sm:h-4" />
             {success}
           </div>
         </div>
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Bell className="w-6 h-6 text-blue-500" />
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+        <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+          <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
           Notification Management
         </h1>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <button
             onClick={() => fetchCampaigns()}
             disabled={loading}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-50"
+            className="px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center gap-2 disabled:opacity-50 text-sm sm:text-base"
           >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-            Refresh
+            <RefreshCw size={14} className={`sm:w-4 sm:h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Refresh</span>
+            <span className="sm:hidden">Ref</span>
           </button>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center gap-2"
+            className="px-3 sm:px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center gap-2 text-sm sm:text-base"
           >
-            <Plus size={16} />
-            Create Campaign
+            <Plus size={14} className="sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Create Campaign</span>
+            <span className="sm:hidden">Create</span>
           </button>
         </div>
       </div>
 
       {/* Statistics Cards */}
       {performanceStats.overall_stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-blue-600">{performanceStats.overall_stats.total_sent || 0}</div>
-            <div className="text-sm text-gray-600">Total Sent</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-xl sm:text-2xl font-bold text-blue-600">{performanceStats.overall_stats.total_sent || 0}</div>
+            <div className="text-xs sm:text-sm text-gray-600">Total Sent</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-green-600">{performanceStats.overall_stats.overall_delivery_rate || 0}%</div>
-            <div className="text-sm text-gray-600">Delivery Rate</div>
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-xl sm:text-2xl font-bold text-green-600">{performanceStats.overall_stats.overall_delivery_rate || 0}%</div>
+            <div className="text-xs sm:text-sm text-gray-600">Delivery Rate</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-orange-600">{performanceStats.overall_stats.overall_open_rate || 0}%</div>
-            <div className="text-sm text-gray-600">Open Rate</div>
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-xl sm:text-2xl font-bold text-orange-600">{performanceStats.overall_stats.overall_open_rate || 0}%</div>
+            <div className="text-xs sm:text-sm text-gray-600">Open Rate</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-purple-600">{performanceStats.overall_stats.overall_click_rate || 0}%</div>
-            <div className="text-sm text-gray-600">Click Rate</div>
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow">
+            <div className="text-xl sm:text-2xl font-bold text-purple-600">{performanceStats.overall_stats.overall_click_rate || 0}%</div>
+            <div className="text-xs sm:text-sm text-gray-600">Click Rate</div>
           </div>
         </div>
       )}
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
           {/* Search */}
-          <div className="relative">
+          <div className="relative lg:col-span-2">
             <input
               type="text"
               placeholder="Search campaigns..."
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             />
           </div>
 
@@ -453,7 +455,7 @@ export default function Notification() {
           <select
             value={filters.status}
             onChange={(e) => handleFilterChange('status', e.target.value)}
-            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           >
             <option value="all">All Status</option>
             <option value="draft">Draft</option>
@@ -466,7 +468,7 @@ export default function Notification() {
           <select
             value={filters.notification_type}
             onChange={(e) => handleFilterChange('notification_type', e.target.value)}
-            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           >
             <option value="all">All Types</option>
             <option value="reminder">Reminder</option>
@@ -476,11 +478,22 @@ export default function Notification() {
             <option value="template">Template</option>
           </select>
 
-          {/* Target Audience Filter */}
+          {/* Clear Filters */}
+          <button
+            onClick={clearFilters}
+            className="px-3 sm:px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm sm:text-base"
+          >
+            <span className="hidden sm:inline">Clear Filters</span>
+            <span className="sm:hidden">Clear</span>
+          </button>
+        </div>
+
+        {/* Target Audience Filter - Separate Row */}
+        <div className="mt-3 sm:mt-4">
           <select
             value={filters.target_audience}
             onChange={(e) => handleFilterChange('target_audience', e.target.value)}
-            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           >
             <option value="all">All Audiences</option>
             <option value="all_users">All Users</option>
@@ -489,14 +502,6 @@ export default function Notification() {
             <option value="free_users">Free Users</option>
             <option value="inactive_users">Inactive Users</option>
           </select>
-
-          {/* Clear Filters */}
-          <button
-            onClick={clearFilters}
-            className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
-          >
-            Clear Filters
-          </button>
         </div>
       </div>
 
@@ -504,127 +509,177 @@ export default function Notification() {
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <span className="ml-2 text-gray-600">Loading campaigns...</span>
+            <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <span className="ml-2 text-sm sm:text-base text-gray-600">Loading campaigns...</span>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Campaign</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Type</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Target</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Recipients</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Created</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {campaigns.map((campaign) => (
-                  <tr key={campaign.campaign_id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">
-                      <div>
-                        <div className="font-medium text-gray-900">{campaign.title}</div>
-                        <div className="text-sm text-gray-500 truncate max-w-xs" title={campaign.message}>
-                          {campaign.message}
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Campaign</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Type</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Target</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Recipients</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Created</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {campaigns.map((campaign) => (
+                    <tr key={campaign.campaign_id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        <div>
+                          <div className="font-medium text-gray-900">{campaign.title}</div>
+                          <div className="text-sm text-gray-500 truncate max-w-xs" title={campaign.message}>
+                            {campaign.message}
+                          </div>
                         </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {renderNotificationTypeBadge(campaign.notification_type)}
+                      </td>
+                      <td className="px-4 py-3">
+                        {renderTargetAudienceBadge(campaign.target_audience)}
+                      </td>
+                      <td className="px-4 py-3">
+                        {renderStatusBadge(campaign.status)}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {campaign.total_recipients || 0}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500">
+                        {formatTimeAgo(campaign.createtime)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-2">
+                          {campaign.status === 'draft' && (
+                            <button
+                              onClick={() => handleSendCampaign(campaign.campaign_id)}
+                              className="px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium transition-colors"
+                            >
+                              Send
+                            </button>
+                          )}
+                          <button
+                            onClick={() => fetchPerformanceStats()}
+                            className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-medium transition-colors"
+                          >
+                            <Eye size={12} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+              {campaigns.map((campaign) => (
+                <div key={campaign.campaign_id} className="border-b border-gray-200 p-3 sm:p-4 hover:bg-gray-50">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-sm font-medium text-gray-900 truncate">{campaign.title}</h3>
+                        <p className="text-xs text-gray-500 mt-1" title={campaign.message}>
+                          {campaign.message.length > 50 ? `${campaign.message.substring(0, 50)}...` : campaign.message}
+                        </p>
                       </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      {renderNotificationTypeBadge(campaign.notification_type)}
-                    </td>
-                    <td className="px-4 py-3">
-                      {renderTargetAudienceBadge(campaign.target_audience)}
-                    </td>
-                    <td className="px-4 py-3">
-                      {renderStatusBadge(campaign.status)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {campaign.total_recipients || 0}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
-                      {formatTimeAgo(campaign.createtime)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2">
+                      <div className="flex space-x-1 ml-2">
                         {campaign.status === 'draft' && (
                           <button
                             onClick={() => handleSendCampaign(campaign.campaign_id)}
-                            className="px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium transition-colors"
+                            className="px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium"
                           >
                             Send
                           </button>
                         )}
                         <button
                           onClick={() => fetchPerformanceStats()}
-                          className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-medium transition-colors"
+                          className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
                         >
                           <Eye size={12} />
                         </button>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <div>{renderNotificationTypeBadge(campaign.notification_type)}</div>
+                      <div>{renderTargetAudienceBadge(campaign.target_audience)}</div>
+                      <div className="hidden sm:block">{renderStatusBadge(campaign.status)}</div>
+                    </div>
+
+                    <div className="flex flex-wrap justify-between text-xs text-gray-500">
+                      <span>Recipients: {campaign.total_recipients || 0}</span>
+                      <span>{formatTimeAgo(campaign.createtime)}</span>
+                      <span className="block sm:hidden">{renderStatusBadge(campaign.status)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {campaigns.length === 0 && !loading && (
           <div className="text-center py-8">
-            <div className="w-12 h-12 text-gray-400 mx-auto mb-4">
-              <Bell size={48} />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-4">
+              <Bell size={40} className="sm:w-12 sm:h-12" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No campaigns found</h3>
-            <p className="text-gray-500">Create your first notification campaign to get started.</p>
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No campaigns found</h3>
+            <p className="text-sm text-gray-500">Create your first notification campaign to get started.</p>
           </div>
         )}
       </div>
 
       {/* Smart Triggers Section */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Zap className="w-5 h-5 text-purple-500" />
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4 mb-4">
+          <h2 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
             Smart Triggers & Auto Actions
           </h2>
           <button
             onClick={handleRunSmartTriggers}
             disabled={loading}
-            className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-50"
+            className="px-3 sm:px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg flex items-center justify-center gap-2 disabled:opacity-50 text-sm sm:text-base"
           >
-            <Play size={16} />
-            Run Triggers
+            <Play size={14} className="sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Run Triggers</span>
+            <span className="sm:hidden">Run</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-4 bg-blue-50 rounded-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <div className="p-3 sm:p-4 bg-blue-50 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <Pause className="w-5 h-5 text-blue-600" />
-              <span className="font-medium">Inactive Users</span>
+              <Pause className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+              <span className="font-medium text-sm sm:text-base">Inactive Users</span>
             </div>
-            <p className="text-sm text-gray-600">Send reminders to users inactive for 3+ days</p>
+            <p className="text-xs sm:text-sm text-gray-600">Send reminders to users inactive for 3+ days</p>
             <div className="text-xs text-gray-500 mt-1">Daily at 10:00 AM</div>
           </div>
 
-          <div className="p-4 bg-green-50 rounded-lg">
+          <div className="p-3 sm:p-4 bg-green-50 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <Heart className="w-5 h-5 text-green-600" />
-              <span className="font-medium">Festival Greetings</span>
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+              <span className="font-medium text-sm sm:text-base">Festival Greetings</span>
             </div>
-            <p className="text-sm text-gray-600">Send greetings on special occasions</p>
+            <p className="text-xs sm:text-sm text-gray-600">Send greetings on special occasions</p>
             <div className="text-xs text-gray-500 mt-1">Daily at 9:00 AM</div>
           </div>
 
-          <div className="p-4 bg-red-50 rounded-lg">
+          <div className="p-3 sm:p-4 bg-red-50 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <AlertCircle className="w-5 h-5 text-red-600" />
-              <span className="font-medium">Failed Payments</span>
+              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
+              <span className="font-medium text-sm sm:text-base">Failed Payments</span>
             </div>
-            <p className="text-sm text-gray-600">Retry failed payments and notify users</p>
+            <p className="text-xs sm:text-sm text-gray-600">Retry failed payments and notify users</p>
             <div className="text-xs text-gray-500 mt-1">Hourly checks</div>
           </div>
         </div>
@@ -632,19 +687,35 @@ export default function Notification() {
 
       {/* Performance Analytics */}
       {performanceStats.daily_stats && performanceStats.daily_stats.length > 0 && (
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
-            <BarChart3 className="w-5 h-5 text-green-500" />
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+          <h2 className="text-base sm:text-lg font-semibold flex items-center gap-2 mb-4">
+            <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
             Performance Analytics
           </h2>
-          <div className="h-64">
+          <div className="h-48 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={performanceStats.daily_stats}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
+                <XAxis
+                  dataKey="date"
+                  fontSize={12}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis
+                  fontSize={12}
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    fontSize: '12px',
+                    padding: '8px',
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb'
+                  }}
+                />
+                <Legend
+                  wrapperStyle={{ fontSize: '12px' }}
+                />
                 <Bar dataKey="total_sent" fill="#3b82f6" name="Sent" />
                 <Bar dataKey="total_delivered" fill="#10b981" name="Delivered" />
                 <Bar dataKey="total_opened" fill="#f59e0b" name="Opened" />
@@ -657,29 +728,29 @@ export default function Notification() {
 
       {/* Create Campaign Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto mx-2 sm:mx-0">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Create Notification Campaign</h3>
+              <h3 className="text-base sm:text-lg font-semibold">Create Notification Campaign</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="text-gray-400 hover:text-gray-600"
               >
-                <X size={20} />
+                <X size={18} className="sm:w-5 sm:h-5" />
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   Campaign Title *
                 </label>
                 <input
                   type="text"
                   value={campaignData.title}
                   onChange={(e) => setCampaignData(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-2 sm:px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="Enter campaign title"
                   required
                 />
@@ -687,29 +758,29 @@ export default function Notification() {
 
               {/* Message */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   Message *
                 </label>
                 <textarea
                   value={campaignData.message}
                   onChange={(e) => setCampaignData(prev => ({ ...prev, message: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-2 sm:px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   rows={3}
                   placeholder="Enter notification message"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {/* Notification Type */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                     Notification Type *
                   </label>
                   <select
                     value={campaignData.notification_type}
                     onChange={(e) => setCampaignData(prev => ({ ...prev, notification_type: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-2 sm:px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                     required
                   >
                     <option value="message">Message</option>
@@ -722,13 +793,13 @@ export default function Notification() {
 
                 {/* Target Audience */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                     Target Audience *
                   </label>
                   <select
                     value={campaignData.target_audience}
                     onChange={(e) => setCampaignData(prev => ({ ...prev, target_audience: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-2 sm:px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                     required
                   >
                     <option value="all_users">All Users</option>
@@ -740,7 +811,7 @@ export default function Notification() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {/* Image URL */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -811,17 +882,17 @@ export default function Notification() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4 sm:mt-6">
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateCampaign}
                 disabled={loading || !campaignData.title || !campaignData.message}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                className="px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 text-sm sm:text-base"
               >
                 {loading ? 'Creating...' : 'Create Campaign'}
               </button>
@@ -832,33 +903,33 @@ export default function Notification() {
 
       {/* Templates Modal */}
       {showTemplatesModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 max-w-4xl w-full max-h-[90vh] sm:max-h-[80vh] overflow-y-auto mx-2 sm:mx-0">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Select Template</h3>
+              <h3 className="text-base sm:text-lg font-semibold">Select Template</h3>
               <button
                 onClick={() => setShowTemplatesModal(false)}
                 className="text-gray-400 hover:text-gray-600"
               >
-                <X size={20} />
+                <X size={18} className="sm:w-5 sm:h-5" />
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {templates.map((template) => (
                 <div
                   key={template.template_id}
                   onClick={() => handleTemplateSelect(template)}
-                  className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                  className="p-3 sm:p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     {renderNotificationTypeBadge(template.template_type)}
-                    <span className="font-medium">{template.template_name}</span>
+                    <span className="font-medium text-sm sm:text-base">{template.template_name}</span>
                   </div>
-                  <div className="text-sm text-gray-600 mb-2">
+                  <div className="text-xs sm:text-sm text-gray-600 mb-2">
                     <strong>Title:</strong> {template.title_template}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-xs sm:text-sm text-gray-600">
                     <strong>Message:</strong> {template.message_template}
                   </div>
                 </div>

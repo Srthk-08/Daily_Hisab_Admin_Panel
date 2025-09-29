@@ -342,10 +342,10 @@ const TandCManager = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <div className="max-w-6xl mx-auto p-3 sm:p-4 lg:p-6 bg-white rounded-lg shadow-md">
         <div className="flex items-center justify-center h-64">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <span className="ml-2 text-gray-600">Loading policies...</span>
+          <div className="w-6 h-6 sm:w-8 sm:h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <span className="ml-2 text-sm sm:text-base text-gray-600">Loading policies...</span>
         </div>
       </div>
     );
@@ -353,14 +353,14 @@ const TandCManager = () => {
 
   if (error) {
     return (
-      <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <div className="max-w-6xl mx-auto p-3 sm:p-4 lg:p-6 bg-white rounded-lg shadow-md">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <p className="text-red-600 mb-4">{error}</p>
+            <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-red-500 mx-auto mb-4" />
+            <p className="text-sm sm:text-base text-red-600 mb-4">{error}</p>
             <button
               onClick={fetchPolicies}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
             >
               Try Again
             </button>
@@ -371,73 +371,79 @@ const TandCManager = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <div className="mb-8">
-        <div className="flex justify-between items-center">
+    <div className="max-w-6xl mx-auto p-3 sm:p-4 lg:p-6 bg-white rounded-lg shadow-md">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Policy Management</h1>
-            <p className="text-gray-600">Update your website's policies and terms</p>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Policy Management</h1>
+            <p className="text-sm sm:text-base text-gray-600">Update your website's policies and terms</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={handleViewVersionHistory}
-              className="flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="flex items-center justify-center px-3 sm:px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
             >
-              <History size={18} className="mr-2" />
-              Version History
+              <History size={16} className="mr-2" />
+              <span className="hidden sm:inline">Version History</span>
+              <span className="sm:hidden">History</span>
             </button>
             <button
               onClick={() => setShowVersionModal(true)}
-              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="flex items-center justify-center px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base"
             >
-              <Save size={18} className="mr-2" />
-              Create Version
+              <Save size={16} className="mr-2" />
+              <span className="hidden sm:inline">Create Version</span>
+              <span className="sm:hidden">Create</span>
             </button>
           </div>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex border-b mb-6 overflow-x-scroll md:overflow-x-auto">
+      <div className="flex border-b mb-4 sm:mb-6 overflow-x-scroll md:overflow-x-auto">
         <button
-          className={`flex items-center px-4 py-3 font-medium border-b-2 transition-colors ${activeTab === 'terms'
+          className={`flex items-center px-2 sm:px-4 py-2 sm:py-3 font-medium border-b-2 transition-colors text-xs sm:text-sm ${activeTab === 'terms'
             ? 'border-blue-500 text-blue-600'
             : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           onClick={() => handleTabChange('terms')}
         >
-          <FileText size={18} className="mr-2" />
-          Terms & Conditions
+          <FileText size={16} className="mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">Terms & Conditions</span>
+          <span className="sm:hidden">Terms</span>
         </button>
         <button
-          className={`flex items-center px-4 py-3 font-medium border-b-2 transition-colors ${activeTab === 'privacy'
+          className={`flex items-center px-2 sm:px-4 py-2 sm:py-3 font-medium border-b-2 transition-colors text-xs sm:text-sm ${activeTab === 'privacy'
             ? 'border-blue-500 text-blue-600'
             : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           onClick={() => handleTabChange('privacy')}
         >
-          <Shield size={18} className="mr-2" />
-          Privacy Policy
+          <Shield size={16} className="mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">Privacy Policy</span>
+          <span className="sm:hidden">Privacy</span>
         </button>
         <button
-          className={`flex items-center px-4 py-3 font-medium border-b-2 transition-colors ${activeTab === 'about'
+          className={`flex items-center px-2 sm:px-4 py-2 sm:py-3 font-medium border-b-2 transition-colors text-xs sm:text-sm ${activeTab === 'about'
             ? 'border-blue-500 text-blue-600'
             : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           onClick={() => handleTabChange('about')}
         >
-          <ReceiptText size={18} className="mr-2" />
-          About Us
+          <ReceiptText size={16} className="mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">About Us</span>
+          <span className="sm:hidden">About</span>
         </button>
         <button
-          className={`flex items-center px-4 py-3 font-medium border-b-2 transition-colors ${activeTab === 'faq'
+          className={`flex items-center px-2 sm:px-4 py-2 sm:py-3 font-medium border-b-2 transition-colors text-xs sm:text-sm ${activeTab === 'faq'
             ? 'border-blue-500 text-blue-600'
             : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           onClick={() => handleTabChange('faq')}
         >
-          <HelpCircle size={18} className="mr-2" />
-          FAQ Management
+          <HelpCircle size={16} className="mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">FAQ Management</span>
+          <span className="sm:hidden">FAQ</span>
         </button>
       </div>
 
@@ -511,9 +517,9 @@ const TandCManager = () => {
 
       {/* Version Creation Modal */}
       {showVersionModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Create Policy Version</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">Create Policy Version</h3>
 
             <div className="space-y-4">
               <div>
@@ -522,7 +528,7 @@ const TandCManager = () => {
                   type="text"
                   value={versionData.version_number}
                   onChange={(e) => setVersionData({ ...versionData, version_number: e.target.value })}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="e.g., 1.1, 2.0"
                 />
               </div>
@@ -532,7 +538,7 @@ const TandCManager = () => {
                 <textarea
                   value={versionData.version_description}
                   onChange={(e) => setVersionData({ ...versionData, version_description: e.target.value })}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   rows="3"
                   placeholder="Describe the changes in this version"
                 />
@@ -544,15 +550,15 @@ const TandCManager = () => {
                   type="date"
                   value={versionData.effective_date}
                   onChange={(e) => setVersionData({ ...versionData, effective_date: e.target.value })}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowVersionModal(false)}
-                className="px-4 py-2 text-gray-700 border rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-gray-700 border rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
                 disabled={isSaving}
               >
                 Cancel
@@ -560,7 +566,7 @@ const TandCManager = () => {
               <button
                 onClick={handleCreateVersion}
                 disabled={isSaving || !versionData.version_number.trim()}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors text-sm sm:text-base"
               >
                 {isSaving ? 'Creating...' : 'Create Version'}
               </button>

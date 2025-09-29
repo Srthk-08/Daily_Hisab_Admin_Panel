@@ -464,8 +464,8 @@ export default function Report() {
 
         <div className="h-64 sm:h-80 lg:h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={userGrowthData}>
-              <CartesianGrid strokeDasharray="3 3" />
+          <AreaChart data={userGrowthData}>
+            <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
                 fontSize={12}
@@ -481,15 +481,15 @@ export default function Report() {
                   padding: '8px'
                 }}
               />
-              <Area type="monotone" dataKey="totalUsers" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="Total Users" />
-              <Area type="monotone" dataKey="newUsers" stackId="2" stroke="#4ade80" fill="#4ade80" name="New Users" />
-              <Line type="monotone" dataKey="churn" stroke="#f87171" strokeWidth={2} name="Churn" />
+            <Area type="monotone" dataKey="totalUsers" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="Total Users" />
+            <Area type="monotone" dataKey="newUsers" stackId="2" stroke="#4ade80" fill="#4ade80" name="New Users" />
+            <Line type="monotone" dataKey="churn" stroke="#f87171" strokeWidth={2} name="Churn" />
               <Legend
                 className="mt-4 sm:mt-6 lg:mt-10"
                 wrapperStyle={{ fontSize: '12px' }}
               />
-            </AreaChart>
-          </ResponsiveContainer>
+          </AreaChart>
+        </ResponsiveContainer>
         </div>
       </div>
 
@@ -651,8 +651,8 @@ export default function Report() {
 
         <div className="h-64 sm:h-80 lg:h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={subscriptionRevenueData}>
-              <CartesianGrid strokeDasharray="3 3" />
+          <BarChart data={subscriptionRevenueData}>
+            <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
                 fontSize={12}
@@ -664,8 +664,8 @@ export default function Report() {
               />
               <Tooltip
                 formatter={(value, name) => [
-                  name === 'userCount' ? value : `₹${value?.toLocaleString() || 0}`,
-                  name === 'userCount' ? 'Users' : 'Revenue'
+              name === 'userCount' ? value : `₹${value?.toLocaleString() || 0}`,
+              name === 'userCount' ? 'Users' : 'Revenue'
                 ]}
                 contentStyle={{
                   fontSize: '12px',
@@ -675,10 +675,10 @@ export default function Report() {
               <Legend
                 wrapperStyle={{ fontSize: '12px' }}
               />
-              <Bar dataKey="userCount" fill="#3b82f6" name="User Count" />
-              <Bar dataKey="totalRevenue" fill="#4ade80" name="Total Revenue" />
-            </BarChart>
-          </ResponsiveContainer>
+            <Bar dataKey="userCount" fill="#3b82f6" name="User Count" />
+            <Bar dataKey="totalRevenue" fill="#4ade80" name="Total Revenue" />
+          </BarChart>
+        </ResponsiveContainer>
         </div>
       </div>
 
@@ -736,7 +736,7 @@ export default function Report() {
               <div className="flex items-center justify-between mb-2">
                 <span className="font-medium text-sm sm:text-base truncate">{item.category}</span>
                 <div className="flex-shrink-0 ml-2">
-                  {getHealthIcon(item.status)}
+                {getHealthIcon(item.status)}
                 </div>
               </div>
 
@@ -1014,23 +1014,23 @@ export default function Report() {
 
           <div className="h-48 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={expenseData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) =>
-                    `${name} ${(percent * 100).toFixed(0)}%`
-                  }
+            <PieChart>
+              <Pie
+                data={expenseData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) =>
+                  `${name} ${(percent * 100).toFixed(0)}%`
+                }
                   outerRadius={60}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {expenseData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {expenseData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
                 <Tooltip
                   formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']}
                   contentStyle={{
@@ -1038,8 +1038,8 @@ export default function Report() {
                     padding: '8px'
                   }}
                 />
-              </PieChart>
-            </ResponsiveContainer>
+            </PieChart>
+          </ResponsiveContainer>
           </div>
 
           {/* Expense Details */}
@@ -1053,10 +1053,10 @@ export default function Report() {
                   ></div>
                   <div className="min-w-0 flex-1">
                     <span className="text-xs sm:text-sm font-medium truncate block">{item.name}</span>
-                    <span className="text-xs text-gray-500">
-                      ({item.accountType === 0 ? 'Business' : 'Personal'})
-                    </span>
-                  </div>
+                  <span className="text-xs text-gray-500">
+                    ({item.accountType === 0 ? 'Business' : 'Personal'})
+                  </span>
+                </div>
                 </div>
                 <div className="text-right flex-shrink-0 ml-2">
                   <div className="text-xs sm:text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>
@@ -1086,23 +1086,23 @@ export default function Report() {
 
           <div className="h-48 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={incomeData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) =>
-                    `${name} ${(percent * 100).toFixed(0)}%`
-                  }
+            <PieChart>
+              <Pie
+                data={incomeData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) =>
+                  `${name} ${(percent * 100).toFixed(0)}%`
+                }
                   outerRadius={60}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {incomeData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {incomeData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
                 <Tooltip
                   formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']}
                   contentStyle={{
@@ -1110,8 +1110,8 @@ export default function Report() {
                     padding: '8px'
                   }}
                 />
-              </PieChart>
-            </ResponsiveContainer>
+            </PieChart>
+          </ResponsiveContainer>
           </div>
 
           {/* Income Details */}
@@ -1125,10 +1125,10 @@ export default function Report() {
                   ></div>
                   <div className="min-w-0 flex-1">
                     <span className="text-xs sm:text-sm font-medium truncate block">{item.name}</span>
-                    <span className="text-xs text-gray-500">
-                      ({item.accountType === 0 ? 'Business' : 'Personal'})
-                    </span>
-                  </div>
+                  <span className="text-xs text-gray-500">
+                    ({item.accountType === 0 ? 'Business' : 'Personal'})
+                  </span>
+                </div>
                 </div>
                 <div className="text-right flex-shrink-0 ml-2">
                   <div className="text-xs sm:text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>
