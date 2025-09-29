@@ -464,8 +464,8 @@ export default function Report() {
 
         <div className="h-64 sm:h-80 lg:h-96">
           <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={userGrowthData}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <AreaChart data={userGrowthData}>
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
                 fontSize={12}
@@ -481,15 +481,15 @@ export default function Report() {
                   padding: '8px'
                 }}
               />
-            <Area type="monotone" dataKey="totalUsers" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="Total Users" />
-            <Area type="monotone" dataKey="newUsers" stackId="2" stroke="#4ade80" fill="#4ade80" name="New Users" />
-            <Line type="monotone" dataKey="churn" stroke="#f87171" strokeWidth={2} name="Churn" />
+              <Area type="monotone" dataKey="totalUsers" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="Total Users" />
+              <Area type="monotone" dataKey="newUsers" stackId="2" stroke="#4ade80" fill="#4ade80" name="New Users" />
+              <Line type="monotone" dataKey="churn" stroke="#f87171" strokeWidth={2} name="Churn" />
               <Legend
                 className="mt-4 sm:mt-6 lg:mt-10"
                 wrapperStyle={{ fontSize: '12px' }}
               />
-          </AreaChart>
-        </ResponsiveContainer>
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
@@ -649,36 +649,165 @@ export default function Report() {
           </div>
         </div>
 
+        {/* Plan Details Table */}
+        <div className="mb-6">
+          <h4 className="text-sm font-medium text-gray-700 mb-3">Plan Details</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs sm:text-sm">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="px-2 py-2 text-left font-medium text-gray-600">Plan Name</th>
+                  <th className="px-2 py-2 text-center font-medium text-gray-600">Type</th>
+                  <th className="px-2 py-2 text-center font-medium text-gray-600">Amount</th>
+                  <th className="px-2 py-2 text-center font-medium text-gray-600">Users</th>
+                  <th className="px-2 py-2 text-center font-medium text-gray-600">Active</th>
+                  <th className="px-2 py-2 text-center font-medium text-gray-600">Expired</th>
+                  <th className="px-2 py-2 text-center font-medium text-gray-600">Revenue</th>
+                  <th className="px-2 py-2 text-center font-medium text-gray-600">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {subscriptionRevenueData.map((plan, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-2 py-2 text-left">
+                      <div className="font-medium text-gray-900 truncate max-w-[200px]" title={plan.name}>
+                        {plan.name}
+                      </div>
+                      <div className="text-gray-500 text-xs">
+                        {plan.duration} days
+                      </div>
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${plan.type === 'Yearly' ? 'bg-blue-100 text-blue-800' :
+                        plan.type === 'Monthly' ? 'bg-green-100 text-green-800' :
+                          plan.type === 'Lifetime' ? 'bg-purple-100 text-purple-800' :
+                            'bg-gray-100 text-gray-800'
+                        }`}>
+                        {plan.type}
+                      </span>
+                    </td>
+                    <td className="px-2 py-2 text-center font-medium">
+                      ₹{plan.amount?.toLocaleString() || '0'}
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      {plan.userCount || 0}
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <span className="text-green-600 font-medium">{plan.activeUsers || 0}</span>
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <span className="text-red-600 font-medium">{plan.expiredUsers || 0}</span>
+                    </td>
+                    <td className="px-2 py-2 text-center font-medium">
+                      ₹{plan.totalRevenue?.toLocaleString() || '0'}
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${plan.status === 'Active' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                        }`}>
+                        {plan.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Revenue vs Users Chart */}
         <div className="h-64 sm:h-80 lg:h-96">
           <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={subscriptionRevenueData}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <BarChart data={subscriptionRevenueData}>
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
-                fontSize={12}
-                tick={{ fontSize: 10 }}
+                fontSize={10}
+                tick={{ fontSize: 9 }}
+                angle={-45}
+                textAnchor="end"
+                height={100}
+                interval={0}
               />
               <YAxis
-                fontSize={12}
-                tick={{ fontSize: 10 }}
+                fontSize={10}
+                tick={{ fontSize: 9 }}
+                yAxisId="left"
+                orientation="left"
+              />
+              <YAxis
+                fontSize={10}
+                tick={{ fontSize: 9 }}
+                yAxisId="right"
+                orientation="right"
               />
               <Tooltip
-                formatter={(value, name) => [
-              name === 'userCount' ? value : `₹${value?.toLocaleString() || 0}`,
-              name === 'userCount' ? 'Users' : 'Revenue'
-                ]}
+                formatter={(value, name) => {
+                  if (name === 'userCount') {
+                    return [value, 'Total Users'];
+                  } else if (name === 'activeUsers') {
+                    return [value, 'Active Users'];
+                  } else if (name === 'expiredUsers') {
+                    return [value, 'Expired Users'];
+                  } else {
+                    return [`₹${value?.toLocaleString() || 0}`, 'Revenue'];
+                  }
+                }}
                 contentStyle={{
-                  fontSize: '12px',
-                  padding: '8px'
+                  fontSize: '11px',
+                  padding: '6px',
+                  borderRadius: '6px'
                 }}
               />
               <Legend
-                wrapperStyle={{ fontSize: '12px' }}
+                wrapperStyle={{ fontSize: '11px' }}
               />
-            <Bar dataKey="userCount" fill="#3b82f6" name="User Count" />
-            <Bar dataKey="totalRevenue" fill="#4ade80" name="Total Revenue" />
-          </BarChart>
-        </ResponsiveContainer>
+              <Bar yAxisId="left" dataKey="userCount" fill="#3b82f6" name="Total Users" radius={[2, 2, 0, 0]} />
+              <Bar yAxisId="left" dataKey="activeUsers" fill="#4ade80" name="Active Users" radius={[2, 2, 0, 0]} />
+              <Bar yAxisId="left" dataKey="expiredUsers" fill="#f87171" name="Expired Users" radius={[2, 2, 0, 0]} />
+              <Bar yAxisId="right" dataKey="totalRevenue" fill="#f59e0b" name="Revenue (₹)" radius={[2, 2, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Plan Type Distribution */}
+        <div className="mt-6">
+          <h4 className="text-sm font-medium text-gray-700 mb-3">Plan Type Distribution</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {['Yearly', 'Monthly', 'Lifetime', 'Other'].map((type) => {
+              const typePlans = subscriptionRevenueData.filter(plan => plan.type === type);
+              const totalRevenue = typePlans.reduce((sum, plan) => sum + (plan.totalRevenue || 0), 0);
+              const totalUsers = typePlans.reduce((sum, plan) => sum + (plan.userCount || 0), 0);
+              const activeUsers = typePlans.reduce((sum, plan) => sum + (plan.activeUsers || 0), 0);
+
+              return (
+                <div key={type} className="bg-gray-50 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-600">{type} Plans</span>
+                    <span className={`w-2 h-2 rounded-full ${type === 'Yearly' ? 'bg-blue-500' :
+                      type === 'Monthly' ? 'bg-green-500' :
+                        type === 'Lifetime' ? 'bg-purple-500' :
+                          'bg-gray-500'
+                      }`}></span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs">
+                      <span>Revenue:</span>
+                      <span className="font-medium">₹{totalRevenue.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span>Users:</span>
+                      <span className="font-medium">{totalUsers}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span>Active:</span>
+                      <span className="font-medium text-green-600">{activeUsers}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -736,7 +865,7 @@ export default function Report() {
               <div className="flex items-center justify-between mb-2">
                 <span className="font-medium text-sm sm:text-base truncate">{item.category}</span>
                 <div className="flex-shrink-0 ml-2">
-                {getHealthIcon(item.status)}
+                  {getHealthIcon(item.status)}
                 </div>
               </div>
 
@@ -1014,23 +1143,23 @@ export default function Report() {
 
           <div className="h-48 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={expenseData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) =>
-                  `${name} ${(percent * 100).toFixed(0)}%`
-                }
+              <PieChart>
+                <Pie
+                  data={expenseData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) =>
+                    `${name} ${(percent * 100).toFixed(0)}%`
+                  }
                   outerRadius={60}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {expenseData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {expenseData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
                 <Tooltip
                   formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']}
                   contentStyle={{
@@ -1038,8 +1167,8 @@ export default function Report() {
                     padding: '8px'
                   }}
                 />
-            </PieChart>
-          </ResponsiveContainer>
+              </PieChart>
+            </ResponsiveContainer>
           </div>
 
           {/* Expense Details */}
@@ -1053,10 +1182,10 @@ export default function Report() {
                   ></div>
                   <div className="min-w-0 flex-1">
                     <span className="text-xs sm:text-sm font-medium truncate block">{item.name}</span>
-                  <span className="text-xs text-gray-500">
-                    ({item.accountType === 0 ? 'Business' : 'Personal'})
-                  </span>
-                </div>
+                    <span className="text-xs text-gray-500">
+                      ({item.accountType === 0 ? 'Business' : 'Personal'})
+                    </span>
+                  </div>
                 </div>
                 <div className="text-right flex-shrink-0 ml-2">
                   <div className="text-xs sm:text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>
@@ -1086,23 +1215,23 @@ export default function Report() {
 
           <div className="h-48 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={incomeData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) =>
-                  `${name} ${(percent * 100).toFixed(0)}%`
-                }
+              <PieChart>
+                <Pie
+                  data={incomeData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) =>
+                    `${name} ${(percent * 100).toFixed(0)}%`
+                  }
                   outerRadius={60}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {incomeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {incomeData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
                 <Tooltip
                   formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']}
                   contentStyle={{
@@ -1110,8 +1239,8 @@ export default function Report() {
                     padding: '8px'
                   }}
                 />
-            </PieChart>
-          </ResponsiveContainer>
+              </PieChart>
+            </ResponsiveContainer>
           </div>
 
           {/* Income Details */}
@@ -1125,10 +1254,10 @@ export default function Report() {
                   ></div>
                   <div className="min-w-0 flex-1">
                     <span className="text-xs sm:text-sm font-medium truncate block">{item.name}</span>
-                  <span className="text-xs text-gray-500">
-                    ({item.accountType === 0 ? 'Business' : 'Personal'})
-                  </span>
-                </div>
+                    <span className="text-xs text-gray-500">
+                      ({item.accountType === 0 ? 'Business' : 'Personal'})
+                    </span>
+                  </div>
                 </div>
                 <div className="text-right flex-shrink-0 ml-2">
                   <div className="text-xs sm:text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>

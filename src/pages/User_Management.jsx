@@ -729,19 +729,24 @@ const UserManagement = () => {
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Full Name</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.name || userDetails?.name || 'Not provided'}</p>
+                        <p className="text-xs sm:text-sm text-gray-900">
+                          {userDetails?.personal_info?.name ||
+                            (userDetails?.personal_info?.f_name && userDetails?.personal_info?.l_name
+                              ? `${userDetails.personal_info.f_name} ${userDetails.personal_info.l_name}`.trim()
+                              : userDetails?.personal_info?.f_name || userDetails?.personal_info?.l_name || 'Not provided')}
+                        </p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Email</label>
-                        <p className="text-xs sm:text-sm text-gray-900 break-all">{userDetails?.personal_info?.email || userDetails?.email || 'Not provided'}</p>
+                        <p className="text-xs sm:text-sm text-gray-900 break-all">{userDetails?.personal_info?.email || 'Not provided'}</p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Mobile</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.mobile || userDetails?.mobile || 'Not provided'}</p>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.mobile || 'Not provided'}</p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Phone Code</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.phone_code || userDetails?.phone_code || 'N/A'}</p>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.phone_code || 'N/A'}</p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Username</label>
@@ -772,6 +777,18 @@ const UserManagement = () => {
                               userDetails?.personal_info?.gender === 3 ? 'Other' : 'Not specified'}
                         </p>
                       </div>
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Zipcode</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.zipcode || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">City ID</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.city_id || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Country ID</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.country_id || 'N/A'}</p>
+                      </div>
                       <div className="sm:col-span-2">
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Address</label>
                         <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.address || 'Not provided'}</p>
@@ -785,7 +802,7 @@ const UserManagement = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">User Type</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.account_info?.user_type_label || userDetails?.user_type_label || 'N/A'}</p>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.account_info?.user_type_label || 'N/A'}</p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Login Type</label>
@@ -793,12 +810,16 @@ const UserManagement = () => {
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Profile Complete</label>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${(userDetails?.account_info?.profile_complete || userDetails?.profile_complete) === 1
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.account_info?.profile_complete === 1
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-yellow-100 text-yellow-800'
                           }`}>
-                          {(userDetails?.account_info?.profile_complete || userDetails?.profile_complete) === 1 ? 'Complete' : 'Incomplete'}
+                          {userDetails?.account_info?.profile_complete_label || (userDetails?.account_info?.profile_complete === 1 ? 'Complete' : 'Incomplete')}
                         </span>
+                      </div>
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Apple ID</label>
+                        <p className="text-xs sm:text-sm text-gray-900 break-all">{userDetails?.account_info?.apple_id || 'Not linked'}</p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Google ID</label>
@@ -813,12 +834,11 @@ const UserManagement = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Active Status</label>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${(userDetails?.status_info?.active_flag || userDetails?.active_flag) === 1
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.status_info?.active_flag === 1
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                           }`}>
-                          {userDetails?.status_info?.active_status ||
-                            ((userDetails?.status_info?.active_flag || userDetails?.active_flag) === 1 ? 'Active' : 'Suspended')}
+                          {userDetails?.status_info?.active_status || (userDetails?.status_info?.active_flag === 1 ? 'Active' : 'Suspended')}
                         </span>
                       </div>
                       <div>
@@ -827,8 +847,7 @@ const UserManagement = () => {
                           ? 'bg-green-100 text-green-800'
                           : 'bg-gray-100 text-gray-800'
                           }`}>
-                          {userDetails?.status_info?.notification_status_label ||
-                            (userDetails?.status_info?.notification_status === 1 ? 'Enabled' : 'Disabled')}
+                          {userDetails?.status_info?.notification_status_label || (userDetails?.status_info?.notification_status === 1 ? 'Enabled' : 'Disabled')}
                         </span>
                       </div>
                       <div>
@@ -837,9 +856,23 @@ const UserManagement = () => {
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-gray-100 text-gray-800'
                           }`}>
-                          {userDetails?.status_info?.app_lock_status_label ||
-                            (userDetails?.status_info?.app_lock_status === 1 ? 'Enabled' : 'Disabled')}
+                          {userDetails?.status_info?.app_lock_status_label || (userDetails?.status_info?.app_lock_status === 1 ? 'Enabled' : 'Disabled')}
                         </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Timestamps */}
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Timestamps</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Created At</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.timestamps?.created_at || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Updated At</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.timestamps?.updated_at || 'N/A'}</p>
                       </div>
                     </div>
                   </div>
@@ -896,8 +929,8 @@ const UserManagement = () => {
                           <div className="text-xs text-gray-600">Customers</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg sm:text-2xl font-bold text-purple-600">{userDetails.statistics.total_team_members || 0}</div>
-                          <div className="text-xs text-gray-600">Team Members</div>
+                          <div className="text-lg sm:text-2xl font-bold text-purple-600">{userDetails.statistics.total_managers || 0}</div>
+                          <div className="text-xs text-gray-600">Managers</div>
                         </div>
                         <div className="text-center">
                           <div className="text-lg sm:text-2xl font-bold text-orange-600">{userDetails.statistics.total_feedback || 0}</div>
@@ -917,7 +950,7 @@ const UserManagement = () => {
                       <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">User Accounts</h4>
                       <div className="space-y-2">
                         {userDetails.accounts.map((account, index) => (
-                          <div key={index} className="flex justify-between items-center p-2 bg-white rounded border">
+                          <div key={account.account_id || index} className="flex justify-between items-center p-2 bg-white rounded border">
                             <div className="min-w-0 flex-1">
                               <span className="font-medium text-xs sm:text-sm">{account.account_name}</span>
                               <span className="ml-2 text-xs text-gray-600">({account.account_type_label})</span>
