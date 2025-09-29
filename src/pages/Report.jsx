@@ -742,21 +742,38 @@ export default function Report() {
                 orientation="right"
               />
               <Tooltip
-                formatter={(value, name) => {
-                  if (name === 'userCount') {
-                    return [value, 'Total Users'];
-                  } else if (name === 'activeUsers') {
-                    return [value, 'Active Users'];
-                  } else if (name === 'expiredUsers') {
-                    return [value, 'Expired Users'];
-                  } else {
-                    return [`₹${value?.toLocaleString() || 0}`, 'Revenue'];
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                        <p className="font-medium text-sm text-gray-900 mb-2">{label}</p>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                            <span className="text-xs text-gray-600">Total Users:</span>
+                            <span className="text-xs font-medium">{data.userCount || 0}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-green-500 rounded"></div>
+                            <span className="text-xs text-gray-600">Active Users:</span>
+                            <span className="text-xs font-medium">{data.activeUsers || 0}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-red-500 rounded"></div>
+                            <span className="text-xs text-gray-600">Expired Users:</span>
+                            <span className="text-xs font-medium">{data.expiredUsers || 0}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-orange-500 rounded"></div>
+                            <span className="text-xs text-gray-600">Revenue:</span>
+                            <span className="text-xs font-medium">₹{data.totalRevenue?.toLocaleString() || '0'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
                   }
-                }}
-                contentStyle={{
-                  fontSize: '11px',
-                  padding: '6px',
-                  borderRadius: '6px'
+                  return null;
                 }}
               />
               <Legend
