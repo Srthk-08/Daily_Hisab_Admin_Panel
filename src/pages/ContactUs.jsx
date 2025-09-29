@@ -85,23 +85,33 @@ const ContactUs = () => {
     ]
   }), []);
 
+  // Icon mapping based on config type
+  const configTypeIconMapping = useMemo(() => ({
+    whatsapp: 'whatsapp',
+    phone: 'phone',
+    email: 'mail',
+    website: 'globe',
+    support_hours: 'clock'
+  }), []);
+
   // Fetch data on component mount
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Update config_key when config_type changes
+  // Update config_key and icon_name when config_type changes
   useEffect(() => {
     if (showCreateModal || (showEditModal && editingItem)) {
       const options = configKeyOptions[formData.config_type] || [];
-      if (options.length > 0 && !formData.config_key) {
-        setFormData(prev => ({
-          ...prev,
-          config_key: options[0].value
-        }));
-      }
+      const iconName = configTypeIconMapping[formData.config_type] || '';
+
+      setFormData(prev => ({
+        ...prev,
+        config_key: options.length > 0 && !prev.config_key ? options[0].value : prev.config_key,
+        icon_name: iconName
+      }));
     }
-  }, [formData.config_type, formData.config_key, showCreateModal, showEditModal, editingItem, configKeyOptions]);
+  }, [formData.config_type, formData.config_key, showCreateModal, showEditModal, editingItem, configKeyOptions, configTypeIconMapping]);
 
   const fetchData = async () => {
     try {
@@ -919,9 +929,14 @@ const ContactUs = () => {
                         type="text"
                         value={formData.icon_name}
                         onChange={(e) => setFormData({ ...formData, icon_name: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-                        placeholder="e.g., whatsapp, phone, mail, etc."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed text-sm sm:text-base"
+                        placeholder="Auto-selected based on config type"
+                        disabled
+                        readOnly
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Icon is automatically selected based on the config type
+                      </p>
                     </div>
 
                     <div>

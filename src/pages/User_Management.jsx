@@ -39,7 +39,7 @@ const UserManagement = () => {
   // UI states
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
+  const [sortBy, setSortBy] = useState('created');
 
   // Modal states
   const [showViewModal, setShowViewModal] = useState(false);
@@ -445,141 +445,141 @@ const UserManagement = () => {
           <>
             {/* Desktop Table View */}
             <div className="hidden lg:block overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User Info
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contact
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Accounts
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
-                <tr key={user.user_id} className="hover:bg-gray-50">
-                  {/* User Info */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
-                          <span className="text-white font-medium text-sm">
-                            {(user.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      User Info
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Contact
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Accounts
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Created
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredUsers.map((user) => (
+                    <tr key={user.user_id} className="hover:bg-gray-50">
+                      {/* User Info */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-10 w-10">
+                            <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                              <span className="text-white font-medium text-sm">
+                                {(user.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">{user.name || 'Unknown User'}</div>
+                            <div className="text-sm text-gray-500">ID: {user.user_id || 'N/A'}</div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Contact */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900 flex items-center gap-1">
+                          <Mail className="w-4 h-4 text-gray-400" />
+                          {user.email || 'No email'}
+                        </div>
+                        <div className="text-sm text-gray-500 flex items-center gap-1">
+                          <Phone className="w-4 h-4 text-gray-400" />
+                          {user.phone_code || ''} {user.mobile || 'No mobile'}
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-col gap-1">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.active_flag === 1
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                            }`}>
+                            {user.active_flag === 1 ? 'Active' : 'Inactive'}
+                          </span>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.profile_complete === 1
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                            {user.profile_complete === 1 ? 'Complete' : 'Incomplete'}
                           </span>
                         </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name || 'Unknown User'}</div>
-                        <div className="text-sm text-gray-500">ID: {user.user_id || 'N/A'}</div>
-                      </div>
-                    </div>
-                  </td>
+                      </td>
 
-                  {/* Contact */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 flex items-center gap-1">
-                      <Mail className="w-4 h-4 text-gray-400" />
-                      {user.email || 'No email'}
-                    </div>
-                    <div className="text-sm text-gray-500 flex items-center gap-1">
-                      <Phone className="w-4 h-4 text-gray-400" />
-                      {user.phone_code || ''} {user.mobile || 'No mobile'}
-                    </div>
-                  </td>
+                      {/* Accounts */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-wrap gap-1">
+                          {user.accounts && Object.entries(user.accounts).map(([type, accounts]) => (
+                            accounts.length > 0 && (
+                              <span
+                                key={type}
+                                className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${getAccountTypeColor(type)}`}
+                              >
+                                {getAccountTypeIcon(type)}
+                                {type} ({accounts.length})
+                              </span>
+                            )
+                          ))}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          Total: {user.account_counts?.total || 0} accounts
+                        </div>
+                      </td>
 
-                  {/* Status */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex flex-col gap-1">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.active_flag === 1
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                        }`}>
-                        {user.active_flag === 1 ? 'Active' : 'Inactive'}
-                      </span>
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.profile_complete === 1
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                        {user.profile_complete === 1 ? 'Complete' : 'Incomplete'}
-                      </span>
-                    </div>
-                  </td>
+                      {/* Created Date */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4 text-gray-400" />
+                          {formatDate(user.createtime)}
+                        </div>
+                      </td>
 
-                  {/* Accounts */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex flex-wrap gap-1">
-                      {user.accounts && Object.entries(user.accounts).map(([type, accounts]) => (
-                        accounts.length > 0 && (
-                          <span
-                            key={type}
-                            className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${getAccountTypeColor(type)}`}
+                      {/* Actions */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleViewUser(user)}
+                            className="text-blue-600 hover:text-blue-900 p-1"
+                            title="View User Details"
                           >
-                            {getAccountTypeIcon(type)}
-                            {type} ({accounts.length})
-                          </span>
-                        )
-                      ))}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      Total: {user.account_counts?.total || 0} accounts
-                    </div>
-                  </td>
-
-                  {/* Created Date */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      {formatDate(user.createtime)}
-                    </div>
-                  </td>
-
-                  {/* Actions */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleViewUser(user)}
-                        className="text-blue-600 hover:text-blue-900 p-1"
-                        title="View User Details"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      {user.active_flag === 1 ? (
-                        <button
-                          onClick={() => handleSuspendUser(user)}
-                          className="text-orange-600 hover:text-orange-900 p-1"
-                          title="Suspend User"
-                        >
-                          <UserX className="w-4 h-4" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleUnsuspendUser(user)}
-                          className="text-green-600 hover:text-green-900 p-1"
-                          title="Unsuspend User"
-                        >
-                          <UserCheck className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          {user.active_flag === 1 ? (
+                            <button
+                              onClick={() => handleSuspendUser(user)}
+                              className="text-orange-600 hover:text-orange-900 p-1"
+                              title="Suspend User"
+                            >
+                              <UserX className="w-4 h-4" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleUnsuspendUser(user)}
+                              className="text-green-600 hover:text-green-900 p-1"
+                              title="Unsuspend User"
+                            >
+                              <UserCheck className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {/* Mobile/Tablet Card View */}
             <div className="lg:hidden">
@@ -749,7 +749,16 @@ const UserManagement = () => {
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Date of Birth</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.dob || 'Not provided'}</p>
+                        <p className="text-xs sm:text-sm text-gray-900">
+                          {userDetails?.personal_info?.dob
+                            ? new Date(userDetails.personal_info.dob).toLocaleDateString('en-IN', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric'
+                            })
+                            : 'Not provided'
+                          }
+                        </p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Age</label>
