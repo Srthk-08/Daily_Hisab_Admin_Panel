@@ -324,55 +324,55 @@ const UserManagement = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-3 sm:p-4 lg:p-6 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
-        <p className="text-gray-600">Manage users and their account information</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">User Management</h1>
+        <p className="text-sm sm:text-base text-gray-600">Manage users and their account information</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
           <div className="flex items-center">
-            <Users className="w-8 h-8 text-blue-500" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Users</p>
-              <p className="text-2xl font-bold text-gray-900">{totalUsers}</p>
+            <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
+            <div className="ml-3 sm:ml-4">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Total Users</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{totalUsers}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
           <div className="flex items-center">
-            <CheckCircle className="w-8 h-8 text-green-500" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Users</p>
-              <p className="text-2xl font-bold text-gray-900">
+            <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
+            <div className="ml-3 sm:ml-4">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Active Users</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
                 {users.filter(user => user.active_flag === 1).length}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
           <div className="flex items-center">
-            <User className="w-8 h-8 text-purple-500" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Profile Complete</p>
-              <p className="text-2xl font-bold text-gray-900">
+            <User className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
+            <div className="ml-3 sm:ml-4">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Profile Complete</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
                 {users.filter(user => user.profile_complete === 1).length}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
           <div className="flex items-center">
-            <TrendingUp className="w-8 h-8 text-orange-500" />
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Accounts</p>
-              <p className="text-2xl font-bold text-gray-900">
+            <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-orange-500" />
+            <div className="ml-3 sm:ml-4">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Total Accounts</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
                 {users.reduce((total, user) => total + (user.account_counts?.total || 0), 0)}
               </p>
             </div>
@@ -381,28 +381,28 @@ const UserManagement = () => {
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
               <input
                 type="text"
                 placeholder="Search users by name, email, or mobile..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
               />
             </div>
           </div>
 
           {/* Filter */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             >
               <option value="all">All Users</option>
               <option value="active">Active Only</option>
@@ -414,7 +414,7 @@ const UserManagement = () => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             >
               <option value="name">Sort by Name</option>
               <option value="email">Sort by Email</option>
@@ -424,10 +424,11 @@ const UserManagement = () => {
 
             <button
               onClick={exportToCSV}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               <Download className="w-4 h-4" />
-              Export ({filteredUsers.length})
+              <span className="hidden sm:inline">Export ({filteredUsers.length})</span>
+              <span className="sm:hidden">Export</span>
             </button>
           </div>
         </div>
@@ -435,7 +436,15 @@ const UserManagement = () => {
 
       {/* Users List */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
+        {loading && filteredUsers.length === 0 ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="ml-2 text-gray-600">Loading users...</span>
+          </div>
+        ) : (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden lg:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
@@ -572,7 +581,114 @@ const UserManagement = () => {
           </table>
         </div>
 
-        {filteredUsers.length === 0 && (
+            {/* Mobile/Tablet Card View */}
+            <div className="lg:hidden">
+              {filteredUsers.map((user) => (
+                <div key={user.user_id} className="border-b border-gray-200 p-4 hover:bg-gray-50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
+                      {/* Avatar */}
+                      <div className="flex-shrink-0">
+                        <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                          <span className="text-white font-medium text-sm">
+                            {(user.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="text-sm font-medium text-gray-900 truncate">{user.name || 'Unknown User'}</h3>
+                          <span className="text-xs text-gray-500">ID: {user.user_id || 'N/A'}</span>
+                        </div>
+
+                        {/* Contact Info */}
+                        <div className="space-y-1 mb-2">
+                          <div className="text-xs text-gray-600 flex items-center gap-1">
+                            <Mail className="w-3 h-3 text-gray-400" />
+                            <span className="truncate">{user.email || 'No email'}</span>
+                          </div>
+                          <div className="text-xs text-gray-600 flex items-center gap-1">
+                            <Phone className="w-3 h-3 text-gray-400" />
+                            <span>{user.phone_code || ''} {user.mobile || 'No mobile'}</span>
+                          </div>
+                        </div>
+
+                        {/* Status Badges */}
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.active_flag === 1
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                            }`}>
+                            {user.active_flag === 1 ? 'Active' : 'Inactive'}
+                          </span>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.profile_complete === 1
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                            {user.profile_complete === 1 ? 'Complete' : 'Incomplete'}
+                          </span>
+                        </div>
+
+                        {/* Account Info */}
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {user.accounts && Object.entries(user.accounts).map(([type, accounts]) => (
+                            accounts.length > 0 && (
+                              <span
+                                key={type}
+                                className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${getAccountTypeColor(type)}`}
+                              >
+                                {getAccountTypeIcon(type)}
+                                {type} ({accounts.length})
+                              </span>
+                            )
+                          ))}
+                        </div>
+
+                        {/* Created Date */}
+                        <div className="text-xs text-gray-500 flex items-center gap-1">
+                          <Calendar className="w-3 h-3 text-gray-400" />
+                          <span>{formatDate(user.createtime)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex space-x-1 ml-2">
+                      <button
+                        onClick={() => handleViewUser(user)}
+                        className="text-blue-600 hover:text-blue-900 p-2 rounded-lg hover:bg-blue-50"
+                        title="View User Details"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      {user.active_flag === 1 ? (
+                        <button
+                          onClick={() => handleSuspendUser(user)}
+                          className="text-orange-600 hover:text-orange-900 p-2 rounded-lg hover:bg-orange-50"
+                          title="Suspend User"
+                        >
+                          <UserX className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleUnsuspendUser(user)}
+                          className="text-green-600 hover:text-green-900 p-2 rounded-lg hover:bg-green-50"
+                          title="Unsuspend User"
+                        >
+                          <UserCheck className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {filteredUsers.length === 0 && !loading && (
           <div className="text-center py-12">
             <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
@@ -583,91 +699,91 @@ const UserManagement = () => {
 
       {/* View User Modal */}
       {showViewModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">User Details</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">User Details</h3>
                 <button
                   onClick={closeModals}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 p-1"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
               </div>
 
               {isLoadingDetails ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="ml-2 text-gray-600">Loading user details...</span>
+                  <span className="ml-2 text-gray-600 text-sm sm:text-base">Loading user details...</span>
                 </div>
               ) : (
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* Personal Information */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="text-md font-semibold text-gray-900 mb-3">Personal Information</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Personal Information</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">User ID</label>
-                        <p className="text-sm text-gray-900">{userDetails?.user_id || 'N/A'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">User ID</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.user_id || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Full Name</label>
-                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.name || userDetails?.name || 'Not provided'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Full Name</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.name || userDetails?.name || 'Not provided'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Email</label>
-                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.email || userDetails?.email || 'Not provided'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Email</label>
+                        <p className="text-xs sm:text-sm text-gray-900 break-all">{userDetails?.personal_info?.email || userDetails?.email || 'Not provided'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Mobile</label>
-                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.mobile || userDetails?.mobile || 'Not provided'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Mobile</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.mobile || userDetails?.mobile || 'Not provided'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Phone Code</label>
-                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.phone_code || userDetails?.phone_code || 'N/A'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Phone Code</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.phone_code || userDetails?.phone_code || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Username</label>
-                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.username || 'Not provided'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Username</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.username || 'Not provided'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.dob || 'Not provided'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Date of Birth</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.dob || 'Not provided'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Age</label>
-                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.age || 'N/A'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Age</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.age || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Gender</label>
-                        <p className="text-sm text-gray-900">
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Gender</label>
+                        <p className="text-xs sm:text-sm text-gray-900">
                           {userDetails?.personal_info?.gender === 1 ? 'Male' :
                             userDetails?.personal_info?.gender === 2 ? 'Female' :
                               userDetails?.personal_info?.gender === 3 ? 'Other' : 'Not specified'}
                         </p>
                       </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700">Address</label>
-                        <p className="text-sm text-gray-900">{userDetails?.personal_info?.address || 'Not provided'}</p>
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Address</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.address || 'Not provided'}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Account Information */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="text-md font-semibold text-gray-900 mb-3">Account Information</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Account Information</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">User Type</label>
-                        <p className="text-sm text-gray-900">{userDetails?.account_info?.user_type_label || userDetails?.user_type_label || 'N/A'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">User Type</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.account_info?.user_type_label || userDetails?.user_type_label || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Login Type</label>
-                        <p className="text-sm text-gray-900">{userDetails?.account_info?.login_type_label || 'App'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Login Type</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.account_info?.login_type_label || 'App'}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Profile Complete</label>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Profile Complete</label>
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${(userDetails?.account_info?.profile_complete || userDetails?.profile_complete) === 1
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-yellow-100 text-yellow-800'
@@ -676,18 +792,18 @@ const UserManagement = () => {
                         </span>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Google ID</label>
-                        <p className="text-sm text-gray-900">{userDetails?.account_info?.google_id || 'Not linked'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Google ID</label>
+                        <p className="text-xs sm:text-sm text-gray-900 break-all">{userDetails?.account_info?.google_id || 'Not linked'}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Status Information */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="text-md font-semibold text-gray-900 mb-3">Status Information</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Status Information</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Active Status</label>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Active Status</label>
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${(userDetails?.status_info?.active_flag || userDetails?.active_flag) === 1
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
@@ -697,7 +813,7 @@ const UserManagement = () => {
                         </span>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Notifications</label>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Notifications</label>
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.status_info?.notification_status === 1
                           ? 'bg-green-100 text-green-800'
                           : 'bg-gray-100 text-gray-800'
@@ -707,7 +823,7 @@ const UserManagement = () => {
                         </span>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">App Lock</label>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">App Lock</label>
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.status_info?.app_lock_status === 1
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-gray-100 text-gray-800'
@@ -721,31 +837,31 @@ const UserManagement = () => {
 
                   {/* Subscription Information */}
                   {userDetails?.current_subscription && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="text-md font-semibold text-gray-900 mb-3">Current Subscription</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                      <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Current Subscription</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Plan Name</label>
-                          <p className="text-sm text-gray-900">{userDetails.current_subscription.plan_name}</p>
+                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Plan Name</label>
+                          <p className="text-xs sm:text-sm text-gray-900">{userDetails.current_subscription.plan_name}</p>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Amount Paid</label>
-                          <p className="text-sm text-gray-900">₹{userDetails.current_subscription.amount_paid}</p>
+                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Amount Paid</label>
+                          <p className="text-xs sm:text-sm text-gray-900">₹{userDetails.current_subscription.amount_paid}</p>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Start Date</label>
-                          <p className="text-sm text-gray-900">{userDetails.current_subscription.start_date}</p>
+                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Start Date</label>
+                          <p className="text-xs sm:text-sm text-gray-900">{userDetails.current_subscription.start_date}</p>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">End Date</label>
-                          <p className="text-sm text-gray-900">{userDetails.current_subscription.end_date}</p>
+                          <label className="block text-xs sm:text-sm font-medium text-gray-700">End Date</label>
+                          <p className="text-xs sm:text-sm text-gray-900">{userDetails.current_subscription.end_date}</p>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Days Remaining</label>
-                          <p className="text-sm text-gray-900">{userDetails.current_subscription.days_remaining} days</p>
+                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Days Remaining</label>
+                          <p className="text-xs sm:text-sm text-gray-900">{userDetails.current_subscription.days_remaining} days</p>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">Status</label>
+                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Status</label>
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails.current_subscription.status === 'Active'
                             ? 'bg-green-100 text-green-800'
                             : 'bg-red-100 text-red-800'
@@ -759,27 +875,27 @@ const UserManagement = () => {
 
                   {/* User Statistics */}
                   {userDetails?.statistics && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="text-md font-semibold text-gray-900 mb-3">User Statistics</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                      <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">User Statistics</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-blue-600">{userDetails.statistics.total_transactions || 0}</div>
+                          <div className="text-lg sm:text-2xl font-bold text-blue-600">{userDetails.statistics.total_transactions || 0}</div>
                           <div className="text-xs text-gray-600">Transactions</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-green-600">{userDetails.statistics.total_customers || 0}</div>
+                          <div className="text-lg sm:text-2xl font-bold text-green-600">{userDetails.statistics.total_customers || 0}</div>
                           <div className="text-xs text-gray-600">Customers</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-purple-600">{userDetails.statistics.total_team_members || 0}</div>
+                          <div className="text-lg sm:text-2xl font-bold text-purple-600">{userDetails.statistics.total_team_members || 0}</div>
                           <div className="text-xs text-gray-600">Team Members</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-orange-600">{userDetails.statistics.total_feedback || 0}</div>
+                          <div className="text-lg sm:text-2xl font-bold text-orange-600">{userDetails.statistics.total_feedback || 0}</div>
                           <div className="text-xs text-gray-600">Feedback</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-red-600">{userDetails.statistics.total_ratings || 0}</div>
+                          <div className="text-lg sm:text-2xl font-bold text-red-600">{userDetails.statistics.total_ratings || 0}</div>
                           <div className="text-xs text-gray-600">Ratings</div>
                         </div>
                       </div>
@@ -788,31 +904,28 @@ const UserManagement = () => {
 
                   {/* User Accounts */}
                   {userDetails?.accounts && userDetails.accounts.length > 0 && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="text-md font-semibold text-gray-900 mb-3">User Accounts</h4>
+                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                      <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">User Accounts</h4>
                       <div className="space-y-2">
                         {userDetails.accounts.map((account, index) => (
                           <div key={index} className="flex justify-between items-center p-2 bg-white rounded border">
-                            <div>
-                              <span className="font-medium">{account.account_name}</span>
-                              <span className="ml-2 text-sm text-gray-600">({account.account_type_label})</span>
+                            <div className="min-w-0 flex-1">
+                              <span className="font-medium text-xs sm:text-sm">{account.account_name}</span>
+                              <span className="ml-2 text-xs text-gray-600">({account.account_type_label})</span>
                             </div>
-                            <span className="text-sm text-gray-500">{account.created_at}</span>
+                            <span className="text-xs text-gray-500">{account.created_at}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
-
-
-
                 </div>
               )}
 
-              <div className="flex justify-end mt-6">
+              <div className="flex justify-end mt-4 sm:mt-6">
                 <button
                   onClick={closeModals}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
                 >
                   Close
                 </button>
@@ -824,21 +937,21 @@ const UserManagement = () => {
 
       {/* Suspend User Modal */}
       {showSuspendModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-            <div className="p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-2 sm:mx-0">
+            <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Suspend User</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Suspend User</h3>
                 <button
                   onClick={closeModals}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 p-1"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
               </div>
 
               <div className="mb-4">
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-xs sm:text-sm text-gray-600 mb-2">
                   Are you sure you want to suspend <strong>{selectedUser?.name || selectedUser?.personal_info?.name || 'this user'}</strong>?
                 </p>
                 <p className="text-xs text-gray-500">
@@ -846,40 +959,42 @@ const UserManagement = () => {
                 </p>
               </div>
 
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="mb-4 sm:mb-6">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Suspension Reason (Optional)
                 </label>
                 <textarea
                   value={suspensionReason}
                   onChange={(e) => setSuspensionReason(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm sm:text-base"
                   rows="3"
                   placeholder="Enter reason for suspension..."
                 />
               </div>
 
-              <div className="flex justify-end space-x-3">
+              <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
                 <button
                   onClick={closeModals}
-                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors text-sm sm:text-base"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmSuspend}
                   disabled={isProcessing}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   {isProcessing ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Suspending...
+                      <span className="hidden sm:inline">Suspending...</span>
+                      <span className="sm:hidden">Suspending...</span>
                     </>
                   ) : (
                     <>
                       <UserX className="w-4 h-4" />
-                      Suspend User
+                      <span className="hidden sm:inline">Suspend User</span>
+                      <span className="sm:hidden">Suspend</span>
                     </>
                   )}
                 </button>

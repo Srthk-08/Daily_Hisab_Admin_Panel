@@ -316,15 +316,16 @@ const IncomeCategoryManager = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Income Categories</h2>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Income Categories</h2>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-blue-300 text-white px-4 py-2 rounded-lg hover:bg-blue-500 flex items-center gap-2"
+          className="bg-blue-300 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-500 flex items-center justify-center gap-2 text-sm sm:text-base"
         >
-          <Plus size={20} />
-          Add Income Category
+          <Plus size={16} className="sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline">Add Income Category</span>
+          <span className="sm:hidden">Add Category</span>
         </button>
       </div>
 
@@ -353,7 +354,7 @@ const IncomeCategoryManager = () => {
       )}
 
       {/* Search Filter */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
+      <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input
@@ -361,28 +362,28 @@ const IncomeCategoryManager = () => {
             placeholder="Search income categories..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base"
           />
         </div>
       </div>
 
       {/* Add/Edit Form */}
       {showForm && (
-        <div className="bg-white p-6 rounded-lg shadow-md border">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">
+            <h3 className="text-base sm:text-lg font-semibold">
               {editingCategory ? 'Edit Income Category' : 'Add New Income Category'}
             </h3>
             <button
               onClick={clearForm}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 p-1"
             >
-              <X size={20} />
+              <X size={18} className="sm:w-5 sm:h-5" />
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Category Name *
@@ -391,7 +392,7 @@ const IncomeCategoryManager = () => {
                   type="text"
                   value={formData.category_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, category_name: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="Enter income category name"
                   required
                 />
@@ -404,7 +405,7 @@ const IncomeCategoryManager = () => {
                 <select
                   value={formData.account_type}
                   onChange={(e) => setFormData(prev => ({ ...prev, account_type: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base"
                   required
                 >
                   {config.getAccountTypeOptions().map(option => (
@@ -419,7 +420,7 @@ const IncomeCategoryManager = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Deletable by Users
                 </label>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-start space-x-2">
                   <input
                     type="checkbox"
                     id="deletable"
@@ -428,19 +429,21 @@ const IncomeCategoryManager = () => {
                       ...prev,
                       deletable: e.target.checked ? 1 : 0
                     }))}
-                    className="w-4 h-4 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                    className="w-4 h-4 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2 mt-1 flex-shrink-0"
                     style={{ accentColor: '#16a34a' }}
                   />
-                  <label htmlFor="deletable" className="text-sm text-gray-600">
-                    Allow users to delete this category
-                  </label>
+                  <div className="min-w-0 flex-1">
+                    <label htmlFor="deletable" className="text-xs sm:text-sm text-gray-600 block">
+                      Allow users to delete this category
+                    </label>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.deletable === 1
+                        ? "✓ Users can delete this category"
+                        : "✗ Users cannot delete this category (admin only)"
+                      }
+                    </p>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {formData.deletable === 1
-                    ? "✓ Users can delete this category"
-                    : "✗ Users cannot delete this category (admin only)"
-                  }
-                </p>
               </div>
             </div>
 
@@ -453,20 +456,20 @@ const IncomeCategoryManager = () => {
               <div className="mb-4 p-3 bg-gray-50 rounded-lg border">
                 <div className="flex items-center gap-3">
                   {selectedIcon ? (
-                    <span className="material-icons text-3xl text-gray-700">{selectedIcon}</span>
+                    <span className="material-icons text-2xl sm:text-3xl text-gray-700 flex-shrink-0">{selectedIcon}</span>
                   ) : iconPreview ? (
                     <img
                       src={iconPreview}
                       alt="Icon preview"
-                      className="w-12 h-12 object-cover rounded-lg border"
+                      className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-lg border flex-shrink-0"
                     />
                   ) : (
-                    <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
                       <span className="text-gray-400 text-xs">No Icon</span>
                     </div>
                   )}
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm font-medium text-gray-700">
                       {selectedIcon ? 'Material Icon Selected' : iconPreview ? 'Custom Icon Selected' : 'No Icon Selected'}
                     </p>
                     <p className="text-xs text-gray-500">
@@ -477,14 +480,15 @@ const IncomeCategoryManager = () => {
               </div>
 
               {/* Icon Selection Button */}
-              <div className="flex gap-2 mb-4">
+              <div className="flex flex-col sm:flex-row gap-2 mb-4">
                 <button
                   type="button"
                   onClick={() => setShowIconSelector(!showIconSelector)}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
                 >
-                  <Plus size={16} />
-                  {showIconSelector ? 'Hide Icon Selector' : 'Select Icon'}
+                  <Plus size={14} className="sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">{showIconSelector ? 'Hide Icon Selector' : 'Select Icon'}</span>
+                  <span className="sm:hidden">{showIconSelector ? 'Hide' : 'Select'}</span>
                 </button>
 
                 <input
@@ -496,10 +500,11 @@ const IncomeCategoryManager = () => {
                 />
                 <label
                   htmlFor="icon-file-input"
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer text-sm sm:text-base"
                 >
-                  <Upload size={16} />
-                  Upload Custom
+                  <Upload size={14} className="sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Upload Custom</span>
+                  <span className="sm:hidden">Upload</span>
                 </label>
               </div>
 
@@ -515,28 +520,30 @@ const IncomeCategoryManager = () => {
               )}
             </div>
 
-            <div className="flex justify-end space-x-3">
+            <div className="flex flex-col sm:flex-row justify-end gap-3">
               <button
                 type="button"
                 onClick={clearForm}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 {loading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    {editingCategory ? 'Updating...' : 'Creating...'}
+                    <span className="hidden sm:inline">{editingCategory ? 'Updating...' : 'Creating...'}</span>
+                    <span className="sm:hidden">{editingCategory ? 'Updating...' : 'Creating...'}</span>
                   </>
                 ) : (
                   <>
-                    <Upload size={16} />
-                    {editingCategory ? 'Update Category' : 'Create Category'}
+                    <Upload size={14} className="sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">{editingCategory ? 'Update Category' : 'Create Category'}</span>
+                    <span className="sm:hidden">{editingCategory ? 'Update' : 'Create'}</span>
                   </>
                 )}
               </button>
@@ -553,93 +560,172 @@ const IncomeCategoryManager = () => {
             <span className="ml-2 text-gray-600">Loading income categories...</span>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Icon</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deletable</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {Array.isArray(categories) && categories.map((category) => (
-                  <tr key={category.category_id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {category.category_id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {category.icon ? (
-                        category.icon.startsWith('data:') || category.icon.startsWith('http') ? (
-                          <img
-                            src={category.icon}
-                            alt={category.category_name}
-                            className="w-12 h-12 object-cover rounded-lg"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <span className="material-icons text-3xl text-gray-700">{category.icon}</span>
-                        )
-                      ) : (
-                        <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                          <span className="text-gray-400 text-xs">No Icon</span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {category.category_name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.getAccountTypeColor(category.account_type || 1)}`}>
-                        {config.getAccountTypeLabel(category.account_type || 1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(category.status)}`}>
-                        {category.status || 'Active'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${category.deletable === 1
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                        }`}>
-                        {category.deletable === 1 ? '✓ Yes' : '✗ No'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {category.createtime}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEdit(category)}
-                          className="text-blue-600 hover:text-blue-900 p-1"
-                          title="Edit Category"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(category.category_id)}
-                          className="text-red-600 hover:text-red-900 p-1"
-                          title="Delete Category"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Icon</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deletable</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {Array.isArray(categories) && categories.map((category) => (
+                    <tr key={category.category_id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {category.category_id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {category.icon ? (
+                          category.icon.startsWith('data:') || category.icon.startsWith('http') ? (
+                            <img
+                              src={category.icon}
+                              alt={category.category_name}
+                              className="w-12 h-12 object-cover rounded-lg"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <span className="material-icons text-3xl text-gray-700">{category.icon}</span>
+                          )
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <span className="text-gray-400 text-xs">No Icon</span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {category.category_name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.getAccountTypeColor(category.account_type || 1)}`}>
+                          {config.getAccountTypeLabel(category.account_type || 1)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(category.status)}`}>
+                          {category.status || 'Active'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${category.deletable === 1
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}>
+                          {category.deletable === 1 ? '✓ Yes' : '✗ No'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {category.createtime}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEdit(category)}
+                            className="text-blue-600 hover:text-blue-900 p-1"
+                            title="Edit Category"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(category.category_id)}
+                            className="text-red-600 hover:text-red-900 p-1"
+                            title="Delete Category"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+              {Array.isArray(categories) && categories.map((category) => (
+                <div key={category.category_id} className="border-b border-gray-200 p-4 hover:bg-gray-50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
+                      {/* Icon */}
+                      <div className="flex-shrink-0">
+                        {category.icon ? (
+                          category.icon.startsWith('data:') || category.icon.startsWith('http') ? (
+                            <img
+                              src={category.icon}
+                              alt={category.category_name}
+                              className="w-10 h-10 object-cover rounded-lg"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <span className="material-icons text-2xl text-gray-700">{category.icon}</span>
+                          )
+                        ) : (
+                          <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <span className="text-gray-400 text-xs">No Icon</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="text-sm font-medium text-gray-900 truncate">{category.category_name}</h3>
+                          <span className="text-xs text-gray-500">ID: {category.category_id}</span>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.getAccountTypeColor(category.account_type || 1)}`}>
+                            {config.getAccountTypeLabel(category.account_type || 1)}
+                          </span>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(category.status)}`}>
+                            {category.status || 'Active'}
+                          </span>
+                          <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${category.deletable === 1
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                            }`}>
+                            {category.deletable === 1 ? '✓ Deletable' : '✗ Not Deletable'}
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-gray-500">Created: {category.createtime}</p>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex space-x-1 ml-2">
+                      <button
+                        onClick={() => handleEdit(category)}
+                        className="text-blue-600 hover:text-blue-900 p-2 rounded-lg hover:bg-blue-50"
+                        title="Edit Category"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(category.category_id)}
+                        className="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50"
+                        title="Delete Category"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {categories.length === 0 && !loading && (

@@ -347,22 +347,22 @@ export default function Report() {
   }
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 bg-gray-50 min-h-screen">
       {/* Header with Controls */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Admin Reports</h1>
-          <p className="text-gray-600">Comprehensive analytics and insights</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Admin Reports</h1>
+          <p className="text-sm sm:text-base text-gray-600">Comprehensive analytics and insights</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto">
           {/* Period Selection */}
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-gray-500" />
+            <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
             <select
               value={selectedPeriod}
               onChange={(e) => handlePeriodChange(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full sm:w-auto"
             >
               <option value="6months">Last 6 Months</option>
               <option value="yearly">Yearly</option>
@@ -372,20 +372,21 @@ export default function Report() {
 
           {/* Custom Date Range */}
           {selectedPeriod === 'custom' && (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <input
                 type="date"
                 value={customDateRange.startDate}
                 onChange={(e) => handleCustomDateChange('startDate', e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                 placeholder="Start Date"
               />
-              <span className="text-gray-500">to</span>
+              <span className="text-gray-500 text-sm text-center sm:hidden">to</span>
+              <span className="hidden sm:inline text-gray-500">to</span>
               <input
                 type="date"
                 value={customDateRange.endDate}
                 onChange={(e) => handleCustomDateChange('endDate', e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                 placeholder="End Date"
               />
             </div>
@@ -395,10 +396,11 @@ export default function Report() {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-2 bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 text-sm"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            <span className="hidden sm:inline">Refresh</span>
+            <span className="sm:hidden">Refresh</span>
           </button>
 
           {/* Export Button */}
@@ -407,10 +409,11 @@ export default function Report() {
       </div>
 
       {/* User Growth Report */}
-      <div className="bg-white rounded-2xl shadow-md p-6">
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Users className="w-6 h-6 text-blue-600" /> User Growth Report
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+            <span className="truncate">User Growth Report</span>
           </h3>
           {/* <button
             onClick={() => handleExportData('userGrowth')}
@@ -422,62 +425,80 @@ export default function Report() {
         </div>
 
         {/* Growth Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-green-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">New Users (This Month)</p>
-            <p className="text-2xl font-bold text-green-600">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-green-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">New Users (This Month)</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">
               {userGrowthSummary.newUsersThisMonth?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-green-500">
               {userGrowthSummary.growthRate || '+0%'} from last month
             </p>
           </div>
-          <div className="bg-blue-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Total Users</p>
-            <p className="text-2xl font-bold text-blue-600">
+          <div className="bg-blue-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Total Users</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">
               {userGrowthSummary.totalUsers?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-blue-500">
               {userGrowthSummary.growthRate || '+0%'} growth rate
             </p>
           </div>
-          <div className="bg-red-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Churn Rate</p>
-            <p className="text-2xl font-bold text-red-600">
+          <div className="bg-red-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Churn Rate</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">
               {userGrowthSummary.churnRate || '0'}%
             </p>
             <p className="text-xs text-red-500">
               {userGrowthSummary.churnChange || '0'} from last month
             </p>
           </div>
-          <div className="bg-purple-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Net Growth</p>
-            <p className="text-2xl font-bold text-purple-600">
+          <div className="bg-purple-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Net Growth</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-600">
               {userGrowthSummary.netGrowth?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-purple-500">Users this month</p>
           </div>
         </div>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={userGrowthData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Area type="monotone" dataKey="totalUsers" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="Total Users" />
-            <Area type="monotone" dataKey="newUsers" stackId="2" stroke="#4ade80" fill="#4ade80" name="New Users" />
-            <Line type="monotone" dataKey="churn" stroke="#f87171" strokeWidth={2} name="Churn" />
-            <Legend className="mt-10" />
-          </AreaChart>
-        </ResponsiveContainer>
+        <div className="h-64 sm:h-80 lg:h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={userGrowthData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="name"
+                fontSize={12}
+                tick={{ fontSize: 10 }}
+              />
+              <YAxis
+                fontSize={12}
+                tick={{ fontSize: 10 }}
+              />
+              <Tooltip
+                contentStyle={{
+                  fontSize: '12px',
+                  padding: '8px'
+                }}
+              />
+              <Area type="monotone" dataKey="totalUsers" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="Total Users" />
+              <Area type="monotone" dataKey="newUsers" stackId="2" stroke="#4ade80" fill="#4ade80" name="New Users" />
+              <Line type="monotone" dataKey="churn" stroke="#f87171" strokeWidth={2} name="Churn" />
+              <Legend
+                className="mt-4 sm:mt-6 lg:mt-10"
+                wrapperStyle={{ fontSize: '12px' }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Active vs Inactive Users */}
-      <div className="bg-white rounded-2xl shadow-md p-6">
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Activity className="w-6 h-6 text-green-600" /> User Activity Report
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+            <span className="truncate">User Activity Report</span>
           </h3>
           {/* <button
             onClick={() => handleExportData('userActivity')}
@@ -489,44 +510,44 @@ export default function Report() {
         </div>
 
         {/* Activity Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-blue-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Total Users</p>
-            <p className="text-2xl font-bold text-blue-600">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-blue-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Total Users</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">
               {userActivitySummary.totalUsers?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-blue-500">All registered users</p>
           </div>
-          <div className="bg-green-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Free Users</p>
-            <p className="text-2xl font-bold text-green-600">
+          <div className="bg-green-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Free Users</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">
               {userActivitySummary.freeUsers?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-green-500">
               {((userActivitySummary.freeUsers / userActivitySummary.totalUsers) * 100 || 0).toFixed(1)}% of total
             </p>
           </div>
-          <div className="bg-purple-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Paid Users</p>
-            <p className="text-2xl font-bold text-purple-600">
+          <div className="bg-purple-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Paid Users</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-600">
               {userActivitySummary.paidUsers?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-purple-500">
               {((userActivitySummary.paidUsers / userActivitySummary.totalUsers) * 100 || 0).toFixed(1)}% of total
             </p>
           </div>
-          <div className="bg-gray-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Active Users</p>
-            <p className="text-2xl font-bold text-gray-600">
+          <div className="bg-gray-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Active Users</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-600">
               {userActivitySummary.activePercentage || '0'}%
             </p>
             <p className="text-xs text-gray-500">Active percentage</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <ResponsiveContainer width="100%" height={300}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div className="h-64 sm:h-80 lg:h-96">
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={userActivityData}
@@ -536,7 +557,7 @@ export default function Report() {
                   label={({ name, percentage, value }) =>
                     `${name}: ${value?.toLocaleString() || 0} (${percentage || 0}%)`
                   }
-                  outerRadius={100}
+                  outerRadius={60}
                   fill="#8884d8"
                   dataKey="value"
                 >
@@ -544,23 +565,28 @@ export default function Report() {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    fontSize: '12px',
+                    padding: '8px'
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {userActivityData.map((item) => (
-              <div key={item.name} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                <div className="flex items-center gap-3">
+              <div key={item.name} className="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   {item.name.includes('Active') ?
-                    <UserCheck className="w-6 h-6" style={{ color: item.color }} /> :
-                    <UserX className="w-6 h-6" style={{ color: item.color }} />
+                    <UserCheck className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" style={{ color: item.color }} /> :
+                    <UserX className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" style={{ color: item.color }} />
                   }
-                  <span className="font-medium">{item.name}</span>
+                  <span className="font-medium text-sm sm:text-base truncate">{item.name}</span>
                 </div>
-                <div className="text-right">
-                  <p className="text-xl font-bold" style={{ color: item.color }}>
+                <div className="text-right flex-shrink-0 ml-2">
+                  <p className="text-lg sm:text-xl font-bold" style={{ color: item.color }}>
                     {item.value?.toLocaleString() || 0}
                   </p>
                   <p className="text-xs text-gray-500">
@@ -574,10 +600,11 @@ export default function Report() {
       </div>
 
       {/* Subscription Revenue Report */}
-      <div className="bg-white rounded-2xl shadow-md p-6">
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <DollarSign className="w-6 h-6 text-green-600" /> Subscription Revenue Report
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+            <span className="truncate">Subscription Revenue Report</span>
           </h3>
           {/* <button
             onClick={() => handleExportData('subscriptionRevenue')}
@@ -589,31 +616,31 @@ export default function Report() {
         </div>
 
         {/* Revenue Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-blue-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Yearly Revenue</p>
-            <p className="text-2xl font-bold text-blue-600">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-blue-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Yearly Revenue</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">
               ₹{subscriptionRevenueSummary.yearlyRevenue?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-blue-500">From yearly plans</p>
           </div>
-          <div className="bg-green-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Monthly Revenue</p>
-            <p className="text-2xl font-bold text-green-600">
+          <div className="bg-green-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Monthly Revenue</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">
               ₹{subscriptionRevenueSummary.monthlyRevenue?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-green-500">From monthly plans</p>
           </div>
-          <div className="bg-orange-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Lifetime Revenue</p>
-            <p className="text-2xl font-bold text-orange-600">
+          <div className="bg-orange-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Lifetime Revenue</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-orange-600">
               ₹{subscriptionRevenueSummary.lifetimeRevenue?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-orange-500">From lifetime plans</p>
           </div>
-          <div className="bg-purple-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Total Revenue</p>
-            <p className="text-2xl font-bold text-purple-600">
+          <div className="bg-purple-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Total Revenue</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-600">
               ₹{subscriptionRevenueSummary.totalRevenue?.toLocaleString() || '0'}
             </p>
             <p className="text-xs text-purple-500">
@@ -622,27 +649,45 @@ export default function Report() {
           </div>
         </div>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={subscriptionRevenueData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip formatter={(value, name) => [
-              name === 'userCount' ? value : `₹${value?.toLocaleString() || 0}`,
-              name === 'userCount' ? 'Users' : 'Revenue'
-            ]} />
-            <Legend />
-            <Bar dataKey="userCount" fill="#3b82f6" name="User Count" />
-            <Bar dataKey="totalRevenue" fill="#4ade80" name="Total Revenue" />
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="h-64 sm:h-80 lg:h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={subscriptionRevenueData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="name"
+                fontSize={12}
+                tick={{ fontSize: 10 }}
+              />
+              <YAxis
+                fontSize={12}
+                tick={{ fontSize: 10 }}
+              />
+              <Tooltip
+                formatter={(value, name) => [
+                  name === 'userCount' ? value : `₹${value?.toLocaleString() || 0}`,
+                  name === 'userCount' ? 'Users' : 'Revenue'
+                ]}
+                contentStyle={{
+                  fontSize: '12px',
+                  padding: '8px'
+                }}
+              />
+              <Legend
+                wrapperStyle={{ fontSize: '12px' }}
+              />
+              <Bar dataKey="userCount" fill="#3b82f6" name="User Count" />
+              <Bar dataKey="totalRevenue" fill="#4ade80" name="Total Revenue" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Business Health Distribution */}
-      <div className="bg-white rounded-2xl shadow-md p-6">
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Target className="w-6 h-6 text-purple-600" /> Business Health Distribution
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <Target className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+            <span className="truncate">Business Health Distribution</span>
           </h3>
           {/* <button
             onClick={() => handleExportData('businessHealth')}
@@ -654,43 +699,45 @@ export default function Report() {
         </div>
 
         {/* Business Health Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-purple-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Overall Score</p>
-            <p className="text-2xl font-bold text-purple-600">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-purple-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Overall Score</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-600">
               {businessHealthSummary.overallScore || '0'}/100
             </p>
             <p className="text-xs text-purple-500">Business health score</p>
           </div>
-          <div className="bg-green-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Strong Categories</p>
-            <p className="text-2xl font-bold text-green-600">
+          <div className="bg-green-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Strong Categories</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">
               {businessHealthSummary.strongCategories || '0'}
             </p>
             <p className="text-xs text-green-500">Performing well</p>
           </div>
-          <div className="bg-yellow-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Average Categories</p>
-            <p className="text-2xl font-bold text-yellow-600">
+          <div className="bg-yellow-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Average Categories</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-yellow-600">
               {businessHealthSummary.averageCategories || '0'}
             </p>
             <p className="text-xs text-yellow-500">Need improvement</p>
           </div>
-          <div className="bg-red-50 rounded-xl p-4 text-center">
-            <p className="text-sm text-gray-600">Poor Categories</p>
-            <p className="text-2xl font-bold text-red-600">
+          <div className="bg-red-50 rounded-xl p-3 sm:p-4 text-center">
+            <p className="text-xs sm:text-sm text-gray-600">Poor Categories</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-red-600">
               {businessHealthSummary.poorCategories || '0'}
             </p>
             <p className="text-xs text-red-500">Require attention</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {businessHealthData.map((item) => (
-            <div key={item.category} className="bg-gray-50 rounded-xl p-4">
+            <div key={item.category} className="bg-gray-50 rounded-xl p-3 sm:p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-medium">{item.category}</span>
-                {getHealthIcon(item.status)}
+                <span className="font-medium text-sm sm:text-base truncate">{item.category}</span>
+                <div className="flex-shrink-0 ml-2">
+                  {getHealthIcon(item.status)}
+                </div>
               </div>
 
               <div className="mb-2">
@@ -705,11 +752,11 @@ export default function Report() {
                 </div>
               </div>
 
-              <div className="flex justify-between text-sm">
-                <span className="font-medium" style={{ color: item.color }}>
+              <div className="flex justify-between text-xs sm:text-sm">
+                <span className="font-medium truncate" style={{ color: item.color }}>
                   {item.status}
                 </span>
-                <span className="text-gray-600">{item.value}%</span>
+                <span className="text-gray-600 flex-shrink-0 ml-2">{item.value}%</span>
               </div>
             </div>
           ))}
@@ -717,10 +764,11 @@ export default function Report() {
       </div>
 
       {/* Overall System Statistics - Performance Tracking */}
-      <div className="bg-white rounded-2xl shadow-md p-6">
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Target className="w-6 h-6 text-indigo-600" /> Overall System Statistics
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <Target className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
+            <span className="truncate">Overall System Statistics</span>
           </h3>
           {performanceLoading && (
             <RefreshCw className="w-4 h-4 animate-spin text-indigo-600" />
@@ -737,31 +785,31 @@ export default function Report() {
         ) : (
           <>
             {/* Performance Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-indigo-50 rounded-xl p-4 text-center">
-                <p className="text-sm text-gray-600">Total Users</p>
-                <p className="text-2xl font-bold text-indigo-600">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="bg-indigo-50 rounded-xl p-3 sm:p-4 text-center">
+                <p className="text-xs sm:text-sm text-gray-600">Total Users</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-indigo-600">
                   {performanceStats.overview?.totalUsers?.toLocaleString() || '0'}
                 </p>
                 <p className="text-xs text-indigo-500">All users in system</p>
               </div>
-              <div className="bg-green-50 rounded-xl p-4 text-center">
-                <p className="text-sm text-gray-600">Average Score</p>
-                <p className="text-2xl font-bold text-green-600">
+              <div className="bg-green-50 rounded-xl p-3 sm:p-4 text-center">
+                <p className="text-xs sm:text-sm text-gray-600">Average Score</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">
                   {performanceStats.overview?.averageScore?.toFixed(1) || '0'}/100
                 </p>
                 <p className="text-xs text-green-500">Overall performance</p>
               </div>
-              <div className="bg-blue-50 rounded-xl p-4 text-center">
-                <p className="text-sm text-gray-600">Excellent Users</p>
-                <p className="text-2xl font-bold text-blue-600">
+              <div className="bg-blue-50 rounded-xl p-3 sm:p-4 text-center">
+                <p className="text-xs sm:text-sm text-gray-600">Excellent Users</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">
                   {performanceStats.overview?.scoreDistribution?.excellent || '0'}
                 </p>
                 <p className="text-xs text-blue-500">80-100 points</p>
               </div>
-              <div className="bg-yellow-50 rounded-xl p-4 text-center">
-                <p className="text-sm text-gray-600">Good Users</p>
-                <p className="text-2xl font-bold text-yellow-600">
+              <div className="bg-yellow-50 rounded-xl p-3 sm:p-4 text-center">
+                <p className="text-xs sm:text-sm text-gray-600">Good Users</p>
+                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-yellow-600">
                   {performanceStats.overview?.scoreDistribution?.good || '0'}
                 </p>
                 <p className="text-xs text-yellow-500">60-79 points</p>
@@ -771,13 +819,13 @@ export default function Report() {
             {/* Performance Distribution Chart */}
             {performanceStats.overview?.scoreDistribution && (
               <div className="mb-6">
-                <h4 className="text-md font-semibold mb-4 text-gray-800">Performance Score Distribution</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-green-50 rounded-lg p-4 text-center">
-                    <div className="text-3xl font-bold text-green-600 mb-1">
+                <h4 className="text-sm sm:text-md font-semibold mb-3 sm:mb-4 text-gray-800">Performance Score Distribution</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                  <div className="bg-green-50 rounded-lg p-3 sm:p-4 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-1">
                       {performanceStats.overview.scoreDistribution.excellent || 0}
                     </div>
-                    <div className="text-sm text-green-700 font-medium">Excellent</div>
+                    <div className="text-xs sm:text-sm text-green-700 font-medium">Excellent</div>
                     <div className="text-xs text-green-600">80-100 points</div>
                     <div className="w-full bg-green-200 rounded-full h-2 mt-2">
                       <div
@@ -789,11 +837,11 @@ export default function Report() {
                     </div>
                   </div>
 
-                  <div className="bg-yellow-50 rounded-lg p-4 text-center">
-                    <div className="text-3xl font-bold text-yellow-600 mb-1">
+                  <div className="bg-yellow-50 rounded-lg p-3 sm:p-4 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-yellow-600 mb-1">
                       {performanceStats.overview.scoreDistribution.good || 0}
                     </div>
-                    <div className="text-sm text-yellow-700 font-medium">Good</div>
+                    <div className="text-xs sm:text-sm text-yellow-700 font-medium">Good</div>
                     <div className="text-xs text-yellow-600">60-79 points</div>
                     <div className="w-full bg-yellow-200 rounded-full h-2 mt-2">
                       <div
@@ -805,11 +853,11 @@ export default function Report() {
                     </div>
                   </div>
 
-                  <div className="bg-orange-50 rounded-lg p-4 text-center">
-                    <div className="text-3xl font-bold text-orange-600 mb-1">
+                  <div className="bg-orange-50 rounded-lg p-3 sm:p-4 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-orange-600 mb-1">
                       {performanceStats.overview.scoreDistribution.fair || 0}
                     </div>
-                    <div className="text-sm text-orange-700 font-medium">Fair</div>
+                    <div className="text-xs sm:text-sm text-orange-700 font-medium">Fair</div>
                     <div className="text-xs text-orange-600">40-59 points</div>
                     <div className="w-full bg-orange-200 rounded-full h-2 mt-2">
                       <div
@@ -821,11 +869,11 @@ export default function Report() {
                     </div>
                   </div>
 
-                  <div className="bg-red-50 rounded-lg p-4 text-center">
-                    <div className="text-3xl font-bold text-red-600 mb-1">
+                  <div className="bg-red-50 rounded-lg p-3 sm:p-4 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-red-600 mb-1">
                       {performanceStats.overview.scoreDistribution.poor || 0}
                     </div>
-                    <div className="text-sm text-red-700 font-medium">Poor</div>
+                    <div className="text-xs sm:text-sm text-red-700 font-medium">Poor</div>
                     <div className="text-xs text-red-600">0-39 points</div>
                     <div className="w-full bg-red-200 rounded-full h-2 mt-2">
                       <div
@@ -843,15 +891,15 @@ export default function Report() {
             {/* Performance Metrics */}
             {performanceStats.metrics && (
               <div className="mb-6">
-                <h4 className="text-md font-semibold mb-4 text-gray-800">Key Performance Metrics</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <h4 className="text-sm sm:text-md font-semibold mb-3 sm:mb-4 text-gray-800">Key Performance Metrics</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   {Object.entries(performanceStats.metrics).map(([metric, value]) => (
-                    <div key={metric} className="bg-gray-50 rounded-lg p-4">
+                    <div key={metric} className="bg-gray-50 rounded-lg p-3 sm:p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700 capitalize">
+                        <span className="text-xs sm:text-sm font-medium text-gray-700 capitalize truncate">
                           {metric.replace(/([A-Z])/g, ' $1').trim()}
                         </span>
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-base sm:text-lg font-bold text-gray-900 flex-shrink-0 ml-2">
                           {typeof value === 'number' ? value.toFixed(1) : value}
                         </span>
                       </div>
@@ -872,12 +920,12 @@ export default function Report() {
             {/* Performance Trends */}
             {performanceStats.trends && (
               <div>
-                <h4 className="text-md font-semibold mb-4 text-gray-800">Performance Trends</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-blue-50 rounded-lg p-4">
+                <h4 className="text-sm sm:text-md font-semibold mb-3 sm:mb-4 text-gray-800">Performance Trends</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-blue-700">Monthly Improvement</span>
-                      <span className="text-lg font-bold text-blue-600">
+                      <span className="text-xs sm:text-sm font-medium text-blue-700">Monthly Improvement</span>
+                      <span className="text-base sm:text-lg font-bold text-blue-600">
                         {performanceStats.trends.monthlyImprovement || 0}%
                       </span>
                     </div>
@@ -886,10 +934,10 @@ export default function Report() {
                     </div>
                   </div>
 
-                  <div className="bg-green-50 rounded-lg p-4">
+                  <div className="bg-green-50 rounded-lg p-3 sm:p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-green-700">Top Performers</span>
-                      <span className="text-lg font-bold text-green-600">
+                      <span className="text-xs sm:text-sm font-medium text-green-700">Top Performers</span>
+                      <span className="text-base sm:text-lg font-bold text-green-600">
                         {performanceStats.trends.topPerformers || 0}
                       </span>
                     </div>
@@ -946,61 +994,72 @@ export default function Report() {
       </div> */}
 
       {/* Financial Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Expenses */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
-            <PieChartIcon className="text-red-600" /> Expense Breakdown
+        <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 mb-3 sm:mb-4">
+            <PieChartIcon className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
+            <span className="truncate">Expense Breakdown</span>
           </h3>
 
           {/* Expense Summary */}
-          <div className="mb-4">
+          <div className="mb-3 sm:mb-4">
             <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-              <span className="text-sm font-medium text-gray-700">Total Expenses</span>
-              <span className="text-lg font-bold text-red-600">
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Total Expenses</span>
+              <span className="text-base sm:text-lg font-bold text-red-600">
                 ₹{expenseData.reduce((sum, item) => sum + (item.value || 0), 0).toLocaleString()}
               </span>
             </div>
           </div>
 
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={expenseData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) =>
-                  `${name} ${(percent * 100).toFixed(0)}%`
-                }
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {expenseData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']} />
-            </PieChart>
-          </ResponsiveContainer>
+          <div className="h-48 sm:h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={expenseData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) =>
+                    `${name} ${(percent * 100).toFixed(0)}%`
+                  }
+                  outerRadius={60}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {expenseData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']}
+                  contentStyle={{
+                    fontSize: '12px',
+                    padding: '8px'
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
 
           {/* Expense Details */}
-          <div className="mt-4 space-y-2">
+          <div className="mt-3 sm:mt-4 space-y-2">
             {expenseData.map((item, index) => (
-              <div key={item.name} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-2">
+              <div key={item.name} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   <div
-                    className="w-3 h-3 rounded-full"
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: COLORS[index % COLORS.length] }}
                   ></div>
-                  <span className="text-sm font-medium">{item.name}</span>
-                  <span className="text-xs text-gray-500">
-                    ({item.accountType === 0 ? 'Business' : 'Personal'})
-                  </span>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs sm:text-sm font-medium truncate block">{item.name}</span>
+                    <span className="text-xs text-gray-500">
+                      ({item.accountType === 0 ? 'Business' : 'Personal'})
+                    </span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>
+                <div className="text-right flex-shrink-0 ml-2">
+                  <div className="text-xs sm:text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>
                   <div className="text-xs text-gray-500">{item.count} transactions</div>
                 </div>
               </div>
@@ -1009,59 +1068,70 @@ export default function Report() {
         </div>
 
         {/* Incomes */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
-            <PieChartIcon className="text-green-600" /> Income Breakdown
+        <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 mb-3 sm:mb-4">
+            <PieChartIcon className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+            <span className="truncate">Income Breakdown</span>
           </h3>
 
           {/* Income Summary */}
-          <div className="mb-4">
+          <div className="mb-3 sm:mb-4">
             <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-              <span className="text-sm font-medium text-gray-700">Total Income</span>
-              <span className="text-lg font-bold text-green-600">
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Total Income</span>
+              <span className="text-base sm:text-lg font-bold text-green-600">
                 ₹{incomeData.reduce((sum, item) => sum + (item.value || 0), 0).toLocaleString()}
               </span>
             </div>
           </div>
 
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={incomeData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) =>
-                  `${name} ${(percent * 100).toFixed(0)}%`
-                }
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {incomeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']} />
-            </PieChart>
-          </ResponsiveContainer>
+          <div className="h-48 sm:h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={incomeData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) =>
+                    `${name} ${(percent * 100).toFixed(0)}%`
+                  }
+                  outerRadius={60}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {incomeData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value) => [`₹${value?.toLocaleString() || 0}`, 'Amount']}
+                  contentStyle={{
+                    fontSize: '12px',
+                    padding: '8px'
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
 
           {/* Income Details */}
-          <div className="mt-4 space-y-2">
+          <div className="mt-3 sm:mt-4 space-y-2">
             {incomeData.map((item, index) => (
-              <div key={item.name} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-2">
+              <div key={item.name} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   <div
-                    className="w-3 h-3 rounded-full"
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: COLORS[index % COLORS.length] }}
                   ></div>
-                  <span className="text-sm font-medium">{item.name}</span>
-                  <span className="text-xs text-gray-500">
-                    ({item.accountType === 0 ? 'Business' : 'Personal'})
-                  </span>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs sm:text-sm font-medium truncate block">{item.name}</span>
+                    <span className="text-xs text-gray-500">
+                      ({item.accountType === 0 ? 'Business' : 'Personal'})
+                    </span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>
+                <div className="text-right flex-shrink-0 ml-2">
+                  <div className="text-xs sm:text-sm font-bold">₹{item.value?.toLocaleString() || 0}</div>
                   <div className="text-xs text-gray-500">{item.count} transactions</div>
                 </div>
               </div>
@@ -1071,10 +1141,31 @@ export default function Report() {
       </div>
 
       {/* Credit Score */}
-      <div className="bg-white rounded-2xl shadow-md p-6 flex flex-col items-center">
-        <h3 className="text-lg font-semibold mb-2">Business Health Score</h3>
-        <div className="relative w-32 h-32">
-          <svg className="w-32 h-32">
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6 flex flex-col items-center">
+        <h3 className="text-base sm:text-lg font-semibold mb-2 text-center">Business Health Score</h3>
+        <div className="relative w-24 h-24 sm:w-32 sm:h-32">
+          <svg className="w-24 h-24 sm:w-32 sm:h-32">
+            <circle
+              cx="32"
+              cy="32"
+              r="28"
+              stroke="#e5e7eb"
+              strokeWidth="6"
+              fill="none"
+              className="sm:hidden"
+            />
+            <circle
+              cx="32"
+              cy="32"
+              r="28"
+              stroke={creditScore >= 70 ? "#4ade80" : creditScore >= 40 ? "#facc15" : "#f87171"}
+              strokeWidth="6"
+              fill="none"
+              strokeDasharray={`${(creditScore / 100) * 176} 176`}
+              strokeLinecap="round"
+              transform="rotate(-90 32 32)"
+              className="sm:hidden"
+            />
             <circle
               cx="64"
               cy="64"
@@ -1082,6 +1173,7 @@ export default function Report() {
               stroke="#e5e7eb"
               strokeWidth="8"
               fill="none"
+              className="hidden sm:block"
             />
             <circle
               cx="64"
@@ -1093,17 +1185,18 @@ export default function Report() {
               strokeDasharray={`${(creditScore / 100) * 377} 377`}
               strokeLinecap="round"
               transform="rotate(-90 64 64)"
+              className="hidden sm:block"
             />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-xl font-bold">
+          <span className="absolute inset-0 flex items-center justify-center text-lg sm:text-xl font-bold">
             {creditScore}
           </span>
         </div>
-        <p className="text-sm text-gray-500 mt-2">
+        <p className="text-xs sm:text-sm text-gray-500 mt-2 text-center">
           {creditScore >= 70 ? 'Excellent Health' : creditScore >= 40 ? 'Average Health' : 'Needs Attention'}
         </p>
         <div className="mt-2 text-center">
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-400 px-2">
             Based on {businessHealthSummary.strongCategories || 0} strong, {businessHealthSummary.averageCategories || 0} average, and {businessHealthSummary.poorCategories || 0} poor categories
           </p>
         </div>
