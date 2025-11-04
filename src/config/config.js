@@ -74,6 +74,8 @@ const config = {
 
     // Notification Management
     CREATE_NOTIFICATION_CAMPAIGN: '/admin/create_notification_campaign',
+    UPDATE_NOTIFICATION_CAMPAIGN: '/admin/update_notification_campaign',
+    DELETE_NOTIFICATION_CAMPAIGN: '/admin/delete_notification_campaign',
     SEND_NOTIFICATION_CAMPAIGN: '/admin/send_notification_campaign',
     GET_ALL_NOTIFICATION_CAMPAIGNS: '/admin/get_all_notification_campaigns',
     GET_NOTIFICATION_PERFORMANCE_STATS: '/admin/get_notification_performance_stats',
@@ -230,6 +232,8 @@ const config = {
 
       // Notification Management URLs
       CREATE_NOTIFICATION_CAMPAIGN: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_NOTIFICATION_CAMPAIGN}`,
+      UPDATE_NOTIFICATION_CAMPAIGN: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_NOTIFICATION_CAMPAIGN}`,
+      DELETE_NOTIFICATION_CAMPAIGN: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_NOTIFICATION_CAMPAIGN}`,
       SEND_NOTIFICATION_CAMPAIGN: `${this.API_BASE_URL}${this.API_ENDPOINTS.SEND_NOTIFICATION_CAMPAIGN}`,
       GET_ALL_NOTIFICATION_CAMPAIGNS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_NOTIFICATION_CAMPAIGNS}`,
       GET_NOTIFICATION_PERFORMANCE_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_NOTIFICATION_PERFORMANCE_STATS}`,

@@ -360,6 +360,20 @@ const apiService = {
     return response.data;
   },
 
+  updateNotificationCampaign: async (campaignData) => {
+    console.log('Updating notification campaign with data:', campaignData);
+
+    const response = await api.put(config.API_ENDPOINTS.UPDATE_NOTIFICATION_CAMPAIGN, campaignData);
+    return response.data;
+  },
+
+  deleteNotificationCampaign: async (campaignId) => {
+    const response = await api.delete(config.API_ENDPOINTS.DELETE_NOTIFICATION_CAMPAIGN, {
+      data: { campaign_id: campaignId }
+    });
+    return response.data;
+  },
+
   // Content Management
   createBanner: async (bannerData) => {
     // Get admin user ID from localStorage

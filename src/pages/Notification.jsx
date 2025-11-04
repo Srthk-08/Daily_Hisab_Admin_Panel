@@ -66,10 +66,13 @@ export default function Notification() {
   // Form states
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showSendModal, setShowSendModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Campaign form data
   const [campaignData, setCampaignData] = useState({
+    campaign_id: null,
     title: "",
     message: "",
     notification_type: "message",
@@ -209,7 +212,9 @@ export default function Notification() {
       if (response && response.success) {
         setSuccess("Campaign created successfully");
         setShowCreateModal(false);
+        setIsEditMode(false);
         setCampaignData({
+          campaign_id: null,
           title: "",
           message: "",
           notification_type: "message",
@@ -256,6 +261,89 @@ export default function Notification() {
     } catch (err) {
       console.error("Error sending campaign:", err);
       setError(err.message || "Failed to send campaign");
+      setTimeout(() => setError(null), 5000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle edit campaign
+  const handleEditCampaign = (campaign) => {
+    setSelectedCampaign(campaign);
+    setIsEditMode(true);
+    setCampaignData({
+      campaign_id: campaign.campaign_id,
+      title: campaign.title || "",
+      message: campaign.message || "",
+      notification_type: campaign.notification_type || "message",
+      target_audience: campaign.target_audience || "all_users",
+    });
+    setShowCreateModal(true);
+  };
+
+  // Update campaign
+  const handleUpdateCampaign = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
+
+      const response = await apiService.updateNotificationCampaign(campaignData);
+      console.log("Update Campaign Response:", response);
+
+      if (response && response.success) {
+        setSuccess("Campaign updated successfully");
+        setShowCreateModal(false);
+        setIsEditMode(false);
+        setSelectedCampaign(null);
+        setCampaignData({
+          campaign_id: null,
+          title: "",
+          message: "",
+          notification_type: "message",
+          target_audience: "all_users",
+        });
+        fetchCampaigns();
+        setTimeout(() => setSuccess(null), 3000);
+      } else {
+        setError(response?.msg?.[0] || "Failed to update campaign");
+        setTimeout(() => setError(null), 5000);
+      }
+    } catch (err) {
+      console.error("Error updating campaign:", err);
+      setError(err.message || "Failed to update campaign");
+      setTimeout(() => setError(null), 5000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle delete campaign
+  const handleDeleteCampaign = async () => {
+    if (!selectedCampaign) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
+
+      const response = await apiService.deleteNotificationCampaign(selectedCampaign.campaign_id);
+      console.log("Delete Campaign Response:", response);
+
+      if (response && response.success) {
+        setSuccess("Campaign deleted successfully");
+        setShowDeleteModal(false);
+        setSelectedCampaign(null);
+        fetchCampaigns();
+        setTimeout(() => setSuccess(null), 3000);
+      } else {
+        setError(response?.msg?.[0] || "Failed to delete campaign");
+        setTimeout(() => setError(null), 5000);
+      }
+    } catch (err) {
+      console.error("Error deleting campaign:", err);
+      setError(err.message || "Failed to delete campaign");
       setTimeout(() => setError(null), 5000);
     } finally {
       setLoading(false);
@@ -583,17 +671,39 @@ export default function Notification() {
                         )}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                        {campaign.status === "draft" && (
-                          <button
-                            onClick={() => {
-                              setSelectedCampaign(campaign);
-                              setShowSendModal(true);
-                            }}
-                            className="text-green-600 hover:text-green-900 mr-3"
-                          >
-                            <Send size={16} />
-                          </button>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {campaign.status === "draft" && (
+                            <>
+                              <button
+                                onClick={() => handleEditCampaign(campaign)}
+                                className="text-blue-600 hover:text-blue-900"
+                                title="Edit Campaign"
+                              >
+                                <Edit size={16} />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedCampaign(campaign);
+                                  setShowDeleteModal(true);
+                                }}
+                                className="text-red-600 hover:text-red-900"
+                                title="Delete Campaign"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedCampaign(campaign);
+                                  setShowSendModal(true);
+                                }}
+                                className="text-green-600 hover:text-green-900"
+                                title="Send Campaign"
+                              >
+                                <Send size={16} />
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -624,16 +734,35 @@ export default function Notification() {
                       {campaign.sendtime && <div>Sent: {campaign.sendtime}</div>}
                     </div>
                     {campaign.status === "draft" && (
-                      <button
-                        onClick={() => {
-                          setSelectedCampaign(campaign);
-                          setShowSendModal(true);
-                        }}
-                        className="w-full px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 flex items-center justify-center gap-2"
-                      >
-                        <Send size={14} />
-                        Send Campaign
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditCampaign(campaign)}
+                          className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 flex items-center justify-center gap-2"
+                        >
+                          <Edit size={14} />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedCampaign(campaign);
+                            setShowDeleteModal(true);
+                          }}
+                          className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 flex items-center justify-center gap-2"
+                        >
+                          <Trash2 size={14} />
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedCampaign(campaign);
+                            setShowSendModal(true);
+                          }}
+                          className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 flex items-center justify-center gap-2"
+                        >
+                          <Send size={14} />
+                          Send
+                        </button>
+                      </div>
                     )}
                   </div>
                 ))}
@@ -668,16 +797,21 @@ export default function Notification() {
         )}
       </div>
 
-      {/* Create Campaign Modal */}
+      {/* Create/Edit Campaign Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-4 sm:p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Create Notification Campaign</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                {isEditMode ? "Edit Notification Campaign" : "Create Notification Campaign"}
+              </h2>
               <button
                 onClick={() => {
                   setShowCreateModal(false);
+                  setIsEditMode(false);
+                  setSelectedCampaign(null);
                   setCampaignData({
+                    campaign_id: null,
                     title: "",
                     message: "",
                     notification_type: "message",
@@ -689,7 +823,7 @@ export default function Notification() {
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleCreateCampaign} className="p-4 sm:p-6 space-y-4">
+            <form onSubmit={isEditMode ? handleUpdateCampaign : handleCreateCampaign} className="p-4 sm:p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                 <input
@@ -747,13 +881,16 @@ export default function Notification() {
                   disabled={loading}
                   className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 text-sm sm:text-base"
                 >
-                  {loading ? "Creating..." : "Create Campaign"}
+                  {loading ? (isEditMode ? "Updating..." : "Creating...") : (isEditMode ? "Update Campaign" : "Create Campaign")}
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     setShowCreateModal(false);
+                    setIsEditMode(false);
+                    setSelectedCampaign(null);
                     setCampaignData({
+                      campaign_id: null,
                       title: "",
                       message: "",
                       notification_type: "message",
@@ -766,6 +903,62 @@ export default function Notification() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Campaign Modal */}
+      {showDeleteModal && selectedCampaign && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-4 sm:p-6 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Delete Campaign</h2>
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedCampaign(null);
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-4 sm:p-6 space-y-4">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-xs sm:text-sm text-red-800 font-medium mb-2">Warning: This action cannot be undone!</p>
+                <p className="text-xs sm:text-sm text-red-700">
+                  You are about to permanently delete this campaign. This action cannot be reversed.
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 mb-2">Campaign:</p>
+                <p className="text-base font-medium text-gray-900">{selectedCampaign.title}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 mb-2">Target Audience:</p>
+                <p className="text-sm text-gray-900">
+                  {targetAudiences[selectedCampaign.target_audience]?.label || selectedCampaign.target_audience}
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 pt-4">
+                <button
+                  onClick={handleDeleteCampaign}
+                  disabled={loading}
+                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 text-sm sm:text-base"
+                >
+                  {loading ? "Deleting..." : "Delete Campaign"}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedCampaign(null);
+                  }}
+                  className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-sm sm:text-base"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
