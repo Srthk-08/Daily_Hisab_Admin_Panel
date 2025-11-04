@@ -350,28 +350,13 @@ const apiService = {
     return response.data;
   },
 
-  getNotificationTemplates: async (params = {}) => {
-    const response = await api.get(config.API_ENDPOINTS.GET_NOTIFICATION_TEMPLATES, { params });
-    return response.data;
-  },
-
   getNotificationPerformanceStats: async (params = {}) => {
     const response = await api.get(config.API_ENDPOINTS.GET_NOTIFICATION_PERFORMANCE_STATS, { params });
     return response.data;
   },
 
-  runSmartTriggers: async () => {
-    const response = await api.post(config.API_ENDPOINTS.RUN_SMART_TRIGGERS);
-    return response.data;
-  },
-
-  getSmartTriggerStats: async () => {
-    const response = await api.get(config.API_ENDPOINTS.GET_SMART_TRIGGER_STATS);
-    return response.data;
-  },
-
-  updateDeviceToken: async (tokenData) => {
-    const response = await api.post(config.API_ENDPOINTS.UPDATE_DEVICE_TOKEN, tokenData);
+  getNotificationSystemStats: async () => {
+    const response = await api.get(config.API_ENDPOINTS.GET_NOTIFICATION_SYSTEM_STATS);
     return response.data;
   },
 
@@ -572,11 +557,6 @@ const apiService = {
     return response.data;
   },
 
-  // Notifications
-  getNotifications: async () => {
-    const response = await api.get(config.API_ENDPOINTS.NOTIFICATION);
-    return response.data;
-  },
 
   // Manual Upgrade System
   getAvailablePlans: async () => {

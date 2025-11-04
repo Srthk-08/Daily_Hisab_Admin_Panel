@@ -11,7 +11,6 @@ import Transaction from "./pages/Transaction";
 import Expense from "./pages/Expense";
 import Budget from "./pages/Budget";
 import Udhari from "./pages/Udhari";
-import Notification from "./pages/Notification";
 import Subscription from "./pages/Subscription";
 import Report from "./pages/Report";
 import Hisab from "./pages/Hisab";
@@ -24,6 +23,7 @@ import ContactUs from "./pages/ContactUs";
 import Content from "./pages/Content";
 import Tandc from "./pages/Tandc";
 import ViewUser from "./pages/ViewUser";
+import Notification from "./pages/Notification";
 // Loading component
 const LoadingSpinner = ({ message = "Loading..." }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -97,7 +97,6 @@ const App = () => {
           <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/admin/transaction" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
-          <Route path="/admin/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
           <Route path="/admin/hisab" element={<ProtectedRoute><Hisab /></ProtectedRoute>} />
           <Route path="/admin/expense" element={<ProtectedRoute><Expense /></ProtectedRoute>} />
           <Route path="/admin/udhari" element={<ProtectedRoute><Udhari /></ProtectedRoute>} />
@@ -113,6 +112,7 @@ const App = () => {
           <Route path="/admin/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
           <Route path="/admin/view-user" element={<ProtectedRoute><ViewUser /></ProtectedRoute>} />
           <Route path="/admin/tnc" element={<ProtectedRoute><Tandc /></ProtectedRoute>} />
+          <Route path="/admin/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/admin/login" replace />} />
         </Routes>
       </Router>

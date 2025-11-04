@@ -46,7 +46,6 @@ const config = {
     EXPENSE: '/api/expense',
     UDHARI: '/api/udhari',
     CONTENT: '/api/content',
-    NOTIFICATION: '/api/notification',
     SUBSCRIPTION: '/api/subscription',
     STOCK: '/api/stock',
     DATA: '/api/data',
@@ -77,11 +76,8 @@ const config = {
     CREATE_NOTIFICATION_CAMPAIGN: '/admin/create_notification_campaign',
     SEND_NOTIFICATION_CAMPAIGN: '/admin/send_notification_campaign',
     GET_ALL_NOTIFICATION_CAMPAIGNS: '/admin/get_all_notification_campaigns',
-    GET_NOTIFICATION_TEMPLATES: '/admin/get_notification_templates',
     GET_NOTIFICATION_PERFORMANCE_STATS: '/admin/get_notification_performance_stats',
-    RUN_SMART_TRIGGERS: '/admin/run_smart_triggers',
-    GET_SMART_TRIGGER_STATS: '/admin/get_smart_trigger_stats',
-    UPDATE_DEVICE_TOKEN: '/update_device_token',
+    GET_NOTIFICATION_SYSTEM_STATS: '/admin/get_notification_system_stats',
 
     // Content Management
     CREATE_BANNER: '/admin/create_banner',
@@ -206,7 +202,6 @@ const config = {
       EXPENSE: `${this.API_BASE_URL}${this.API_ENDPOINTS.EXPENSE}`,
       UDHARI: `${this.API_BASE_URL}${this.API_ENDPOINTS.UDHARI}`,
       CONTENT: `${this.API_BASE_URL}${this.API_ENDPOINTS.CONTENT}`,
-      NOTIFICATION: `${this.API_BASE_URL}${this.API_ENDPOINTS.NOTIFICATION}`,
       SUBSCRIPTION: `${this.API_BASE_URL}${this.API_ENDPOINTS.SUBSCRIPTION}`,
       STOCK: `${this.API_BASE_URL}${this.API_ENDPOINTS.STOCK}`,
       DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.DATA}`,
@@ -237,11 +232,8 @@ const config = {
       CREATE_NOTIFICATION_CAMPAIGN: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_NOTIFICATION_CAMPAIGN}`,
       SEND_NOTIFICATION_CAMPAIGN: `${this.API_BASE_URL}${this.API_ENDPOINTS.SEND_NOTIFICATION_CAMPAIGN}`,
       GET_ALL_NOTIFICATION_CAMPAIGNS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_NOTIFICATION_CAMPAIGNS}`,
-      GET_NOTIFICATION_TEMPLATES: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_NOTIFICATION_TEMPLATES}`,
       GET_NOTIFICATION_PERFORMANCE_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_NOTIFICATION_PERFORMANCE_STATS}`,
-      RUN_SMART_TRIGGERS: `${this.API_BASE_URL}${this.API_ENDPOINTS.RUN_SMART_TRIGGERS}`,
-      GET_SMART_TRIGGER_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_SMART_TRIGGER_STATS}`,
-      UPDATE_DEVICE_TOKEN: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_DEVICE_TOKEN}`,
+      GET_NOTIFICATION_SYSTEM_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_NOTIFICATION_SYSTEM_STATS}`,
 
       // Content Management URLs
       CREATE_BANNER: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_BANNER}`,
