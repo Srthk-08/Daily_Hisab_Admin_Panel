@@ -453,55 +453,6 @@ export default function Notification() {
         </div>
       </div>
 
-      {/* Statistics Cards */}
-      {performanceStats.overall_stats && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs sm:text-sm font-medium text-gray-600">Total Sent</h3>
-              <Send className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">
-              {performanceStats.overall_stats.total_sent?.toLocaleString() || 0}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">All campaigns</p>
-          </div>
-
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs sm:text-sm font-medium text-gray-600">Delivery Rate</h3>
-              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">
-              {performanceStats.overall_stats.overall_delivery_rate || "0.00"}%
-            </p>
-            <p className="text-xs text-gray-500 mt-1">Successful deliveries</p>
-          </div>
-
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs sm:text-sm font-medium text-gray-600">Open Rate</h3>
-              <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">
-              {performanceStats.overall_stats.overall_open_rate || "0.00"}%
-            </p>
-            <p className="text-xs text-gray-500 mt-1">Users opened</p>
-          </div>
-
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs sm:text-sm font-medium text-gray-600">Click Rate</h3>
-              <Target className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
-            </div>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">
-              {performanceStats.overall_stats.overall_click_rate || "0.00"}%
-            </p>
-            <p className="text-xs text-gray-500 mt-1">Users clicked</p>
-          </div>
-        </div>
-      )}
-
       {/* System Stats */}
       {systemStats && Object.keys(systemStats).length > 0 && (
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
@@ -627,9 +578,6 @@ export default function Notification() {
                       Status
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Performance
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                       Date
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -653,17 +601,6 @@ export default function Notification() {
                         {renderTargetAudienceBadge(campaign.target_audience)}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">{renderStatusBadge(campaign.status)}</td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        {campaign.status === "sent" ? (
-                          <div className="text-xs">
-                            <div>Sent: {campaign.total_sent || 0}</div>
-                            <div>Opened: {campaign.total_opened || 0}</div>
-                            <div className="text-green-600">Rate: {campaign.open_rate || "0.00"}%</div>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-gray-400">Draft</span>
-                        )}
-                      </td>
                       <td className="px-4 py-4 whitespace-nowrap text-xs text-gray-500">
                         {campaign.createtime || "N/A"}
                         {campaign.sendtime && (
@@ -723,12 +660,6 @@ export default function Notification() {
                       {renderNotificationTypeBadge(campaign.notification_type)}
                       {renderTargetAudienceBadge(campaign.target_audience)}
                     </div>
-                    {campaign.status === "sent" && (
-                      <div className="text-xs text-gray-600 mb-3">
-                        <div>Sent: {campaign.total_sent || 0} | Opened: {campaign.total_opened || 0}</div>
-                        <div className="text-green-600">Open Rate: {campaign.open_rate || "0.00"}%</div>
-                      </div>
-                    )}
                     <div className="text-xs text-gray-500 mb-3">
                       Created: {campaign.createtime || "N/A"}
                       {campaign.sendtime && <div>Sent: {campaign.sendtime}</div>}
