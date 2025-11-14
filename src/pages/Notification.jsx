@@ -11,7 +11,6 @@ import {
   BarChart3,
   RefreshCw,
   Play,
-  Pause,
   Eye,
   EyeOff,
   AlertCircle,
@@ -107,7 +106,6 @@ export default function Notification() {
     monthly_subscribers: { label: "Monthly Subscribers", icon: Calendar, color: "text-green-600" },
     yearly_subscribers: { label: "Yearly Subscribers", icon: Star, color: "text-yellow-600" },
     free_users: { label: "Free Users", icon: Users, color: "text-gray-600" },
-    inactive_users: { label: "Inactive Users", icon: Pause, color: "text-red-600" },
   };
 
   // Status configuration
@@ -482,10 +480,6 @@ export default function Notification() {
               <p className="text-xs sm:text-sm text-gray-600">Free Users</p>
               <p className="text-lg sm:text-xl font-bold text-gray-900">{systemStats.free_users || 0}</p>
             </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600">Inactive Users</p>
-              <p className="text-lg sm:text-xl font-bold text-gray-900">{systemStats.inactive_users || 0}</p>
-            </div>
           </div>
         </div>
       )}
@@ -541,7 +535,6 @@ export default function Notification() {
               <option value="monthly_subscribers">Monthly Subscribers</option>
               <option value="yearly_subscribers">Yearly Subscribers</option>
               <option value="free_users">Free Users</option>
-              <option value="inactive_users">Inactive Users</option>
             </select>
           </div>
         </div>
@@ -803,7 +796,6 @@ export default function Notification() {
                   <option value="monthly_subscribers">Monthly Subscribers</option>
                   <option value="yearly_subscribers">Yearly Subscribers</option>
                   <option value="free_users">Free Users</option>
-                  <option value="inactive_users">Inactive Users</option>
                 </select>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 pt-4">
