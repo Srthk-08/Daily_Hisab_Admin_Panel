@@ -578,6 +578,13 @@ const apiService = {
     return response.data;
   },
 
+  searchUserByMobile: async (mobile) => {
+    const response = await api.get(config.API_ENDPOINTS.SEARCH_USER_BY_MOBILE, {
+      params: { mobile }
+    });
+    return response.data;
+  },
+
   manualUpgradeUser: async (upgradeData) => {
     const response = await api.post(config.API_ENDPOINTS.MANUAL_UPGRADE_USER, upgradeData);
     return response.data;
