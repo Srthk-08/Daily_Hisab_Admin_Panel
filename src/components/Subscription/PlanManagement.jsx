@@ -26,7 +26,8 @@ const PlanManagement = () => {
   const subscriptionTypes = [
     { value: 1, label: "Yearly", defaultValidity: 365 },
     { value: 2, label: "Monthly", defaultValidity: 30 },
-    { value: 3, label: "Lifetime", defaultValidity: 3650 }
+    { value: 3, label: "Lifetime", defaultValidity: 3650 },
+    { value: 4, label: "Other", defaultValidity: null } // null means custom validity required
   ];
 
   // Special plans that cannot be deleted and have restricted editing
@@ -44,10 +45,20 @@ const PlanManagement = () => {
     return typeObj ? typeObj.defaultValidity : 30;
   };
 
-  // Handle subscription type change and auto-set validity days
+  // Check if subscription type requires custom validity (Other type)
+  const requiresCustomValidity = (subscriptionType) => {
+    return subscriptionType === 4;
+  };
+
+  // Handle subscription type change and auto-set validity days (except for Other)
   const handleSubscriptionTypeChange = (type) => {
     const defaultValidity = getDefaultValidityDays(type);
-    setNewPlan({ ...newPlan, subscription_type: type, validity_days: defaultValidity });
+    // For "Other" type, don't auto-set validity, let user input it
+    if (type === 4) {
+      setNewPlan({ ...newPlan, subscription_type: type, validity_days: '' });
+    } else {
+      setNewPlan({ ...newPlan, subscription_type: type, validity_days: defaultValidity });
+    }
   };
 
   // Check if a plan is a special plan
@@ -99,14 +110,24 @@ const PlanManagement = () => {
       try {
         setLoading(true);
 
-        // Prepare plan data with validity_days (always auto-assigned based on type)
+        // Prepare plan data with validity_days
+        // For "Other" type, validity_days must be provided by user
         const planData = {
           description: newPlan.description,
           text: newPlan.text,
           amount: newPlan.amount,
           subscription_type: newPlan.subscription_type,
-          validity_days: getDefaultValidityDays(newPlan.subscription_type)
+          validity_days: requiresCustomValidity(newPlan.subscription_type) 
+            ? newPlan.validity_days 
+            : getDefaultValidityDays(newPlan.subscription_type)
         };
+
+        // Validate validity_days for "Other" type
+        if (requiresCustomValidity(newPlan.subscription_type) && (!newPlan.validity_days || newPlan.validity_days <= 0)) {
+          setError('For "Other" subscription type, validity days is required');
+          setLoading(false);
+          return;
+        }
 
         const response = await apiService.createSubscriptionPlan(planData);
         if (response && response.success) {
@@ -138,9 +159,20 @@ const PlanManagement = () => {
       const planToUpdate = Array.isArray(plans) ? plans.find(p => p.subscription_id === planId) : null;
       if (planToUpdate) {
         // For special plans, ensure validity_days is set
-        const validityDays = isSpecialPlan(planToUpdate.subscription_id)
-          ? (planToUpdate.validity_days || 15) // Default to 15 days for special plans
-          : (planToUpdate.validity_days || getDefaultValidityDays(planToUpdate.subscription_type));
+        // For "Other" type, validity_days is required
+        let validityDays;
+        if (isSpecialPlan(planToUpdate.subscription_id)) {
+          validityDays = planToUpdate.validity_days || 15; // Default to 15 days for special plans
+        } else if (requiresCustomValidity(planToUpdate.subscription_type)) {
+          validityDays = planToUpdate.validity_days;
+          if (!validityDays || validityDays <= 0) {
+            setError('For "Other" subscription type, validity days is required');
+            setLoading(false);
+            return;
+          }
+        } else {
+          validityDays = planToUpdate.validity_days || getDefaultValidityDays(planToUpdate.subscription_type);
+        }
 
         const updateData = {
           subscription_id: planToUpdate.subscription_id.toString(), // Convert to string
@@ -201,6 +233,13 @@ const PlanManagement = () => {
   const getSubscriptionTypeLabel = (type) => {
     const typeObj = subscriptionTypes.find(t => t.value === type);
     return typeObj ? typeObj.label : 'Unknown';
+  };
+
+  // Get subscription type label with validity for display
+  const getSubscriptionTypeDisplay = (type) => {
+    const typeObj = subscriptionTypes.find(t => t.value === type);
+    if (!typeObj) return 'Unknown';
+    return typeObj.defaultValidity ? `${typeObj.label} (${typeObj.defaultValidity} days)` : typeObj.label;
   };
 
   if (loading && (!Array.isArray(plans) || plans.length === 0)) {
@@ -299,8 +338,11 @@ const PlanManagement = () => {
                   step="0.01"
                   className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="299.00"
-                  value={newPlan.amount}
-                  onChange={(e) => setNewPlan({ ...newPlan, amount: parseFloat(e.target.value) || 0 })}
+                  value={newPlan.amount === 0 ? '' : newPlan.amount}
+                  onChange={(e) => {
+                    const value = e.target.value === '' ? '' : parseFloat(e.target.value) || '';
+                    setNewPlan({ ...newPlan, amount: value === '' ? 0 : value });
+                  }}
                 />
               </div>
 
@@ -313,14 +355,39 @@ const PlanManagement = () => {
                 >
                   {subscriptionTypes.map((type) => (
                     <option key={type.value} value={type.value}>
-                      {type.label} ({type.defaultValidity} days)
+                      {type.label} {type.defaultValidity ? `(${type.defaultValidity} days)` : '(Custom)'}
                     </option>
                   ))}
                 </select>
                 <p className="text-xs text-gray-500 mt-1">
-                  Validity will be automatically set to {getDefaultValidityDays(newPlan.subscription_type)} days
+                  {requiresCustomValidity(newPlan.subscription_type) 
+                    ? 'Please enter custom validity days below'
+                    : `Validity will be automatically set to ${getDefaultValidityDays(newPlan.subscription_type)} days`}
                 </p>
               </div>
+
+              {requiresCustomValidity(newPlan.subscription_type) && (
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+                    Validity Days <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="36500"
+                    className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                    placeholder="Enter validity days (1-36500)"
+                    value={newPlan.validity_days || ''}
+                    onChange={(e) => {
+                      const value = e.target.value === '' ? '' : parseInt(e.target.value) || '';
+                      setNewPlan({ ...newPlan, validity_days: value });
+                    }}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Range: 1-36,500 days (1-100 years)
+                  </p>
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4">
                 <button
@@ -485,10 +552,13 @@ const PlanManagement = () => {
                       type="number"
                       step="0.01"
                       className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      value={plan.amount}
-                      onChange={(e) => setPlans(plans.map(p =>
-                        p.subscription_id === editPlan ? { ...p, amount: parseFloat(e.target.value) || 0 } : p
-                      ))}
+                      value={plan.amount === 0 ? '' : plan.amount}
+                      onChange={(e) => {
+                        const value = e.target.value === '' ? '' : parseFloat(e.target.value) || '';
+                        setPlans(plans.map(p =>
+                          p.subscription_id === editPlan ? { ...p, amount: value === '' ? 0 : value } : p
+                        ));
+                      }}
                     />
                   </div>
 
@@ -501,24 +571,37 @@ const PlanManagement = () => {
                           value={plan.subscription_type}
                           onChange={(e) => {
                             const newType = parseInt(e.target.value);
-                            const defaultValidity = getDefaultValidityDays(newType);
-                            setPlans(plans.map(p =>
-                              p.subscription_id === editPlan ? {
-                                ...p,
-                                subscription_type: newType,
-                                validity_days: defaultValidity
-                              } : p
-                            ));
+                            if (requiresCustomValidity(newType)) {
+                              // For "Other" type, don't auto-set validity
+                              setPlans(plans.map(p =>
+                                p.subscription_id === editPlan ? {
+                                  ...p,
+                                  subscription_type: newType,
+                                  validity_days: p.validity_days || ''
+                                } : p
+                              ));
+                            } else {
+                              const defaultValidity = getDefaultValidityDays(newType);
+                              setPlans(plans.map(p =>
+                                p.subscription_id === editPlan ? {
+                                  ...p,
+                                  subscription_type: newType,
+                                  validity_days: defaultValidity
+                                } : p
+                              ));
+                            }
                           }}
                         >
                           {subscriptionTypes.map((type) => (
                             <option key={type.value} value={type.value}>
-                              {type.label} ({type.defaultValidity} days)
+                              {type.label} {type.defaultValidity ? `(${type.defaultValidity} days)` : '(Custom)'}
                             </option>
                           ))}
                         </select>
                         <p className="text-xs text-gray-500 mt-1">
-                          Validity will be automatically set to {getDefaultValidityDays(plan.subscription_type)} days
+                          {requiresCustomValidity(plan.subscription_type)
+                            ? 'Please enter custom validity days below'
+                            : `Validity will be automatically set to ${getDefaultValidityDays(plan.subscription_type)} days`}
                         </p>
                       </div>
                     </>
@@ -537,8 +620,13 @@ const PlanManagement = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Validity Days
+                      {requiresCustomValidity(plan.subscription_type) && <span className="text-red-500 ml-1">*</span>}
                       <span className="text-gray-500 text-sm ml-1">
-                        {isSpecialPlan(plan.subscription_id) ? '(editable for special plans)' : '(auto-assigned based on type)'}
+                        {isSpecialPlan(plan.subscription_id) 
+                          ? '(editable for special plans)' 
+                          : requiresCustomValidity(plan.subscription_type)
+                          ? '(required for Other type)'
+                          : '(auto-assigned based on type)'}
                       </span>
                     </label>
                     <input
@@ -546,14 +634,21 @@ const PlanManagement = () => {
                       min="1"
                       max="36500"
                       className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder={`Default: ${getDefaultValidityDays(plan.subscription_type)} days`}
+                      placeholder={requiresCustomValidity(plan.subscription_type) 
+                        ? 'Enter validity days (1-36500)' 
+                        : `Default: ${getDefaultValidityDays(plan.subscription_type)} days`}
                       value={plan.validity_days || ''}
-                      onChange={(e) => setPlans(plans.map(p =>
-                        p.subscription_id === editPlan ? {
-                          ...p,
-                          validity_days: e.target.value ? parseInt(e.target.value) : getDefaultValidityDays(p.subscription_type)
-                        } : p
-                      ))}
+                      onChange={(e) => {
+                        const value = e.target.value === '' ? '' : parseInt(e.target.value) || '';
+                        setPlans(plans.map(p =>
+                          p.subscription_id === editPlan ? {
+                            ...p,
+                            validity_days: value === '' 
+                              ? (requiresCustomValidity(p.subscription_type) ? '' : getDefaultValidityDays(p.subscription_type))
+                              : value
+                          } : p
+                        ));
+                      }}
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Range: 1-36,500 days (1-100 years)
