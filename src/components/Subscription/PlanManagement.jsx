@@ -288,7 +288,7 @@ const PlanManagement = () => {
       {/* Create New Plan Modal */}
       {isCreating && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md mx-2 sm:mx-0">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md mx-2 sm:mx-0 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg sm:text-xl font-bold">Create New Plan</h2>
               <button
@@ -502,8 +502,8 @@ const PlanManagement = () => {
 
       {/* Edit Plan Modal */}
       {editPlan !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md mx-2 sm:mx-0 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">Edit Plan</h2>
               <button
@@ -681,23 +681,23 @@ const PlanManagement = () => {
 
       {/* Confirmation Modal */}
       {modal.open && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Confirm Action</h3>
-            <p className="text-gray-600 mb-6">{modal.message}</p>
-            <div className="flex gap-3">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md mx-2 sm:mx-0">
+            <h3 className="text-base sm:text-lg font-semibold mb-4">Confirm Action</h3>
+            <p className="text-sm sm:text-base text-gray-600 mb-6">{modal.message}</p>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <button
                 onClick={() => {
                   modal.onConfirm();
                   setModal({ open: false, message: "", onConfirm: null });
                 }}
-                className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700"
+                className="flex-1 bg-red-600 text-white py-2 sm:py-3 rounded-lg hover:bg-red-700 text-sm sm:text-base"
               >
                 Confirm
               </button>
               <button
                 onClick={() => setModal({ open: false, message: "", onConfirm: null })}
-                className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="flex-1 px-4 sm:px-6 py-2 sm:py-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm sm:text-base"
               >
                 Cancel
               </button>
