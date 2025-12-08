@@ -57,7 +57,7 @@ const PlanManagement = () => {
     if (type === 4) {
       setNewPlan({ ...newPlan, subscription_type: type, validity_days: '' });
     } else {
-      setNewPlan({ ...newPlan, subscription_type: type, validity_days: defaultValidity });
+    setNewPlan({ ...newPlan, subscription_type: type, validity_days: defaultValidity });
     }
   };
 
@@ -581,14 +581,14 @@ const PlanManagement = () => {
                                 } : p
                               ));
                             } else {
-                              const defaultValidity = getDefaultValidityDays(newType);
-                              setPlans(plans.map(p =>
-                                p.subscription_id === editPlan ? {
-                                  ...p,
-                                  subscription_type: newType,
-                                  validity_days: defaultValidity
-                                } : p
-                              ));
+                            const defaultValidity = getDefaultValidityDays(newType);
+                            setPlans(plans.map(p =>
+                              p.subscription_id === editPlan ? {
+                                ...p,
+                                subscription_type: newType,
+                                validity_days: defaultValidity
+                              } : p
+                            ));
                             }
                           }}
                         >
@@ -637,17 +637,30 @@ const PlanManagement = () => {
                       placeholder={requiresCustomValidity(plan.subscription_type) 
                         ? 'Enter validity days (1-36500)' 
                         : `Default: ${getDefaultValidityDays(plan.subscription_type)} days`}
-                      value={plan.validity_days || ''}
+                      value={plan.validity_days !== null && plan.validity_days !== undefined ? plan.validity_days : ''}
                       onChange={(e) => {
-                        const value = e.target.value === '' ? '' : parseInt(e.target.value) || '';
+                        const inputValue = e.target.value;
+                        // Allow empty string during editing
+                        const value = inputValue === '' ? '' : (parseInt(inputValue) || '');
                         setPlans(plans.map(p =>
                           p.subscription_id === editPlan ? {
                             ...p,
-                            validity_days: value === '' 
-                              ? (requiresCustomValidity(p.subscription_type) ? '' : getDefaultValidityDays(p.subscription_type))
-                              : value
+                            validity_days: value
                           } : p
                         ));
+                      }}
+                      onBlur={(e) => {
+                        // Only apply default when field is empty and loses focus (for non-Other types)
+                        const plan = plans.find(p => p.subscription_id === editPlan);
+                        if (plan && e.target.value === '' && !requiresCustomValidity(plan.subscription_type)) {
+                          const defaultValidity = getDefaultValidityDays(plan.subscription_type);
+                          setPlans(plans.map(p =>
+                            p.subscription_id === editPlan ? {
+                              ...p,
+                              validity_days: defaultValidity
+                            } : p
+                          ));
+                        }
                       }}
                     />
                     <p className="text-xs text-gray-500 mt-1">

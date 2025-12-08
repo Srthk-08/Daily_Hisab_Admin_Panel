@@ -569,51 +569,51 @@ export default function Dashboard() {
         {/* Desktop Table View */}
         <div className="hidden md:block overflow-x-auto">
           {support_tickets.length > 0 ? (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2 pr-4">Subject</th>
-                  <th className="text-left py-2 pr-4">Priority</th>
-                  <th className="text-left py-2 pr-4">Status</th>
-                  <th className="text-left py-2 pr-4">User</th>
-                  <th className="text-left py-2 pr-4">Created</th>
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left py-2 pr-4">Subject</th>
+                <th className="text-left py-2 pr-4">Priority</th>
+                <th className="text-left py-2 pr-4">Status</th>
+                <th className="text-left py-2 pr-4">User</th>
+                <th className="text-left py-2 pr-4">Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {support_tickets.slice(0, 4).map((ticket) => (
+                <tr key={ticket.id} className="border-b hover:bg-gray-50">
+                  <td className="py-3 font-medium text-sm">{ticket.subject || 'No subject'}</td>
+                  <td className="py-3">
+                    <span className={`px-2 py-1 rounded-full text-xs ${ticket.priority === 4 ? 'bg-red-100 text-red-800' :
+                      ticket.priority === 3 ? 'bg-orange-100 text-orange-800' :
+                        ticket.priority === 2 ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                      }`}>
+                      {ticket.priority === 4 ? 'Urgent' :
+                        ticket.priority === 3 ? 'High' :
+                          ticket.priority === 2 ? 'Medium' :
+                            ticket.priority === 1 ? 'Low' : 'Unknown'}
+                    </span>
+                  </td>
+                  <td className="py-3">
+                    <span className={`px-2 py-1 rounded-full text-xs ${ticket.status === 0 ? 'bg-yellow-100 text-yellow-800' :
+                      ticket.status === 1 ? 'bg-blue-100 text-blue-800' :
+                        ticket.status === 2 ? 'bg-orange-100 text-orange-800' :
+                          ticket.status === 3 ? 'bg-green-100 text-green-800' :
+                            'bg-gray-100 text-gray-800'
+                      }`}>
+                      {ticket.status === 0 ? 'Pending' :
+                        ticket.status === 1 ? 'In Progress' :
+                          ticket.status === 2 ? 'Open' :
+                            ticket.status === 3 ? 'Resolved' : 'Unknown'}
+                    </span>
+                  </td>
+                  <td className="py-3 text-gray-600 text-sm">{ticket.user_email || 'Unknown'}</td>
+                  <td className="py-3 text-gray-500 text-sm">{ticket.created_at || 'Unknown'}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {support_tickets.slice(0, 4).map((ticket) => (
-                  <tr key={ticket.id} className="border-b hover:bg-gray-50">
-                    <td className="py-3 font-medium text-sm">{ticket.subject || 'No subject'}</td>
-                    <td className="py-3">
-                      <span className={`px-2 py-1 rounded-full text-xs ${ticket.priority === 4 ? 'bg-red-100 text-red-800' :
-                        ticket.priority === 3 ? 'bg-orange-100 text-orange-800' :
-                          ticket.priority === 2 ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-green-100 text-green-800'
-                        }`}>
-                        {ticket.priority === 4 ? 'Urgent' :
-                          ticket.priority === 3 ? 'High' :
-                            ticket.priority === 2 ? 'Medium' :
-                              ticket.priority === 1 ? 'Low' : 'Unknown'}
-                      </span>
-                    </td>
-                    <td className="py-3">
-                      <span className={`px-2 py-1 rounded-full text-xs ${ticket.status === 0 ? 'bg-yellow-100 text-yellow-800' :
-                        ticket.status === 1 ? 'bg-blue-100 text-blue-800' :
-                          ticket.status === 2 ? 'bg-orange-100 text-orange-800' :
-                            ticket.status === 3 ? 'bg-green-100 text-green-800' :
-                              'bg-gray-100 text-gray-800'
-                        }`}>
-                        {ticket.status === 0 ? 'Pending' :
-                          ticket.status === 1 ? 'In Progress' :
-                            ticket.status === 2 ? 'Open' :
-                              ticket.status === 3 ? 'Resolved' : 'Unknown'}
-                      </span>
-                    </td>
-                    <td className="py-3 text-gray-600 text-sm">{ticket.user_email || 'Unknown'}</td>
-                    <td className="py-3 text-gray-500 text-sm">{ticket.created_at || 'Unknown'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              ))}
+            </tbody>
+          </table>
           ) : (
             <div className="text-center py-8 text-gray-500">
               <Headphones className="w-12 h-12 text-gray-400 mx-auto mb-2" />
@@ -626,40 +626,40 @@ export default function Dashboard() {
         <div className="md:hidden space-y-3">
           {support_tickets.length > 0 ? (
             support_tickets.slice(0, 4).map((ticket) => (
-              <div key={ticket.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-medium text-sm text-gray-900 truncate flex-1 mr-2">
-                    {ticket.subject || 'No subject'}
-                  </h4>
-                  <div className="flex gap-2">
-                    <span className={`px-2 py-1 rounded-full text-xs ${ticket.priority === 4 ? 'bg-red-100 text-red-800' :
-                      ticket.priority === 3 ? 'bg-orange-100 text-orange-800' :
-                        ticket.priority === 2 ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
-                      }`}>
-                      {ticket.priority === 4 ? 'Urgent' :
-                        ticket.priority === 3 ? 'High' :
-                          ticket.priority === 2 ? 'Medium' :
-                            ticket.priority === 1 ? 'Low' : 'Unknown'}
-                    </span>
-                    <span className={`px-2 py-1 rounded-full text-xs ${ticket.status === 0 ? 'bg-yellow-100 text-yellow-800' :
-                      ticket.status === 1 ? 'bg-blue-100 text-blue-800' :
-                        ticket.status === 2 ? 'bg-orange-100 text-orange-800' :
-                          ticket.status === 3 ? 'bg-green-100 text-green-800' :
-                            'bg-gray-100 text-gray-800'
-                      }`}>
-                      {ticket.status === 0 ? 'Pending' :
-                        ticket.status === 1 ? 'In Progress' :
-                          ticket.status === 2 ? 'Open' :
-                            ticket.status === 3 ? 'Resolved' : 'Unknown'}
-                    </span>
-                  </div>
-                </div>
-                <div className="text-xs text-gray-600">
-                  <p className="truncate">{ticket.user_email || 'Unknown'}</p>
-                  <p className="text-gray-500 mt-1">{ticket.created_at || 'Unknown'}</p>
+            <div key={ticket.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="flex justify-between items-start mb-2">
+                <h4 className="font-medium text-sm text-gray-900 truncate flex-1 mr-2">
+                  {ticket.subject || 'No subject'}
+                </h4>
+                <div className="flex gap-2">
+                  <span className={`px-2 py-1 rounded-full text-xs ${ticket.priority === 4 ? 'bg-red-100 text-red-800' :
+                    ticket.priority === 3 ? 'bg-orange-100 text-orange-800' :
+                      ticket.priority === 2 ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-green-100 text-green-800'
+                    }`}>
+                    {ticket.priority === 4 ? 'Urgent' :
+                      ticket.priority === 3 ? 'High' :
+                        ticket.priority === 2 ? 'Medium' :
+                          ticket.priority === 1 ? 'Low' : 'Unknown'}
+                  </span>
+                  <span className={`px-2 py-1 rounded-full text-xs ${ticket.status === 0 ? 'bg-yellow-100 text-yellow-800' :
+                    ticket.status === 1 ? 'bg-blue-100 text-blue-800' :
+                      ticket.status === 2 ? 'bg-orange-100 text-orange-800' :
+                        ticket.status === 3 ? 'bg-green-100 text-green-800' :
+                          'bg-gray-100 text-gray-800'
+                    }`}>
+                    {ticket.status === 0 ? 'Pending' :
+                      ticket.status === 1 ? 'In Progress' :
+                        ticket.status === 2 ? 'Open' :
+                          ticket.status === 3 ? 'Resolved' : 'Unknown'}
+                  </span>
                 </div>
               </div>
+              <div className="text-xs text-gray-600">
+                <p className="truncate">{ticket.user_email || 'Unknown'}</p>
+                <p className="text-gray-500 mt-1">{ticket.created_at || 'Unknown'}</p>
+              </div>
+            </div>
             ))
           ) : (
             <div className="text-center py-8 text-gray-500">
