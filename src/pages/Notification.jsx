@@ -473,7 +473,7 @@ export default function Notification() {
       </div>
 
       {/* System Stats */}
-      {systemStats && Object.keys(systemStats).length > 0 && (
+      {/* {systemStats && Object.keys(systemStats).length > 0 && (
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
           <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">System Statistics</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -499,7 +499,7 @@ export default function Notification() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Filters */}
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
