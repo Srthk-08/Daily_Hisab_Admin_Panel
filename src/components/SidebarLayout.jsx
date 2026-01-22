@@ -26,7 +26,8 @@ import {
   Settings,
   HandHelping,
   MonitorUp,
-  Phone
+  Phone,
+  Globe
 } from 'lucide-react';
 
 const SidebarLayout = ({ children }) => {
@@ -50,6 +51,7 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/feedback-support', icon: <MessageCircle size={20} />, label: 'Support Tickets' },
     { path: '/admin/contact-us', icon: <Phone size={20} />, label: 'Contact Us' },
     { path: '/admin/content', icon: <MonitorUp size={20} />, label: 'Content' },
+    { path: '/admin/languages', icon: <Globe size={20} />, label: 'Languages' },
     { path: '/admin/tnc', icon: <HandHelping size={20} />, label: 'Pages Management' },
   ];
 

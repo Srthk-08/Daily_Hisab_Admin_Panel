@@ -190,6 +190,12 @@ const config = {
     GET_USER_PERFORMANCE_COMPARISON: '/admin/get_user_performance_comparison',
     GET_FEATURE_USAGE_ANALYTICS: '/admin/feature_usage_analytics',
     GET_FEATURE_USAGE_TRENDS: '/admin/feature_usage_trends',
+
+    // Language Management
+    GET_LANGUAGES: '/get_languages',
+    ADD_LANGUAGE: '/admin/add_language',
+    TOGGLE_LANGUAGE_STATUS: '/admin/toggle_language_status',
+    GET_LANGUAGE_ANALYTICS: '/admin/get_language_analytics',
   },
 
   // Full API URLs (constructed from base URL and endpoints)
@@ -349,6 +355,12 @@ const config = {
       GET_PERFORMANCE_BAR_GRAPH_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_PERFORMANCE_BAR_GRAPH_DATA}`,
       GET_PERFORMANCE_TRENDS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_PERFORMANCE_TRENDS}`,
       GET_USER_PERFORMANCE_COMPARISON: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_PERFORMANCE_COMPARISON}`,
+
+      // Language Management URLs
+      GET_LANGUAGES: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_LANGUAGES}`,
+      ADD_LANGUAGE: `${this.API_BASE_URL}${this.API_ENDPOINTS.ADD_LANGUAGE}`,
+      TOGGLE_LANGUAGE_STATUS: `${this.API_BASE_URL}${this.API_ENDPOINTS.TOGGLE_LANGUAGE_STATUS}`,
+      GET_LANGUAGE_ANALYTICS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_LANGUAGE_ANALYTICS}`,
     };
   },
 

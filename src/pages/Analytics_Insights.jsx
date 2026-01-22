@@ -61,6 +61,10 @@ export default function AnalyticsInsights() {
   const [featureTrendsData, setFeatureTrendsData] = useState(null);
   const [featureTrendsLoading, setFeatureTrendsLoading] = useState(false);
 
+  // Language Analytics State
+  const [languageData, setLanguageData] = useState([]);
+  const [languageLoading, setLanguageLoading] = useState(true);
+
   // Fetch performance bar graph data
   const fetchPerformanceData = async () => {
     try {
@@ -121,11 +125,27 @@ export default function AnalyticsInsights() {
     }
   };
 
+  // Fetch language analytics data
+  const fetchLanguageData = async () => {
+    try {
+      setLanguageLoading(true);
+      const response = await apiService.getLanguageAnalytics();
+      if (response.success) {
+        setLanguageData(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching language data:', error);
+    } finally {
+      setLanguageLoading(false);
+    }
+  };
+
   // Load performance data on component mount and when month changes
   useEffect(() => {
     fetchPerformanceData();
     fetchFeatureUsageData();
     fetchFeatureTrendsData();
+    fetchLanguageData();
   }, [selectedMonth]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // eslint-disable-next-line no-unused-vars
@@ -701,25 +721,37 @@ export default function AnalyticsInsights() {
 
       {/* Region / Language Activity */}
       <div className="bg-white shadow rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-        <h2 className="text-base sm:text-lg font-semibold mb-3">Most Active Regions</h2>
-        <ResponsiveContainer width="100%" height={250}>
-          <PieChart>
-            <Pie
-              data={regionData}
-              dataKey="users"
-              nameKey="region"
-              outerRadius={100}
-              fill="#8884d8"
-              label
-            >
-              {regionData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+        <h2 className="text-base sm:text-lg font-semibold mb-3">User Language Distribution</h2>
+        <div className="h-64">
+          {languageLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <RefreshCw className="w-6 h-6 animate-spin text-indigo-600" />
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={languageData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  label={({ name, percentage }) => `${name} (${percentage}%)`}
+                >
+                  {languageData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value, name, props) => [`${value} Users`, props.payload.name]}
+                />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
+        </div>
       </div>
 
       {/* Acquisition Channels */}

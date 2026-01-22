@@ -1200,6 +1200,51 @@ const apiService = {
       throw error;
     }
   },
+
+  // Language Management API Functions
+  getLanguages: async () => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_LANGUAGES);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching languages:', error);
+      throw error;
+    }
+  },
+
+  addLanguage: async (languageData) => {
+    try {
+      const formData = new FormData();
+      Object.keys(languageData).forEach(key => formData.append(key, languageData[key]));
+      const response = await api.post(config.API_ENDPOINTS.ADD_LANGUAGE, formData);
+      return response.data;
+    } catch (error) {
+      console.error('Error adding language:', error);
+      throw error;
+    }
+  },
+
+  toggleLanguageStatus: async (languageId) => {
+    try {
+      const formData = new FormData();
+      formData.append('id', languageId);
+      const response = await api.post(config.API_ENDPOINTS.TOGGLE_LANGUAGE_STATUS, formData);
+      return response.data;
+    } catch (error) {
+      console.error('Error toggling language status:', error);
+      throw error;
+    }
+  },
+
+  getLanguageAnalytics: async () => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_LANGUAGE_ANALYTICS);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching language analytics:', error);
+      throw error;
+    }
+  },
 };
 
 // Initialize token management when module loads

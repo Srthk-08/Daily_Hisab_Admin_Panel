@@ -24,6 +24,7 @@ import Content from "./pages/Content";
 import Tandc from "./pages/Tandc";
 import ViewUser from "./pages/ViewUser";
 import Notification from "./pages/Notification";
+import LanguageManagement from "./pages/LanguageManagement";
 // Loading component
 const LoadingSpinner = ({ message = "Loading..." }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -113,6 +114,7 @@ const App = () => {
           <Route path="/admin/view-user/:id" element={<ProtectedRoute><ViewUser /></ProtectedRoute>} />
           <Route path="/admin/tnc" element={<ProtectedRoute><Tandc /></ProtectedRoute>} />
           <Route path="/admin/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
+          <Route path="/admin/languages" element={<ProtectedRoute><LanguageManagement /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/admin/login" replace />} />
         </Routes>
       </Router>
