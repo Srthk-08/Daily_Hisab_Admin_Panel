@@ -72,6 +72,7 @@ const UserManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('created');
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'free', 'paid'
 
   // Modal states
   const [showSuspendModal, setShowSuspendModal] = useState(false);
@@ -89,7 +90,8 @@ const UserManagement = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await apiService.getAllUsersWithAccounts();
+        // Pass activeTab as filter_status to the API
+        const response = await apiService.getAllUsersWithAccounts({ filter_status: activeTab });
 
         if (response && response.success) {
           setUsers(Array.isArray(response.users) ? response.users : []);
@@ -108,7 +110,7 @@ const UserManagement = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [activeTab]);
 
   // Filter and sort users
   const filteredUsers = users
@@ -426,6 +428,37 @@ const UserManagement = () => {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex space-x-2 sm:space-x-4 mb-4 sm:mb-6 overflow-x-auto pb-2 sm:pb-0">
+        <button
+          onClick={() => setActiveTab('all')}
+          className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'all'
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'bg-white text-gray-600 hover:bg-gray-100'
+            }`}
+        >
+          All Users
+        </button>
+        <button
+          onClick={() => setActiveTab('free')}
+          className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'free'
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'bg-white text-gray-600 hover:bg-gray-100'
+            }`}
+        >
+          Free Users
+        </button>
+        <button
+          onClick={() => setActiveTab('paid')}
+          className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'paid'
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'bg-white text-gray-600 hover:bg-gray-100'
+            }`}
+        >
+          Paid Users
+        </button>
+      </div>
+
       {/* Search and Filter Bar */}
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
         <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
@@ -551,12 +584,19 @@ const UserManagement = () => {
 
                       {/* User Type */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.user_type === 0 || user.user_type === '0'
-                          ? 'bg-purple-100 text-purple-800'
-                          : 'bg-blue-100 text-blue-800'
-                          }`}>
-                          {user.user_type_label || (user.user_type === 0 || user.user_type === '0' ? 'Manager' : 'User')}
-                        </span>
+                        <div className="flex flex-col gap-1 items-start">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.user_type === 0 || user.user_type === '0'
+                            ? 'bg-purple-100 text-purple-800'
+                            : 'bg-blue-100 text-blue-800'
+                            }`}>
+                            {user.user_type_label || (user.user_type === 0 || user.user_type === '0' ? 'Manager' : 'User')}
+                          </span>
+                          {user.is_paid_user === 1 && (
+                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                              Premium
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Status */}
@@ -682,13 +722,18 @@ const UserManagement = () => {
                         </div>
 
                         {/* User Type Badge */}
-                        <div className="mb-2">
+                        <div className="mb-2 flex gap-2">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.user_type === 0 || user.user_type === '0'
                             ? 'bg-purple-100 text-purple-800'
                             : 'bg-blue-100 text-blue-800'
                             }`}>
                             {user.user_type_label || (user.user_type === 0 || user.user_type === '0' ? 'Manager' : 'User')}
                           </span>
+                          {user.is_paid_user === 1 && (
+                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                              Premium
+                            </span>
+                          )}
                         </div>
 
                         {/* Status Badges */}

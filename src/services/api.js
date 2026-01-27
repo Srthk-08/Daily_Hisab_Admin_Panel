@@ -173,8 +173,8 @@ const apiService = {
   },
 
   // Get all users with their accounts
-  getAllUsersWithAccounts: async () => {
-    const response = await api.get(config.API_ENDPOINTS.GET_ALL_USERS_WITH_ACCOUNTS);
+  getAllUsersWithAccounts: async (params = {}) => {
+    const response = await api.get(config.API_ENDPOINTS.GET_ALL_USERS_WITH_ACCOUNTS, { params });
     return response.data;
   },
 
