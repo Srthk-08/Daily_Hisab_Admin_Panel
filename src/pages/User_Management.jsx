@@ -459,6 +459,15 @@ const UserManagement = () => {
           Paid Users
         </button>
         <button
+          onClick={() => setActiveTab('active')}
+          className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'active'
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'bg-white text-gray-600 hover:bg-gray-100'
+            }`}
+        >
+          Active Users
+        </button>
+        <button
           onClick={() => setActiveTab('inactive')}
           className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'inactive'
             ? 'bg-blue-600 text-white shadow-sm'
@@ -466,6 +475,24 @@ const UserManagement = () => {
             }`}
         >
           Inactive Users
+        </button>
+        <button
+          onClick={() => setActiveTab('profile_complete')}
+          className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'profile_complete'
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'bg-white text-gray-600 hover:bg-gray-100'
+            }`}
+        >
+          Profile Complete
+        </button>
+        <button
+          onClick={() => setActiveTab('profile_incomplete')}
+          className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'profile_incomplete'
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'bg-white text-gray-600 hover:bg-gray-100'
+            }`}
+        >
+          Profile Incomplete
         </button>
       </div>
 
@@ -488,18 +515,6 @@ const UserManagement = () => {
 
           {/* Filter */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-            >
-              <option value="all">All Users</option>
-              <option value="active">Active Only</option>
-              <option value="inactive">Inactive Only</option>
-              <option value="complete">Profile Complete</option>
-              <option value="incomplete">Profile Incomplete</option>
-            </select>
-
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -545,9 +560,6 @@ const UserManagement = () => {
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       User Type
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Accounts
@@ -609,24 +621,6 @@ const UserManagement = () => {
                               Premium
                             </span>
                           )}
-                        </div>
-                      </td>
-
-                      {/* Status */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex flex-col gap-1">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.active_flag === 1
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                            }`}>
-                            {user.active_flag === 1 ? 'Active' : 'Inactive'}
-                          </span>
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.profile_complete === 1
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                            {user.profile_complete === 1 ? 'Complete' : 'Incomplete'}
-                          </span>
                         </div>
                       </td>
 
@@ -757,21 +751,8 @@ const UserManagement = () => {
                           )}
                         </div>
 
-                        {/* Status Badges */}
-                        <div className="flex flex-wrap gap-1 mb-2">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.active_flag === 1
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                            }`}>
-                            {user.active_flag === 1 ? 'Active' : 'Inactive'}
-                          </span>
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.profile_complete === 1
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                            {user.profile_complete === 1 ? 'Complete' : 'Incomplete'}
-                          </span>
-                        </div>
+
+
 
                         {/* Account Info */}
                         <div className="flex flex-wrap gap-1 mb-2">

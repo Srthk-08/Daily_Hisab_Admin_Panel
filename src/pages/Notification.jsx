@@ -104,6 +104,8 @@ export default function Notification() {
     all_users: { label: "All Users", icon: Users, color: "text-blue-600" },
     free_users: { label: "Free Users", icon: Users, color: "text-gray-600" },
     paid_users: { label: "Paid Users", icon: Users, color: "text-purple-600" },
+    active_users: { label: "Active Users", icon: Users, color: "text-green-600" },
+    inactive_users: { label: "Inactive Users", icon: Users, color: "text-red-600" },
   };
 
   // Status configuration
@@ -551,6 +553,8 @@ export default function Notification() {
               <option value="all_users">All Users</option>
               <option value="free_users">Free Users</option>
               <option value="paid_users">Paid Users</option>
+              <option value="active_users">Active Users</option>
+              <option value="inactive_users">Inactive Users</option>
             </select>
           </div>
         </div>
@@ -811,6 +815,8 @@ export default function Notification() {
                   <option value="all_users">All Users</option>
                   <option value="free_users">Free Users</option>
                   <option value="paid_users">Paid Users</option>
+                  <option value="active_users">Active Users</option>
+                  <option value="inactive_users">Inactive Users</option>
                 </select>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 pt-4">
