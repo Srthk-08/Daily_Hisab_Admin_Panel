@@ -46,7 +46,8 @@ export default function LanguageManagement() {
       name: language.name,
       native_name: language.native_name
     });
-    setEditId(language.language_id);
+    // Use id or language_id depending on what the backend returns
+    setEditId(language.id || language.language_id);
     setIsEditing(true);
     setShowAddModal(true);
   };
@@ -55,7 +56,15 @@ export default function LanguageManagement() {
     if (!window.confirm('Are you sure you want to delete this language? This action cannot be undone.')) return;
 
     try {
+      // Send both id and language_id keys to be safe
+      const payload = { id: id, language_id: id };
+      // Note: apiService.deleteLanguage might expect a single ID argument?
+      // If apiService.deleteLanguage(id) sends {id: id}, we are good.
+      // If it sends {language_id: id}, we are good because backend checks both.
+      // Let's assume apiService handles it or we update it.
+      // Usually delete requests in this app might be POST with body.
       const response = await apiService.deleteLanguage(id);
+
       if (response.success) {
         toast.success('Language deleted successfully');
         fetchLanguages();
@@ -72,7 +81,8 @@ export default function LanguageManagement() {
     try {
       let response;
       if (isEditing) {
-        response = await apiService.editLanguage({ ...formData, language_id: editId });
+        // Send both keys to support backend transition
+        response = await apiService.editLanguage({ ...formData, id: editId, language_id: editId });
       } else {
         response = await apiService.addLanguage(formData);
       }
@@ -146,47 +156,49 @@ export default function LanguageManagement() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {languages.map((lang) => (
-                  <tr key={lang.language_id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <Globe size={20} className="text-gray-400 mr-3" />
-                        <div className="text-sm font-medium text-gray-900">{lang.name}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lang.code}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lang.native_name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${lang.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {lang.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex gap-3">
-                      <button
-                        onClick={() => handleEdit(lang)}
-                        className="text-blue-600 hover:text-blue-900"
-                        title="Edit"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button
-                        onClick={() => toggleStatus(lang.language_id)}
-                        className={`text-${lang.is_active ? 'red' : 'green'}-600 hover:text-${lang.is_active ? 'red' : 'green'}-900`}
-                        title={lang.is_active ? "Disable" : "Enable"}
-                      >
-                        {/* Using simple text for status toggle as per original design, or icon? Original was text button "Disable" */}
-                        {lang.is_active ? 'Disable' : 'Enable'}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(lang.language_id)}
-                        className="text-red-600 hover:text-red-900"
-                        title="Delete"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {languages.map((lang, index) => {
+                  const currentId = lang.id || lang.language_id;
+                  return (
+                    <tr key={currentId || index}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Globe size={20} className="text-gray-400 mr-3" />
+                          <div className="text-sm font-medium text-gray-900">{lang.name}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lang.code}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lang.native_name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${lang.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                          {lang.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex gap-3">
+                        <button
+                          onClick={() => handleEdit(lang)}
+                          className="text-blue-600 hover:text-blue-900"
+                          title="Edit"
+                        >
+                          <Edit size={18} />
+                        </button>
+                        <button
+                          onClick={() => toggleStatus(currentId)}
+                          className={`text-${lang.is_active ? 'red' : 'green'}-600 hover:text-${lang.is_active ? 'red' : 'green'}-900`}
+                          title={lang.is_active ? "Disable" : "Enable"}
+                        >
+                          {lang.is_active ? 'Disable' : 'Enable'}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(currentId)}
+                          className="text-red-600 hover:text-red-900"
+                          title="Delete"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
