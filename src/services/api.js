@@ -5,7 +5,10 @@ import config from "../config/config";
 // Create axios instance
 const api = axios.create({
   baseURL: config.API_BASE_URL,
-  headers: config.CORS.HEADERS,
+  headers: {
+    ...config.CORS.HEADERS,
+    'Content-Type': 'application/json; charset=UTF-8',
+  },
   withCredentials: config.CORS.WITH_CREDENTIALS,
 });
 
