@@ -36,11 +36,7 @@ const acquisitionData = [
   { channel: "Social Media", users: 120 },
 ];
 
-const funnelData = [
-  { stage: "Installs", count: 1000 },
-  { stage: "Active", count: 600 },
-  { stage: "Paid", count: 200 },
-];
+
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#9A60B4"];
 
@@ -64,6 +60,27 @@ export default function AnalyticsInsights() {
   // Language Analytics State
   const [languageData, setLanguageData] = useState([]);
   const [languageLoading, setLanguageLoading] = useState(true);
+
+  // Conversion Funnel State
+  const [funnelData, setFunnelData] = useState([]);
+  const [funnelLoading, setFunnelLoading] = useState(true);
+
+  // Fetch conversion funnel data
+  const fetchFunnelData = async () => {
+    try {
+      setFunnelLoading(true);
+      const response = await apiService.getConversionFunnelData();
+      if (response.success) {
+        setFunnelData(response.data);
+      } else {
+        console.error('Failed to fetch funnel data');
+      }
+    } catch (error) {
+      console.error('Error fetching funnel data:', error);
+    } finally {
+      setFunnelLoading(false);
+    }
+  };
 
   // Fetch performance bar graph data
   const fetchPerformanceData = async () => {
@@ -146,6 +163,7 @@ export default function AnalyticsInsights() {
     fetchFeatureUsageData();
     fetchFeatureTrendsData();
     fetchLanguageData();
+    fetchFunnelData();
   }, [selectedMonth]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // eslint-disable-next-line no-unused-vars

@@ -185,6 +185,7 @@ const config = {
     GET_PERFORMANCE_COMPARISON: '/admin/get_performance_comparison',
 
     // Performance Visualization System Endpoints
+    GET_CONVERSION_FUNNEL_DATA: '/admin/get_conversion_funnel_data',
     GET_PERFORMANCE_BAR_GRAPH_DATA: '/admin/get_performance_bar_graph_data',
     GET_PERFORMANCE_TRENDS: '/admin/get_performance_trends',
     GET_USER_PERFORMANCE_COMPARISON: '/admin/get_user_performance_comparison',
@@ -194,6 +195,8 @@ const config = {
     // Language Management
     GET_LANGUAGES: '/get_languages',
     ADD_LANGUAGE: '/admin/add_language',
+    EDIT_LANGUAGE: '/admin/edit_language',
+    DELETE_LANGUAGE: '/admin/delete_language',
     TOGGLE_LANGUAGE_STATUS: '/admin/toggle_language_status',
     GET_LANGUAGE_ANALYTICS: '/admin/get_language_analytics',
   },
@@ -352,6 +355,7 @@ const config = {
       GET_PERFORMANCE_COMPARISON: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_PERFORMANCE_COMPARISON}`,
 
       // Performance Visualization System URLs
+      GET_CONVERSION_FUNNEL_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_CONVERSION_FUNNEL_DATA}`,
       GET_PERFORMANCE_BAR_GRAPH_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_PERFORMANCE_BAR_GRAPH_DATA}`,
       GET_PERFORMANCE_TRENDS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_PERFORMANCE_TRENDS}`,
       GET_USER_PERFORMANCE_COMPARISON: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_PERFORMANCE_COMPARISON}`,
@@ -359,6 +363,8 @@ const config = {
       // Language Management URLs
       GET_LANGUAGES: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_LANGUAGES}`,
       ADD_LANGUAGE: `${this.API_BASE_URL}${this.API_ENDPOINTS.ADD_LANGUAGE}`,
+      EDIT_LANGUAGE: `${this.API_BASE_URL}${this.API_ENDPOINTS.EDIT_LANGUAGE}`,
+      DELETE_LANGUAGE: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_LANGUAGE}`,
       TOGGLE_LANGUAGE_STATUS: `${this.API_BASE_URL}${this.API_ENDPOINTS.TOGGLE_LANGUAGE_STATUS}`,
       GET_LANGUAGE_ANALYTICS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_LANGUAGE_ANALYTICS}`,
     };

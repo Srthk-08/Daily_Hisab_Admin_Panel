@@ -1138,6 +1138,16 @@ const apiService = {
   },
 
   // Performance Visualization System API Functions
+  getConversionFunnelData: async () => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_CONVERSION_FUNNEL_DATA);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching conversion funnel data:', error);
+      throw error;
+    }
+  },
+
   getPerformanceBarGraphData: async (params = {}) => {
     try {
       console.log('Fetching performance bar graph data with params:', params);
@@ -1223,6 +1233,30 @@ const apiService = {
       return response.data;
     } catch (error) {
       console.error('Error adding language:', error);
+      throw error;
+    }
+  },
+
+  editLanguage: async (languageData) => {
+    try {
+      const formData = new FormData();
+      Object.keys(languageData).forEach(key => formData.append(key, languageData[key]));
+      const response = await api.post(config.API_ENDPOINTS.EDIT_LANGUAGE, formData);
+      return response.data;
+    } catch (error) {
+      console.error('Error editing language:', error);
+      throw error;
+    }
+  },
+
+  deleteLanguage: async (id) => {
+    try {
+      const formData = new FormData();
+      formData.append('id', id);
+      const response = await api.post(config.API_ENDPOINTS.DELETE_LANGUAGE, formData);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting language:', error);
       throw error;
     }
   },
