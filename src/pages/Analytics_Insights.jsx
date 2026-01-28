@@ -87,7 +87,7 @@ export default function AnalyticsInsights() {
     try {
       setPerformanceLoading(true);
       setPerformanceError(null);
-      const response = await apiService.getPerformanceBarGraphData({
+      const response = await apiService.getOverallPerformanceStats({
         month_year: selectedMonth,
         limit: 50
       });
