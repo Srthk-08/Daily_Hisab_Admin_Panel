@@ -266,68 +266,74 @@ export default function AnalyticsInsights() {
               </div>
             </div>
 
-            {/* Chart Title and Month Info */}
-            <div className="mb-4 p-3 sm:p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">
-                {performanceData.chart_title || 'Performance Analysis'}
-              </h3>
-              <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
-                <span>📅 Month: {performanceData.month_year || selectedMonth}</span>
-              </div>
-            </div>
 
-            {/* 8 Key Parameters Bar Chart */}
-            <div className="mb-4 sm:mb-6">
-              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-800">Performance Graph</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={performanceData.parameter_performance || []} margin={{ top: 15, right: 15, left: 15, bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="parameter"
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                    interval={0}
-                    fontSize={10}
-                  />
-                  <YAxis
-                    label={{ value: 'Performance %', angle: -90, position: 'insideLeft' }}
-                    domain={[0, 100]}
-                    fontSize={10}
-                  />
-                  <Tooltip
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                            <p className="font-semibold text-gray-800 mb-2 text-sm">{label}</p>
-                            <div className="space-y-1 text-xs">
-                              <p><span className="font-medium">Performance:</span> {data.performance_percentage}%</p>
-                              <p><span className="font-medium">Average Score:</span> {data.average_score}/{data.max_score}</p>
-                              <p><span className="font-medium">Weight:</span> {data.weight}</p>
-                              <p><span className="font-medium">Description:</span> {data.description}</p>
-                            </div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: '12px' }} />
-                  <Bar
-                    dataKey="performance_percentage"
-                    fill="#4F46E5"
-                    radius={[4, 4, 0, 0]}
-                    name="Performance %"
-                  >
-                    {performanceData.parameter_performance?.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color || '#4F46E5'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            {/* PERFORMANCE CHART SECTION */}
+            {performanceData.averageMetrics && (
+              <div className="mb-6">
+                <h3 className="text-base sm:text-lg font-semibold mb-4 text-gray-800">Average Performance Metrics</h3>
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={[
+                        { name: 'Profitability', score: performanceData.averageMetrics.profitability, fill: '#4F46E5' },
+                        { name: 'Cash Flow', score: performanceData.averageMetrics.cashFlow, fill: '#06B6D4' },
+                        { name: 'Exp. Control', score: performanceData.averageMetrics.expenseControl, fill: '#10B981' },
+                        { name: 'Debt Health', score: performanceData.averageMetrics.debtHealth, fill: '#F59E0B' },
+                        { name: 'Stock Turn.', score: performanceData.averageMetrics.stockTurnover, fill: '#8B5CF6' },
+                        { name: 'Collections', score: performanceData.averageMetrics.collections, fill: '#EC4899' },
+                        { name: 'Daily Entry', score: performanceData.averageMetrics.dailyEntry, fill: '#6366F1' },
+                        { name: 'Budget Usage', score: performanceData.averageMetrics.budgetUsage, fill: '#14B8A6' },
+                      ]}
+                      margin={{ top: 10, right: 10, left: -20, bottom: 40 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                      <XAxis
+                        dataKey="name"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#6B7280', fontSize: 11 }}
+                        angle={-45}
+                        textAnchor="end"
+                        interval={0}
+                        dy={10}
+                      />
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#6B7280', fontSize: 11 }}
+                        domain={[0, 'auto']} // Let it auto-scale or fix to [0, 100] if scores are normalized
+                      />
+                      <Tooltip
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                        cursor={{ fill: '#F3F4F6' }}
+                      />
+                      <Bar
+                        dataKey="score"
+                        radius={[4, 4, 0, 0]}
+                        barSize={30}
+                      >
+                        {
+                          [
+                            { name: 'Profitability', score: performanceData.averageMetrics.profitability, fill: '#4F46E5' },
+                            { name: 'Cash Flow', score: performanceData.averageMetrics.cashFlow, fill: '#06B6D4' },
+                            { name: 'Exp. Control', score: performanceData.averageMetrics.expenseControl, fill: '#10B981' },
+                            { name: 'Debt Health', score: performanceData.averageMetrics.debtHealth, fill: '#F59E0B' },
+                            { name: 'Stock Turn.', score: performanceData.averageMetrics.stockTurnover, fill: '#8B5CF6' },
+                            { name: 'Collections', score: performanceData.averageMetrics.collections, fill: '#EC4899' },
+                            { name: 'Daily Entry', score: performanceData.averageMetrics.dailyEntry, fill: '#6366F1' },
+                            { name: 'Budget Usage', score: performanceData.averageMetrics.budgetUsage, fill: '#14B8A6' },
+                          ].map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))
+                        }
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+
+
 
             {/* Performance Distribution */}
             {performanceData.performance_distribution && (
