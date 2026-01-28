@@ -88,8 +88,7 @@ export default function AnalyticsInsights() {
       setPerformanceLoading(true);
       setPerformanceError(null);
       const response = await apiService.getOverallPerformanceStats({
-        month_year: selectedMonth,
-        limit: 50
+        month_year: selectedMonth
       });
       if (response.success) {
         setPerformanceData(response.data);
@@ -239,28 +238,28 @@ export default function AnalyticsInsights() {
               <div className="bg-indigo-50 rounded-xl p-3 sm:p-4 text-center">
                 <p className="text-xs sm:text-sm text-gray-600">Total Users</p>
                 <p className="text-xl sm:text-2xl font-bold text-indigo-600">
-                  {performanceData.total_users?.toLocaleString() || '0'}
+                  {performanceData.overview?.totalUsers?.toLocaleString() || '0'}
                 </p>
                 <p className="text-xs text-indigo-500">Analyzed users</p>
               </div>
               <div className="bg-green-50 rounded-xl p-3 sm:p-4 text-center">
                 <p className="text-xs sm:text-sm text-gray-600">Average Score</p>
                 <p className="text-xl sm:text-2xl font-bold text-green-600">
-                  {performanceData.average_total_score?.toFixed(1) || '0'}/100
+                  {performanceData.overview?.averageScore?.toFixed(1) || '0'}/100
                 </p>
                 <p className="text-xs text-green-500">Overall performance</p>
               </div>
               <div className="bg-blue-50 rounded-xl p-3 sm:p-4 text-center">
                 <p className="text-xs sm:text-sm text-gray-600">Excellent Users</p>
                 <p className="text-xl sm:text-2xl font-bold text-blue-600">
-                  {performanceData.performance_distribution?.excellent || '0'}
+                  {performanceData.overview?.scoreDistribution?.excellent || '0'}
                 </p>
                 <p className="text-xs text-blue-500">80-100 points</p>
               </div>
               <div className="bg-yellow-50 rounded-xl p-3 sm:p-4 text-center">
                 <p className="text-xs sm:text-sm text-gray-600">Good Users</p>
                 <p className="text-xl sm:text-2xl font-bold text-yellow-600">
-                  {performanceData.performance_distribution?.good || '0'}
+                  {performanceData.overview?.scoreDistribution?.good || '0'}
                 </p>
                 <p className="text-xs text-yellow-500">60-79 points</p>
               </div>
@@ -408,30 +407,55 @@ export default function AnalyticsInsights() {
             )}
 
             {/* Top Performers */}
-            {performanceData.top_performers && performanceData.top_performers.length > 0 && (
+            {performanceData.topPerformingUsers && performanceData.topPerformingUsers.length > 0 && (
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">Top Performers</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {performanceData.top_performers.slice(0, 6).map((performer, index) => (
-                    <div key={performer.user_id} className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-bold text-indigo-600">#{index + 1}</span>
+                  {performanceData.topPerformingUsers && performanceData.topPerformingUsers.length > 0 ? (
+                    performanceData.topPerformingUsers.map((performer, index) => (
+                      <div key={performer.user_id} className="bg-gray-50 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className={`
+                              flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold
+                              ${index === 0 ? 'bg-yellow-100 text-yellow-700' :
+                                index === 1 ? 'bg-gray-100 text-gray-700' :
+                                  index === 2 ? 'bg-orange-100 text-orange-700' :
+                                    'bg-indigo-100 text-indigo-700'}
+                            `}>
+                              {index + 1}
+                            </span>
+                            <span className="font-medium text-gray-900 truncate max-w-[120px]" title={performer.user_name}>
+                              {performer.user_name || 'N/A'}
+                            </span>
                           </div>
-                          <span className="font-medium text-gray-900">
-                            {performer.user_name || `User ${performer.user_id}`}
+                          <span className={`
+                            px-2 py-0.5 rounded-full text-xs font-medium
+                            ${performer.grade === 'Excellent' ? 'bg-green-100 text-green-800' :
+                              performer.grade === 'Good' ? 'bg-blue-100 text-blue-800' :
+                                performer.grade === 'Fair' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-red-100 text-red-800'}
+                          `}>
+                            {performer.performance_grade}
                           </span>
                         </div>
-                        <span className="text-lg font-bold text-indigo-600">
-                          {performer.total_score?.toFixed(1) || '0'}
-                        </span>
+
+                        <div className="flex justify-between items-center text-sm mb-2">
+                          <span className="text-gray-600">Score:</span>
+                          <span className="font-bold text-gray-900">{performer.total_score}</span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-600">Mobile:</span>
+                          <span className="text-gray-900">{performer.mobile}</span>
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-500">
-                        {performer.performance_grade || 'N/A'} Performance
-                      </div>
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-8 text-gray-500">
+                      No top performers found for this period.
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             )}
