@@ -180,12 +180,28 @@ export default function Notification() {
     }
   }, []);
 
+  // Fetch languages
+  const fetchLanguages = useCallback(async () => {
+    try {
+      const response = await apiService.getLanguages();
+      if (response && response.success) {
+        // Filter only active languages if needed, or show all
+        // Usually we only want to target active languages
+        const activeLanguages = response.data.filter(lang => lang.is_active);
+        setLanguages(activeLanguages);
+      }
+    } catch (err) {
+      console.error("Error fetching languages:", err);
+    }
+  }, []);
+
   // Initial data fetch
   useEffect(() => {
     fetchCampaigns();
     fetchPerformanceStats();
     fetchSystemStats();
-  }, [fetchCampaigns, fetchPerformanceStats, fetchSystemStats]);
+    fetchLanguages();
+  }, [fetchCampaigns, fetchPerformanceStats, fetchSystemStats, fetchLanguages]);
 
   // Handle filter changes
   useEffect(() => {
@@ -564,7 +580,7 @@ export default function Notification() {
           <div className="relative">
             <select
               value={filters.target_language}
-              onChange={(e) => handleFilterChange("target_language", e.target.value)}
+              onChange={(e) => setFilters({ ...filters, target_language: e.target.value })}
               className="appearance-none pl-10 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-full sm:w-auto"
             >
               <option value="all">All Languages</option>

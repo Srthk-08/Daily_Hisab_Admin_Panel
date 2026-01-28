@@ -567,9 +567,7 @@ const UserManagement = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Created
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Last Login
-                    </th>
+
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
@@ -653,12 +651,7 @@ const UserManagement = () => {
                       </td>
 
                       {/* Last Login */}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4 text-gray-400" />
-                          {user.last_login_date_time ? formatDate(user.last_login_date_time) : 'Never'}
-                        </div>
-                      </td>
+
 
                       {/* Actions */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -775,10 +768,7 @@ const UserManagement = () => {
                           <span>{formatDate(user.createtime)}</span>
                         </div>
                         {/* Last Login */}
-                        <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                          <Clock className="w-3 h-3 text-gray-400" />
-                          <span>{user.last_login_date_time ? formatDate(user.last_login_date_time) : 'Never'}</span>
-                        </div>
+
                       </div>
                     </div>
 
