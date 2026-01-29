@@ -564,42 +564,42 @@ export default function AnalyticsInsights() {
               <div className="bg-blue-50 rounded-xl p-3 sm:p-4 text-center">
                 <p className="text-xs sm:text-sm text-gray-600">Total Active Users</p>
                 <p className="text-xl sm:text-2xl font-bold text-blue-600">
-                  {featureUsageData.total_active_users?.toLocaleString() || '0'}
+                  {featureUsageData.totalActiveUsers?.toLocaleString() || '0'}
                 </p>
                 <p className="text-xs text-blue-500">Across all features</p>
               </div>
               <div className="bg-green-50 rounded-xl p-3 sm:p-4 text-center">
                 <p className="text-xs sm:text-sm text-gray-600">Most Used Feature</p>
                 <p className="text-base sm:text-lg font-bold text-green-600">
-                  {featureUsageData.insights?.most_used_feature?.feature || 'N/A'}
+                  {featureUsageData.mostUsedFeature || 'N/A'}
                 </p>
                 <p className="text-xs text-green-500">
-                  {featureUsageData.insights?.most_used_feature?.stats?.unique_users || 0} users
+                  {featureUsageData.mostUsedCount || 0} users
                 </p>
               </div>
               <div className="bg-purple-50 rounded-xl p-3 sm:p-4 text-center">
                 <p className="text-xs sm:text-sm text-gray-600">Fastest Growing</p>
                 <p className="text-base sm:text-lg font-bold text-purple-600">
-                  {featureUsageData.insights?.fastest_growing_feature?.feature || 'N/A'}
+                  {featureUsageData.fastestGrowingFeature || 'N/A'}
                 </p>
                 <p className="text-xs text-purple-500">
-                  {featureUsageData.insights?.fastest_growing_feature?.growth_rate || 0}% growth
+                  {featureUsageData.fastestGrowingPct || 0}% growth
                 </p>
               </div>
               <div className="bg-orange-50 rounded-xl p-3 sm:p-4 text-center">
                 <p className="text-xs sm:text-sm text-gray-600">Engagement Score</p>
                 <p className="text-xl sm:text-2xl font-bold text-orange-600">
-                  {featureUsageData.insights?.engagement_score?.toFixed(1) || '0'}/10
+                  {featureUsageData.engagementScore?.toFixed(1) || '0'}/10
                 </p>
                 <p className="text-xs text-orange-500">Overall engagement</p>
               </div>
             </div>
 
-            {/* Feature Usage Chart */}
+            {/* Feature Usage Comparison Chart */}
             <div className="mb-4 sm:mb-6">
               <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-800">Feature Usage Comparison</h3>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={featureUsageData.feature_usage || []} margin={{ top: 15, right: 15, left: 15, bottom: 50 }}>
+                <BarChart data={featureUsageData.featureUsageComparison || []} margin={{ top: 15, right: 15, left: 15, bottom: 50 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="feature"
@@ -621,9 +621,9 @@ export default function AnalyticsInsights() {
                           <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
                             <p className="font-semibold text-gray-800 mb-2">{label}</p>
                             <div className="space-y-1 text-sm">
-                              <p><span className="font-medium">Active Users:</span> {data.stats?.unique_users || 0}</p>
-                              <p><span className="font-medium">Total Entries:</span> {data.stats?.total_entries || data.stats?.total_budgets || data.stats?.total_referrals || data.stats?.total_regular_transactions || 0}</p>
-                              <p><span className="font-medium">Active Days:</span> {data.stats?.active_days || 0}</p>
+                              <p><span className="font-medium">Current Users:</span> {data.current || 0}</p>
+                              <p><span className="font-medium">Previous Users:</span> {data.previous || 0}</p>
+                              <p><span className="font-medium">Growth:</span> {data.growth}%</p>
                             </div>
                           </div>
                         );
@@ -633,7 +633,7 @@ export default function AnalyticsInsights() {
                   />
                   <Legend />
                   <Bar
-                    dataKey="stats.unique_users"
+                    dataKey="current"
                     fill="#3B82F6"
                     radius={[4, 4, 0, 0]}
                     name="Active Users"
@@ -642,48 +642,15 @@ export default function AnalyticsInsights() {
               </ResponsiveContainer>
             </div>
 
-            {/* Trend Analysis */}
-            {featureUsageData.trend_analysis && (
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">Feature Growth Trends</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {featureUsageData.trend_analysis.map((trend, index) => (
-                    <div key={index} className={`rounded-lg p-4 ${trend.trend === 'increasing' ? 'bg-green-50' :
-                      trend.trend === 'decreasing' ? 'bg-red-50' : 'bg-gray-50'
-                      }`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-gray-900">{trend.feature}</span>
-                        <span className={`text-sm font-bold ${trend.trend === 'increasing' ? 'text-green-600' :
-                          trend.trend === 'decreasing' ? 'text-red-600' : 'text-gray-600'
-                          }`}>
-                          {trend.growth_rate > 0 ? '+' : ''}{trend.growth_rate}%
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        <p>Current: {trend.current_users} users</p>
-                        <p>Previous: {trend.previous_users} users</p>
-                      </div>
-                      <div className={`text-xs font-medium mt-2 ${trend.trend === 'increasing' ? 'text-green-700' :
-                        trend.trend === 'decreasing' ? 'text-red-700' : 'text-gray-700'
-                        }`}>
-                        {trend.trend === 'increasing' ? '📈 Growing' :
-                          trend.trend === 'decreasing' ? '📉 Declining' : '📊 Stable'}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Feature Usage Trends Chart */}
-            {featureTrendsData && (
+            {/* Feature Usage Trends (Last 6 Months) */}
+            {featureUsageData.featureUsageTrends && featureUsageData.featureUsageTrends.length > 0 && (
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">Feature Usage Trends (Last 6 Months)</h3>
                 <ResponsiveContainer width="100%" height={400}>
-                  <LineChart data={featureTrendsData.trends || []} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                  <LineChart data={featureUsageData.featureUsageTrends} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
-                      dataKey="month_year"
+                      dataKey="month"
                       angle={-45}
                       textAnchor="end"
                       height={80}
@@ -693,28 +660,11 @@ export default function AnalyticsInsights() {
                       label={{ value: 'Active Users', angle: -90, position: 'insideLeft' }}
                       fontSize={12}
                     />
-                    <Tooltip
-                      content={({ active, payload, label }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
-                              <p className="font-semibold text-gray-800 mb-2">{label}</p>
-                              <div className="space-y-1 text-sm">
-                                <p><span className="font-medium">Total Active Users:</span> {payload[0].payload.total_active_users}</p>
-                                {payload[0].payload.feature_summary?.map((feature, index) => (
-                                  <p key={index}><span className="font-medium">{feature.feature}:</span> {feature.unique_users} users</p>
-                                ))}
-                              </div>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
+                    <Tooltip />
                     <Legend />
                     <Line
                       type="monotone"
-                      dataKey="total_active_users"
+                      dataKey="active_users"
                       stroke="#3B82F6"
                       strokeWidth={3}
                       name="Total Active Users"
@@ -722,6 +672,39 @@ export default function AnalyticsInsights() {
                     />
                   </LineChart>
                 </ResponsiveContainer>
+              </div>
+            )}
+
+            {/* Growth Trends Cards */}
+            {featureUsageData.featureGrowthTrends && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">Feature Growth Trends</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {featureUsageData.featureGrowthTrends.map((trend, index) => (
+                    <div key={index} className={`rounded-lg p-4 ${trend.status === 'Growing' ? 'bg-green-50' :
+                      trend.status === 'Declining' ? 'bg-red-50' : 'bg-gray-50'
+                      }`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-gray-900">{trend.feature}</span>
+                        <span className={`text-sm font-bold ${trend.status === 'Growing' ? 'text-green-600' :
+                          trend.status === 'Declining' ? 'text-red-600' : 'text-gray-600'
+                          }`}>
+                          {trend.growth > 0 ? '+' : ''}{trend.growth}%
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <p>Current: {trend.current} users</p>
+                        <p>Previous: {trend.previous} users</p>
+                      </div>
+                      <div className={`text-xs font-medium mt-2 ${trend.status === 'Growing' ? 'text-green-700' :
+                        trend.status === 'Declining' ? 'text-red-700' : 'text-gray-700'
+                        }`}>
+                        {trend.status === 'Growing' ? '📈 Growing' :
+                          trend.status === 'Declining' ? '📉 Declining' : '📊 Stable'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </>
