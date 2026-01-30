@@ -61,6 +61,10 @@ export default function AnalyticsInsights() {
   const [languageData, setLanguageData] = useState([]);
   const [languageLoading, setLanguageLoading] = useState(true);
 
+  // State Distribution State
+  const [stateData, setStateData] = useState([]);
+  const [stateLoading, setStateLoading] = useState(true);
+
   // Conversion Funnel State
   const [funnelData, setFunnelData] = useState([]);
   const [funnelLoading, setFunnelLoading] = useState(true);
@@ -156,12 +160,34 @@ export default function AnalyticsInsights() {
     }
   };
 
+  // Fetch state distribution data
+  const fetchStateData = async () => {
+    try {
+      setStateLoading(true);
+      const response = await apiService.getUserDistributionByState();
+      if (response.success) {
+        // Map response data to Recharts format: name and value
+        // Expecting response.data to be array of { name: 'StateName', value: count, percentage: '...' }
+        const formattedData = response.data.map(item => ({
+          name: item.name || 'Unknown',
+          value: item.value || 0
+        }));
+        setStateData(formattedData);
+      }
+    } catch (error) {
+      console.error('Error fetching state data:', error);
+    } finally {
+      setStateLoading(false);
+    }
+  };
+
   // Load performance data on component mount and when month changes
   useEffect(() => {
     fetchPerformanceData();
     fetchFeatureUsageData();
     fetchFeatureTrendsData();
     fetchLanguageData();
+    fetchStateData();
     fetchFunnelData();
   }, [selectedMonth]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -750,38 +776,83 @@ export default function AnalyticsInsights() {
         </ResponsiveContainer>
       </div>
 
-      {/* Region / Language Activity */}
-      <div className="bg-white shadow rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-        <h2 className="text-base sm:text-lg font-semibold mb-3">User Language Distribution</h2>
-        <div className="h-64">
-          {languageLoading ? (
-            <div className="flex items-center justify-center h-full">
-              <RefreshCw className="w-6 h-6 animate-spin text-indigo-600" />
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={languageData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  fill="#8884d8"
-                  label={({ name, percentage }) => `${name} (${percentage}%)`}
-                >
-                  {languageData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value, name, props) => [`${value} Users`, props.payload.name]}
-                />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+        {/* User Language Distribution */}
+        <div className="bg-white shadow rounded-lg p-3 sm:p-4">
+          <h2 className="text-base sm:text-lg font-semibold mb-3">User Language Distribution</h2>
+          <div className="h-64">
+            {languageLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <RefreshCw className="w-6 h-6 animate-spin text-indigo-600" />
+              </div>
+            ) : languageData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={languageData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    label={({ name, percentage }) => `${name} (${percentage}%)`}
+                  >
+                    {languageData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value, name) => [`${value} Users`, name]}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                No language data available
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* User State Distribution */}
+        <div className="bg-white shadow rounded-lg p-3 sm:p-4">
+          <h2 className="text-base sm:text-lg font-semibold mb-3">User State Distribution</h2>
+          <div className="h-64">
+            {stateLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <RefreshCw className="w-6 h-6 animate-spin text-indigo-600" />
+              </div>
+            ) : stateData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={stateData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#82ca9d"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {stateData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value, name) => [`${value} Users`, name]}
+                  />
+                  <Legend layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ fontSize: '10px' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                No state data available
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

@@ -137,7 +137,9 @@ const config = {
     GET_EXPENSE_BREAKDOWN: '/admin/get_expense_breakdown',
     GET_INCOME_BREAKDOWN: '/admin/get_income_breakdown',
     GET_COMPREHENSIVE_REPORT: '/admin/get_comprehensive_report',
+    GET_COMPREHENSIVE_REPORT: '/admin/get_comprehensive_report',
     EXPORT_REPORT_DATA: '/admin/export_report_data',
+    GET_USER_DISTRIBUTION_BY_STATE: '/admin/get_user_distribution_by_state',
 
     GET_CONTACT_US_DATA: '/admin/get_contact_us_data',
     CREATE_CONTACT_CONFIG: '/admin/create_contact_config',
@@ -305,7 +307,9 @@ const config = {
       GET_EXPENSE_BREAKDOWN: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_EXPENSE_BREAKDOWN}`,
       GET_INCOME_BREAKDOWN: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_INCOME_BREAKDOWN}`,
       GET_COMPREHENSIVE_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_COMPREHENSIVE_REPORT}`,
+      GET_COMPREHENSIVE_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_COMPREHENSIVE_REPORT}`,
       EXPORT_REPORT_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.EXPORT_REPORT_DATA}`,
+      GET_USER_DISTRIBUTION_BY_STATE: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_DISTRIBUTION_BY_STATE}`,
 
       // Contact Us Management URLs
       CREATE_CONTACT_CONFIG: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_CONTACT_CONFIG}`,

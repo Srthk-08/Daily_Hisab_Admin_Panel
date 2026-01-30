@@ -663,6 +663,11 @@ const apiService = {
     return response.data;
   },
 
+  getUserDistributionByState: async () => {
+    const response = await api.get(config.API_ENDPOINTS.GET_USER_DISTRIBUTION_BY_STATE);
+    return response.data;
+  },
+
   exportReportData: async (params = {}) => {
     const response = await api.get(config.API_ENDPOINTS.EXPORT_REPORT_DATA, {
       params,
