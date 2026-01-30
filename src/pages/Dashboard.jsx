@@ -172,8 +172,7 @@ export default function Dashboard() {
       name: item.time,
       installs: item.installs,
       revenue: item.revenue,
-      upgrades: 0, // Not available in API
-      uninstalls: 0 // Not available in API
+      uninstalls: item.uninstalls || 0
     })) || []
   };
 
@@ -215,28 +214,28 @@ export default function Dashboard() {
           <div className="overflow-y-auto max-h-96">
             {/* Desktop Table View */}
             <div className="hidden md:block">
-            <table className="w-full">
-              <thead className="bg-gray-50 sticky top-0">
-                <tr>
-                  <th className="text-left p-4 font-semibold">ID</th>
-                  <th className="text-left p-4 font-semibold">Mobile</th>
-                  <th className="text-left p-4 font-semibold">Joined</th>
-                  <th className="text-left p-4 font-semibold">Revenue</th>
-                  <th className="text-left p-4 font-semibold">Plan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {userData.map((user) => (
-                  <tr key={user.id} className="border-b hover:bg-gray-50">
-                    <td className="p-4 font-medium">#{user.id || 'N/A'}</td>
-                    <td className="p-4 text-gray-600">{user.mobile_number || 'No mobile'}</td>
-                    <td className="p-4 text-gray-600">{user.joined_at || 'Unknown'}</td>
-                    <td className="p-4 text-gray-600">₹{user.revenue || 0}</td>
-                    <td className="p-4 text-gray-600">{user.plan || 'No Plan'}</td>
+              <table className="w-full">
+                <thead className="bg-gray-50 sticky top-0">
+                  <tr>
+                    <th className="text-left p-4 font-semibold">ID</th>
+                    <th className="text-left p-4 font-semibold">Mobile</th>
+                    <th className="text-left p-4 font-semibold">Joined</th>
+                    <th className="text-left p-4 font-semibold">Revenue</th>
+                    <th className="text-left p-4 font-semibold">Plan</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {userData.map((user) => (
+                    <tr key={user.id} className="border-b hover:bg-gray-50">
+                      <td className="p-4 font-medium">#{user.id || 'N/A'}</td>
+                      <td className="p-4 text-gray-600">{user.mobile_number || 'No mobile'}</td>
+                      <td className="p-4 text-gray-600">{user.joined_at || 'Unknown'}</td>
+                      <td className="p-4 text-gray-600">₹{user.revenue || 0}</td>
+                      <td className="p-4 text-gray-600">{user.plan || 'No Plan'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
             {/* Mobile Card View */}
@@ -384,8 +383,8 @@ export default function Dashboard() {
         <h3 className="text-base sm:text-lg font-semibold mb-4">Trend Analysis (Monthly)</h3>
         <div className="h-64 sm:h-80 lg:h-96">
           <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={trend_analysis.monthly_data || []}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <LineChart data={trend_analysis.monthly_data || []}>
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
                 fontSize={12}
@@ -402,15 +401,14 @@ export default function Dashboard() {
                 }}
               />
               <Line type="monotone" dataKey="installs" stroke="#3b82f6" strokeWidth={2} name="Installs" />
-              <Line type="monotone" dataKey="upgrades" stroke="#4ade80" strokeWidth={2} name="Upgrades" />
               <Line type="monotone" dataKey="revenue" stroke="#f59e0b" strokeWidth={2} name="Revenue" />
               <Line type="monotone" dataKey="uninstalls" stroke="#f87171" strokeWidth={2} name="Uninstalls" />
               <Legend
                 className="mt-4 sm:mt-6 lg:mt-10"
                 wrapperStyle={{ fontSize: '12px' }}
               />
-          </LineChart>
-        </ResponsiveContainer>
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
@@ -440,8 +438,8 @@ export default function Dashboard() {
                 </Pie>
                 <Tooltip
                   formatter={(value, name, props) => [
-                  `${value} users (${props.payload.percentage}%)`,
-                  props.payload.name
+                    `${value} users (${props.payload.percentage}%)`,
+                    props.payload.name
                   ]}
                   contentStyle={{
                     fontSize: '12px',
@@ -569,51 +567,51 @@ export default function Dashboard() {
         {/* Desktop Table View */}
         <div className="hidden md:block overflow-x-auto">
           {support_tickets.length > 0 ? (
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2 pr-4">Subject</th>
-                <th className="text-left py-2 pr-4">Priority</th>
-                <th className="text-left py-2 pr-4">Status</th>
-                <th className="text-left py-2 pr-4">User</th>
-                <th className="text-left py-2 pr-4">Created</th>
-              </tr>
-            </thead>
-            <tbody>
-              {support_tickets.slice(0, 4).map((ticket) => (
-                <tr key={ticket.id} className="border-b hover:bg-gray-50">
-                  <td className="py-3 font-medium text-sm">{ticket.subject || 'No subject'}</td>
-                  <td className="py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs ${ticket.priority === 4 ? 'bg-red-100 text-red-800' :
-                      ticket.priority === 3 ? 'bg-orange-100 text-orange-800' :
-                        ticket.priority === 2 ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
-                      }`}>
-                      {ticket.priority === 4 ? 'Urgent' :
-                        ticket.priority === 3 ? 'High' :
-                          ticket.priority === 2 ? 'Medium' :
-                            ticket.priority === 1 ? 'Low' : 'Unknown'}
-                    </span>
-                  </td>
-                  <td className="py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs ${ticket.status === 0 ? 'bg-yellow-100 text-yellow-800' :
-                      ticket.status === 1 ? 'bg-blue-100 text-blue-800' :
-                        ticket.status === 2 ? 'bg-orange-100 text-orange-800' :
-                          ticket.status === 3 ? 'bg-green-100 text-green-800' :
-                            'bg-gray-100 text-gray-800'
-                      }`}>
-                      {ticket.status === 0 ? 'Pending' :
-                        ticket.status === 1 ? 'In Progress' :
-                          ticket.status === 2 ? 'Open' :
-                            ticket.status === 3 ? 'Resolved' : 'Unknown'}
-                    </span>
-                  </td>
-                  <td className="py-3 text-gray-600 text-sm">{ticket.user_email || 'Unknown'}</td>
-                  <td className="py-3 text-gray-500 text-sm">{ticket.created_at || 'Unknown'}</td>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2 pr-4">Subject</th>
+                  <th className="text-left py-2 pr-4">Priority</th>
+                  <th className="text-left py-2 pr-4">Status</th>
+                  <th className="text-left py-2 pr-4">User</th>
+                  <th className="text-left py-2 pr-4">Created</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {support_tickets.slice(0, 4).map((ticket) => (
+                  <tr key={ticket.id} className="border-b hover:bg-gray-50">
+                    <td className="py-3 font-medium text-sm">{ticket.subject || 'No subject'}</td>
+                    <td className="py-3">
+                      <span className={`px-2 py-1 rounded-full text-xs ${ticket.priority === 4 ? 'bg-red-100 text-red-800' :
+                        ticket.priority === 3 ? 'bg-orange-100 text-orange-800' :
+                          ticket.priority === 2 ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
+                        }`}>
+                        {ticket.priority === 4 ? 'Urgent' :
+                          ticket.priority === 3 ? 'High' :
+                            ticket.priority === 2 ? 'Medium' :
+                              ticket.priority === 1 ? 'Low' : 'Unknown'}
+                      </span>
+                    </td>
+                    <td className="py-3">
+                      <span className={`px-2 py-1 rounded-full text-xs ${ticket.status === 0 ? 'bg-yellow-100 text-yellow-800' :
+                        ticket.status === 1 ? 'bg-blue-100 text-blue-800' :
+                          ticket.status === 2 ? 'bg-orange-100 text-orange-800' :
+                            ticket.status === 3 ? 'bg-green-100 text-green-800' :
+                              'bg-gray-100 text-gray-800'
+                        }`}>
+                        {ticket.status === 0 ? 'Pending' :
+                          ticket.status === 1 ? 'In Progress' :
+                            ticket.status === 2 ? 'Open' :
+                              ticket.status === 3 ? 'Resolved' : 'Unknown'}
+                      </span>
+                    </td>
+                    <td className="py-3 text-gray-600 text-sm">{ticket.user_email || 'Unknown'}</td>
+                    <td className="py-3 text-gray-500 text-sm">{ticket.created_at || 'Unknown'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <div className="text-center py-8 text-gray-500">
               <Headphones className="w-12 h-12 text-gray-400 mx-auto mb-2" />
@@ -626,40 +624,40 @@ export default function Dashboard() {
         <div className="md:hidden space-y-3">
           {support_tickets.length > 0 ? (
             support_tickets.slice(0, 4).map((ticket) => (
-            <div key={ticket.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-medium text-sm text-gray-900 truncate flex-1 mr-2">
-                  {ticket.subject || 'No subject'}
-                </h4>
-                <div className="flex gap-2">
-                  <span className={`px-2 py-1 rounded-full text-xs ${ticket.priority === 4 ? 'bg-red-100 text-red-800' :
-                    ticket.priority === 3 ? 'bg-orange-100 text-orange-800' :
-                      ticket.priority === 2 ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-green-100 text-green-800'
-                    }`}>
-                    {ticket.priority === 4 ? 'Urgent' :
-                      ticket.priority === 3 ? 'High' :
-                        ticket.priority === 2 ? 'Medium' :
-                          ticket.priority === 1 ? 'Low' : 'Unknown'}
-                  </span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${ticket.status === 0 ? 'bg-yellow-100 text-yellow-800' :
-                    ticket.status === 1 ? 'bg-blue-100 text-blue-800' :
-                      ticket.status === 2 ? 'bg-orange-100 text-orange-800' :
-                        ticket.status === 3 ? 'bg-green-100 text-green-800' :
-                          'bg-gray-100 text-gray-800'
-                    }`}>
-                    {ticket.status === 0 ? 'Pending' :
-                      ticket.status === 1 ? 'In Progress' :
-                        ticket.status === 2 ? 'Open' :
-                          ticket.status === 3 ? 'Resolved' : 'Unknown'}
-                  </span>
+              <div key={ticket.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-medium text-sm text-gray-900 truncate flex-1 mr-2">
+                    {ticket.subject || 'No subject'}
+                  </h4>
+                  <div className="flex gap-2">
+                    <span className={`px-2 py-1 rounded-full text-xs ${ticket.priority === 4 ? 'bg-red-100 text-red-800' :
+                      ticket.priority === 3 ? 'bg-orange-100 text-orange-800' :
+                        ticket.priority === 2 ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                      }`}>
+                      {ticket.priority === 4 ? 'Urgent' :
+                        ticket.priority === 3 ? 'High' :
+                          ticket.priority === 2 ? 'Medium' :
+                            ticket.priority === 1 ? 'Low' : 'Unknown'}
+                    </span>
+                    <span className={`px-2 py-1 rounded-full text-xs ${ticket.status === 0 ? 'bg-yellow-100 text-yellow-800' :
+                      ticket.status === 1 ? 'bg-blue-100 text-blue-800' :
+                        ticket.status === 2 ? 'bg-orange-100 text-orange-800' :
+                          ticket.status === 3 ? 'bg-green-100 text-green-800' :
+                            'bg-gray-100 text-gray-800'
+                      }`}>
+                      {ticket.status === 0 ? 'Pending' :
+                        ticket.status === 1 ? 'In Progress' :
+                          ticket.status === 2 ? 'Open' :
+                            ticket.status === 3 ? 'Resolved' : 'Unknown'}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-600">
+                  <p className="truncate">{ticket.user_email || 'Unknown'}</p>
+                  <p className="text-gray-500 mt-1">{ticket.created_at || 'Unknown'}</p>
                 </div>
               </div>
-              <div className="text-xs text-gray-600">
-                <p className="truncate">{ticket.user_email || 'Unknown'}</p>
-                <p className="text-gray-500 mt-1">{ticket.created_at || 'Unknown'}</p>
-              </div>
-            </div>
             ))
           ) : (
             <div className="text-center py-8 text-gray-500">
@@ -769,8 +767,8 @@ export function AnalyticsOverview({ period, setPeriod, data }) {
       {/* Chart */}
       <div className="h-64 sm:h-80 lg:h-96">
         <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={getCurrentData()}>
-          <CartesianGrid strokeDasharray="3 3" />
+          <AreaChart data={getCurrentData()}>
+            <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="time"
               fontSize={12}
@@ -786,22 +784,22 @@ export function AnalyticsOverview({ period, setPeriod, data }) {
                 padding: '8px'
               }}
             />
-          <Area
-            type="monotone"
-            dataKey="installs"
-            stackId="1"
-            stroke="#3b82f6"
-            fill="#3b82f6"
-          />
-          <Area
-            type="monotone"
-            dataKey="revenue"
-            stackId="2"
-            stroke="#4ade80"
-            fill="#4ade80"
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+            <Area
+              type="monotone"
+              dataKey="installs"
+              stackId="1"
+              stroke="#3b82f6"
+              fill="#3b82f6"
+            />
+            <Area
+              type="monotone"
+              dataKey="revenue"
+              stackId="2"
+              stroke="#4ade80"
+              fill="#4ade80"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
