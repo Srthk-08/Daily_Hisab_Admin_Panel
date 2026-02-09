@@ -135,6 +135,7 @@ export default function Dashboard() {
     app_daily_installs = 0,
     daily_revenue = 0,
     monthly_revenue = 0,
+    total_revenue = 0,
     pending_tickets = 0,
     new_subscribers_today = 0
   } = overview_stats;
@@ -331,7 +332,7 @@ export default function Dashboard() {
           <Wallet className="w-8 h-8 sm:w-10 sm:h-10 text-green-500 flex-shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="text-gray-500 text-xs sm:text-sm capitalize truncate">Revenue (daily)</p>
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold truncate">₹{daily_revenue}</h2>
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold truncate">₹{daily_revenue.toLocaleString()}</h2>
           </div>
         </div>
 
@@ -344,7 +345,20 @@ export default function Dashboard() {
           <TrendingUp className="w-8 h-8 sm:w-10 sm:h-10 text-orange-500 flex-shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="text-gray-500 text-xs sm:text-sm capitalize truncate">Revenue (Monthly)</p>
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold truncate">₹{monthly_revenue}</h2>
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold truncate">₹{monthly_revenue.toLocaleString()}</h2>
+          </div>
+        </div>
+
+        {/* Total Revenue */}
+        <div
+          className="bg-white rounded-2xl shadow-md p-3 sm:p-4 flex items-center gap-3 sm:gap-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
+          onClick={navigateToSubscriptionPayments}
+          title="Click to view Subscription Payments"
+        >
+          <TrendingUp className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-600 flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-gray-500 text-xs sm:text-sm capitalize truncate">Total Revenue</p>
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold truncate">₹{total_revenue.toLocaleString()}</h2>
           </div>
         </div>
 
