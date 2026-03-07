@@ -112,7 +112,7 @@ const IncomeCategoryManager = () => {
       }
 
       // Reset form
-      setFormData({ category_id: '', category_name: '', category_type: 1, account_type: 1 });
+      setFormData({ category_id: '', category_name: '', category_type: 2, account_type: 1 });
       setIconFile(null);
       setIconPreview(null);
       setSelectedIcon(null);
@@ -291,7 +291,7 @@ const IncomeCategoryManager = () => {
     setFormData({
       category_id: '',
       category_name: '',
-      category_type: 1, // Income
+      category_type: 2, // Income
       account_type: 1, // Personal
       deletable: 0 // Default to not deletable
     });
@@ -434,14 +434,14 @@ const IncomeCategoryManager = () => {
                   />
                   <div className="min-w-0 flex-1">
                     <label htmlFor="deletable" className="text-xs sm:text-sm text-gray-600 block">
-                    Allow users to delete this category
-                  </label>
-                <p className="text-xs text-gray-500 mt-1">
-                  {formData.deletable === 1
-                    ? "✓ Users can delete this category"
-                    : "✗ Users cannot delete this category (admin only)"
-                  }
-                </p>
+                      Allow users to delete this category
+                    </label>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.deletable === 1
+                        ? "✓ Users can delete this category"
+                        : "✗ Users cannot delete this category (admin only)"
+                      }
+                    </p>
                   </div>
                 </div>
               </div>
@@ -563,92 +563,92 @@ const IncomeCategoryManager = () => {
           <>
             {/* Desktop Table View */}
             <div className="hidden md:block overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Icon</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deletable</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {Array.isArray(categories) && categories.map((category) => (
-                  <tr key={category.category_id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {category.category_id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {category.icon ? (
-                        category.icon.startsWith('data:') || category.icon.startsWith('http') ? (
-                          <img
-                            src={category.icon}
-                            alt={category.category_name}
-                            className="w-12 h-12 object-cover rounded-lg"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <span className="material-icons text-3xl text-gray-700">{category.icon}</span>
-                        )
-                      ) : (
-                        <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                          <span className="text-gray-400 text-xs">No Icon</span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {category.category_name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.getAccountTypeColor(category.account_type || 1)}`}>
-                        {config.getAccountTypeLabel(category.account_type || 1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(category.status)}`}>
-                        {category.status || 'Active'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${category.deletable === 1
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                        }`}>
-                        {category.deletable === 1 ? '✓ Yes' : '✗ No'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {category.createtime}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEdit(category)}
-                          className="text-blue-600 hover:text-blue-900 p-1"
-                          title="Edit Category"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(category.category_id)}
-                          className="text-red-600 hover:text-red-900 p-1"
-                          title="Delete Category"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Icon</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deletable</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {Array.isArray(categories) && categories.map((category) => (
+                    <tr key={category.category_id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {category.category_id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {category.icon ? (
+                          category.icon.startsWith('data:') || category.icon.startsWith('http') ? (
+                            <img
+                              src={category.icon}
+                              alt={category.category_name}
+                              className="w-12 h-12 object-cover rounded-lg"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <span className="material-icons text-3xl text-gray-700">{category.icon}</span>
+                          )
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <span className="text-gray-400 text-xs">No Icon</span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {category.category_name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.getAccountTypeColor(category.account_type || 1)}`}>
+                          {config.getAccountTypeLabel(category.account_type || 1)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(category.status)}`}>
+                          {category.status || 'Active'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${category.deletable === 1
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}>
+                          {category.deletable === 1 ? '✓ Yes' : '✗ No'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {category.createtime}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEdit(category)}
+                            className="text-blue-600 hover:text-blue-900 p-1"
+                            title="Edit Category"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(category.category_id)}
+                            className="text-red-600 hover:text-red-900 p-1"
+                            title="Delete Category"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {/* Mobile Card View */}
             <div className="md:hidden">
