@@ -1287,6 +1287,27 @@ const apiService = {
       throw error;
     }
   },
+
+  // User Acquisition Tracking API Functions
+  getUserAcquisitionStats: async () => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_USER_ACQUISITION_STATS);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user acquisition stats:', error);
+      throw error;
+    }
+  },
+
+  getUserAcquisitionDetails: async (params = {}) => {
+    try {
+      const response = await api.get(config.API_ENDPOINTS.GET_USER_ACQUISITION_DETAILS, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user acquisition details:', error);
+      throw error;
+    }
+  },
 };
 
 // Initialize token management when module loads

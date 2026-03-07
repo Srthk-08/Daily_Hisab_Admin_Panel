@@ -201,6 +201,10 @@ const config = {
     DELETE_LANGUAGE: '/admin/delete_language',
     TOGGLE_LANGUAGE_STATUS: '/admin/toggle_language_status',
     GET_LANGUAGE_ANALYTICS: '/admin/get_language_analytics',
+
+    // User Acquisition Tracking
+    GET_USER_ACQUISITION_STATS: '/admin/user_acquisition_stats',
+    GET_USER_ACQUISITION_DETAILS: '/admin/user_acquisition_details',
   },
 
   // Full API URLs (constructed from base URL and endpoints)
@@ -371,6 +375,10 @@ const config = {
       DELETE_LANGUAGE: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_LANGUAGE}`,
       TOGGLE_LANGUAGE_STATUS: `${this.API_BASE_URL}${this.API_ENDPOINTS.TOGGLE_LANGUAGE_STATUS}`,
       GET_LANGUAGE_ANALYTICS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_LANGUAGE_ANALYTICS}`,
+
+      // User Acquisition Tracking URLs
+      GET_USER_ACQUISITION_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_ACQUISITION_STATS}`,
+      GET_USER_ACQUISITION_DETAILS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_ACQUISITION_DETAILS}`,
     };
   },
 

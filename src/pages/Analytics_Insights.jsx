@@ -29,12 +29,7 @@ const regionData = [
   { region: "Other", users: 100 },
 ];
 
-const acquisitionData = [
-  { channel: "Google Ads", users: 350 },
-  { channel: "Referrals", users: 250 },
-  { channel: "Organic", users: 180 },
-  { channel: "Social Media", users: 120 },
-];
+// Local fallback data removed - using real API data
 
 
 
@@ -68,6 +63,10 @@ export default function AnalyticsInsights() {
   // Conversion Funnel State
   const [funnelData, setFunnelData] = useState([]);
   const [funnelLoading, setFunnelLoading] = useState(true);
+
+  // User Acquisition State
+  const [acquisitionData, setAcquisitionData] = useState([]);
+  const [acquisitionLoading, setAcquisitionLoading] = useState(true);
 
   // Fetch conversion funnel data
   const fetchFunnelData = async () => {
@@ -181,6 +180,21 @@ export default function AnalyticsInsights() {
     }
   };
 
+  // Fetch user acquisition statistics
+  const fetchAcquisitionData = async () => {
+    try {
+      setAcquisitionLoading(true);
+      const response = await apiService.getUserAcquisitionStats();
+      if (response.success) {
+        setAcquisitionData(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching acquisition data:', error);
+    } finally {
+      setAcquisitionLoading(false);
+    }
+  };
+
   // Load performance data on component mount and when month changes
   useEffect(() => {
     fetchPerformanceData();
@@ -189,6 +203,7 @@ export default function AnalyticsInsights() {
     fetchLanguageData();
     fetchStateData();
     fetchFunnelData();
+    fetchAcquisitionData();
   }, [selectedMonth]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // eslint-disable-next-line no-unused-vars
@@ -859,16 +874,28 @@ export default function AnalyticsInsights() {
       {/* Acquisition Channels */}
       <div className="bg-white shadow rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
         <h2 className="text-base sm:text-lg font-semibold mb-3">Top Acquisition Channels</h2>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={acquisitionData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="channel" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="users" fill="#9A60B4" />
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="h-[250px]">
+          {acquisitionLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <RefreshCw className="w-6 h-6 animate-spin text-indigo-600" />
+            </div>
+          ) : acquisitionData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={acquisitionData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="channel" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="users" fill="#9A60B4" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              No acquisition data available
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Conversion Funnel */}

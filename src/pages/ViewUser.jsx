@@ -244,6 +244,36 @@ const ViewUser = () => {
                 </div>
               </div>
             </div>
+
+            {/* Acquisition Info */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Acquisition Information</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Source (Channel)</label>
+                  <span className="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-purple-100 text-purple-800">
+                    {user.acquisition_info?.source}
+                  </span>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Medium</label>
+                  <span className="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                    {user.acquisition_info?.medium}
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Campaign</label>
+                  <p className="text-gray-900 font-medium">{user.acquisition_info?.campaign}</p>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-500 mb-1">Installed At</label>
+                  <div className="flex items-center text-gray-900">
+                    <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                    {user.timestamps?.installed_at}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
