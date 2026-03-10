@@ -109,6 +109,7 @@ export default function Notification() {
     paid_users: { label: "Paid Users", icon: Users, color: "text-purple-600" },
     active_users: { label: "Active Users", icon: Users, color: "text-green-600" },
     inactive_users: { label: "Inactive Users", icon: Users, color: "text-red-600" },
+    expired_users: { label: "Expired Users", icon: Users, color: "text-orange-600" },
   };
 
   // Status configuration
@@ -574,6 +575,7 @@ export default function Notification() {
               <option value="paid_users">Paid Users</option>
               <option value="active_users">Active Users</option>
               <option value="inactive_users">Inactive Users</option>
+              <option value="expired_users">Expired Users</option>
             </select>
           </div>
 
@@ -854,6 +856,7 @@ export default function Notification() {
                     <option value="paid_users">Paid Users</option>
                     <option value="active_users">Active Users</option>
                     <option value="inactive_users">Inactive Users</option>
+                    <option value="expired_users">Expired Users</option>
                   </select>
                 </div>
 
