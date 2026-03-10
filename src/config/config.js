@@ -126,6 +126,7 @@ const config = {
     MANUAL_UPGRADE_USER: '/admin/manual_upgrade_user',
     GET_MANUAL_UPGRADE_HISTORY: '/admin/get_manual_upgrade_history',
     GET_MANUAL_UPGRADE_STATS: '/admin/get_manual_upgrade_stats',
+    BULK_MANUAL_UPGRADE_USERS: '/admin/bulk_manual_upgrade_users',
 
     // Admin Report System
     GET_USER_GROWTH_REPORT: '/admin/get_user_growth_report',
@@ -300,6 +301,7 @@ const config = {
       MANUAL_UPGRADE_USER: `${this.API_BASE_URL}${this.API_ENDPOINTS.MANUAL_UPGRADE_USER}`,
       GET_MANUAL_UPGRADE_HISTORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_MANUAL_UPGRADE_HISTORY}`,
       GET_MANUAL_UPGRADE_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_MANUAL_UPGRADE_STATS}`,
+      BULK_MANUAL_UPGRADE_USERS: `${this.API_BASE_URL}${this.API_ENDPOINTS.BULK_MANUAL_UPGRADE_USERS}`,
 
       // Admin Report System URLs
       GET_USER_GROWTH_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_GROWTH_REPORT}`,

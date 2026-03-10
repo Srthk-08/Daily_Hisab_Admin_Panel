@@ -607,6 +607,11 @@ const apiService = {
     return response.data;
   },
 
+  bulkManualUpgradeUsers: async (bulkUpgradeData) => {
+    const response = await api.post(config.API_ENDPOINTS.BULK_MANUAL_UPGRADE_USERS, bulkUpgradeData);
+    return response.data;
+  },
+
   getManualUpgradeHistory: async (params = {}) => {
     const response = await api.get(config.API_ENDPOINTS.GET_MANUAL_UPGRADE_HISTORY, { params });
     return response.data;

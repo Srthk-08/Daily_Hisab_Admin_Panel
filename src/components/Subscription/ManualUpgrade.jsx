@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { UserPlus, Search, Filter, Download, CheckCircle, XCircle, Calendar, Loader2, AlertCircle, User, Mail, Phone, Clock } from "lucide-react";
+import { UserPlus, Search, Mail, Phone, Calendar, Download, AlertCircle, CheckCircle, XCircle, Loader2, User, Filter, ChevronLeft, ChevronRight, CheckSquare, Square } from 'lucide-react';
 import apiService from '../../services/api';
 
 const ManualUpgrade = () => {
+  // Mode state
+  const [viewMode, setViewMode] = useState('single'); // 'single' or 'bulk'
+
   // Form state
   const [userMobile, setUserMobile] = useState('');
   const [selectedPlanId, setSelectedPlanId] = useState('');
   const [upgradeReason, setUpgradeReason] = useState('');
 
+  // Bulk state
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [bulkUsers, setBulkUsers] = useState([]);
+  const [activeBulkTab, setActiveBulkTab] = useState('all');
+  const [bulkSearchQuery, setBulkSearchQuery] = useState('');
+  const [bulkLoading, setBulkLoading] = useState(false);
+  const [bulkPagination, setBulkPagination] = useState({ page: 1, totalPages: 1 });
 
   // Search state (for functionality, card removed from UI)
   const [searchMobile, setSearchMobile] = useState('');
@@ -48,6 +58,13 @@ const ManualUpgrade = () => {
     fetchUpgradeHistory();
     fetchUpgradeStats();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Fetch bulk users when in bulk mode or tab changes
+  useEffect(() => {
+    if (viewMode === 'bulk') {
+      fetchBulkUsers();
+    }
+  }, [viewMode, activeBulkTab, bulkSearchQuery, bulkPagination.page]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch available plans
   const fetchAvailablePlans = async () => {
@@ -188,10 +205,88 @@ const ManualUpgrade = () => {
     }
   };
 
-  // Handle manual upgrade
-  const handleManualUpgrade = async () => {
+  // Fetch bulk users with filtering
+  const fetchBulkUsers = async () => {
+    try {
+      setBulkLoading(true);
+      const params = {
+        filter_status: activeBulkTab,
+        search_query: bulkSearchQuery,
+        page: bulkPagination.page,
+        limit: 10
+      };
+
+      const response = await apiService.getAllUsersWithAccounts(params);
+      if (response && response.success) {
+        setBulkUsers(response.users || []);
+        setBulkPagination(prev => ({
+          ...prev,
+          totalPages: response.pagination?.total_pages || 1
+        }));
+      }
+    } catch (err) {
+      console.error('Error fetching bulk users:', err);
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const handleBulkUpgrade = async () => {
+    if (!selectedPlanId) {
+      setError('Please select a plan / कृपया एक प्लान चुनें');
+      return;
+    }
+
+    if (selectedUsers.length === 0) {
+      setError('Please select at least one user / कृपया कम से कम एक उपयोगकर्ता चुनें');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
+
+      const bulkUpgradeData = {
+        user_mobiles: selectedUsers,
+        subscription_id: selectedPlanId,
+        upgrade_reason: upgradeReason || 'Bulk manual upgrade by admin'
+      };
+
+      const response = await apiService.bulkManualUpgradeUsers(bulkUpgradeData);
+
+      if (response.success) {
+        setSuccess(`Bulk upgrade request processed. Success: ${response.data.success.length}, Failed: ${response.data.failed.length}`);
+        setSelectedUsers([]);
+        setUpgradeReason('');
+        setSelectedPlanId('');
+
+        // Refresh data
+        fetchUpgradeHistory();
+        fetchUpgradeStats();
+        fetchBulkUsers();
+      } else {
+        setError(response.msg?.[0] || 'Bulk upgrade failed');
+      }
+    } catch (err) {
+      console.error('Bulk upgrade error:', err);
+      setError(err.message || 'An error occurred during bulk upgrade');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle manual upgrade submission
+  const handleManualUpgrade = async (e) => {
+    e.preventDefault();
+
+    if (viewMode === 'bulk') {
+      handleBulkUpgrade();
+      return;
+    }
+
     if (!userMobile || !selectedPlanId) {
-      setError('Please fill in all required fields');
+      setError('Mobile number and plan are required / मोबाइल नंबर और प्लान आवश्यक हैं');
       return;
     }
 
@@ -311,7 +406,30 @@ const ManualUpgrade = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Manual Subscription Upgrade</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-xl font-semibold">Manual Subscription Upgrade</h2>
+
+        {/* View Mode Toggle */}
+        <div className="flex bg-gray-100 p-1 rounded-lg border">
+          <button
+            onClick={() => setViewMode('single')}
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === 'single' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'
+              }`}
+          >
+            Single User
+          </button>
+          <button
+            onClick={() => {
+              setViewMode('bulk');
+              if (bulkUsers.length === 0) fetchBulkUsers();
+            }}
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${viewMode === 'bulk' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'
+              }`}
+          >
+            Bulk Upgrade
+          </button>
+        </div>
+      </div>
 
       {/* Error/Success Messages */}
       {error && (
@@ -328,162 +446,336 @@ const ManualUpgrade = () => {
         </div>
       )}
 
-      {/* Manual Upgrade Form */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="text-lg font-semibold mb-4">Upgrade User Subscription</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              User Mobile Number <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-            <input
-              type="tel"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Type mobile number (e.g., 9786784534)"
-              value={userMobile}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, '');
-                  setUserMobile(value);
-                  if (value.length === 0) {
-                    setSearchedUser(null);
-                    setShowAutocomplete(false);
-                  } else {
-                    setSearchedUser(null);
-                    setShowAutocomplete(value.length >= 3);
-                  }
-                }}
-                onFocus={() => {
-                  if (userMobile.length >= 3 && autocompleteUsers.length > 0) {
-                    setShowAutocomplete(true);
-                  }
-                }}
-                onBlur={() => {
-                  // Delay to allow click on dropdown items
-                  setTimeout(() => setShowAutocomplete(false), 200);
-                }}
-              required
-            />
-              {autocompleteLoading && (
-                <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin text-gray-400" />
-              )}
-              
-              {/* Autocomplete Dropdown */}
-              {showAutocomplete && autocompleteUsers.length > 0 && (
-                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
-                  {autocompleteUsers.map((user) => (
-                    <div
-                      key={user.user_id}
-                      onClick={() => handleSelectUser(user.mobile)}
-                      className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-gray-400" />
-                            <span className="font-medium text-gray-900">
-                              {user.phone_code} {user.mobile}
-                            </span>
-                            {user.active_flag === 0 && (
-                              <span className="px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded">
-                                Inactive
-                              </span>
-                            )}
-                          </div>
-                          <div className="mt-1 flex items-center gap-4 text-xs text-gray-500">
-                            {user.name && user.name !== 'N/A' && (
-                              <span className="flex items-center gap-1">
-                                <User className="w-3 h-3" />
-                                {user.name}
-                              </span>
-                            )}
-                            {user.email && user.email !== 'N/A' && (
-                              <span className="flex items-center gap-1">
-                                <Mail className="w-3 h-3" />
-                                {user.email}
-                              </span>
-                            )}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Left Section: User Selection */}
+        <div className="xl:col-span-2 space-y-6">
+          {viewMode === 'single' ? (
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h3 className="text-lg font-semibold mb-4">Select User</h3>
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  User Mobile Number <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="tel"
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Type mobile number (e.g., 9786784534)"
+                    value={userMobile}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      setUserMobile(value);
+                      if (value.length === 0) {
+                        setSearchedUser(null);
+                        setShowAutocomplete(false);
+                      } else {
+                        setSearchedUser(null);
+                        setShowAutocomplete(value.length >= 3);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (userMobile.length >= 3 && autocompleteUsers.length > 0) {
+                        setShowAutocomplete(true);
+                      }
+                    }}
+                    onBlur={() => {
+                      setTimeout(() => setShowAutocomplete(false), 200);
+                    }}
+                    required
+                  />
+                  {autocompleteLoading && (
+                    <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin text-gray-400" />
+                  )}
+
+                  {/* Autocomplete Dropdown */}
+                  {showAutocomplete && autocompleteUsers.length > 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                      {autocompleteUsers.map((user) => (
+                        <div
+                          key={user.user_id}
+                          onClick={() => handleSelectUser(user.mobile)}
+                          className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <Phone className="w-4 h-4 text-gray-400" />
+                                <span className="font-medium text-gray-900">
+                                  {user.phone_code} {user.mobile}
+                                </span>
+                                {user.active_flag === 0 && (
+                                  <span className="px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded">
+                                    Inactive
+                                  </span>
+                                )}
+                              </div>
+                              <div className="mt-1 flex items-center gap-4 text-xs text-gray-500">
+                                {user.name && user.name !== 'N/A' && (
+                                  <span className="flex items-center gap-1">
+                                    <User className="w-3 h-3" />
+                                    {user.name}
+                                  </span>
+                                )}
+                                {user.email && user.email !== 'N/A' && (
+                                  <span className="flex items-center gap-1">
+                                    <Mail className="w-3 h-3" />
+                                    {user.email}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <CheckCircle className="w-4 h-4 text-blue-500" />
                           </div>
                         </div>
-                        <CheckCircle className="w-4 h-4 text-blue-500" />
-                      </div>
+                      ))}
                     </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                <h3 className="text-lg font-semibold">Select Users ({selectedUsers.length} Selected)</h3>
+
+                <div className="relative w-full md:w-64">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={bulkSearchQuery}
+                    onChange={(e) => setBulkSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Bulk Tabs */}
+              <div className="flex space-x-2 mb-4 overflow-x-auto pb-2">
+                {['all', 'free', 'paid', 'expired'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => {
+                      setActiveBulkTab(tab);
+                      setBulkPagination(prev => ({ ...prev, page: 1 }));
+                    }}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all whitespace-nowrap ${activeBulkTab === tab ? 'bg-blue-600 border-blue-600 text-white shadow-sm' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                      }`}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)} Users
+                  </button>
+                ))}
+              </div>
+
+              {/* User Selection List */}
+              <div className="border rounded-lg overflow-hidden mb-4">
+                {bulkLoading && bulkUsers.length === 0 ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                  </div>
+                ) : (
+                  <div className="max-h-96 overflow-y-auto divide-y divide-gray-100">
+                    {bulkUsers.length > 0 ? bulkUsers.map((user) => (
+                      <div
+                        key={user.user_id}
+                        className={`px-4 py-3 flex items-center gap-3 hover:bg-blue-50 transition-colors cursor-pointer ${selectedUsers.includes(user.mobile) ? 'bg-blue-50/50' : ''
+                          }`}
+                        onClick={() => {
+                          if (selectedUsers.includes(user.mobile)) {
+                            setSelectedUsers(prev => prev.filter(m => m !== user.mobile));
+                          } else {
+                            setSelectedUsers(prev => [...prev, user.mobile]);
+                          }
+                        }}
+                      >
+                        <div className="flex-shrink-0">
+                          {selectedUsers.includes(user.mobile) ? (
+                            <CheckSquare className="w-5 h-5 text-blue-600" />
+                          ) : (
+                            <Square className="w-5 h-5 text-gray-300" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium text-gray-900 truncate">{user.name || 'Unknown'}</p>
+                            {user.is_paid_user === 1 ? (
+                              <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold">PAID</span>
+                            ) : (
+                              <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-full font-bold">FREE</span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 truncate">{user.mobile}</p>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <p className="text-[10px] text-gray-400">Created</p>
+                          <p className="text-xs text-gray-600">{new Date(user.createtime).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                    )) : (
+                      <div className="py-12 text-center text-gray-500 text-sm">No users found match your criteria.</div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Bulk Selection Footer / Pagination */}
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSelectedUsers(bulkUsers.map(u => u.mobile))}
+                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Select All on Page
+                  </button>
+                  <span className="text-gray-300">|</span>
+                  <button
+                    onClick={() => setSelectedUsers([])}
+                    className="text-xs text-red-600 hover:text-red-800 font-medium"
+                  >
+                    Clear All
+                  </button>
+                </div>
+
+                {bulkPagination.totalPages > 1 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setBulkPagination(p => ({ ...p, page: Math.max(1, p.page - 1) }))}
+                      disabled={bulkPagination.page === 1}
+                      className="p-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <span className="text-xs text-gray-600">Page {bulkPagination.page} of {bulkPagination.totalPages}</span>
+                    <button
+                      onClick={() => setBulkPagination(p => ({ ...p, page: Math.min(p.totalPages, p.page + 1) }))}
+                      disabled={bulkPagination.page === bulkPagination.totalPages}
+                      className="p-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right Section: Upgrade Settings */}
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <h3 className="text-lg font-semibold mb-4">Upgrade Details</h3>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Upgrade To Plan <span className="text-red-500">*</span>
+                </label>
+                <select
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white"
+                  value={selectedPlanId}
+                  onChange={(e) => setSelectedPlanId(e.target.value)}
+                  required
+                >
+                  <option value="">Select a plan</option>
+                  {availablePlans.map(plan => (
+                    <option key={plan.subscription_id} value={plan.subscription_id}>
+                      {plan.plan_name} - ₹{plan.plan_price} ({plan.subscription_type_label})
+                    </option>
                   ))}
-                </div>
-              )}
-              
-              {showAutocomplete && autocompleteUsers.length === 0 && userMobile.length >= 3 && !autocompleteLoading && (
-                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-4 text-center text-sm text-gray-500">
-                  No users found
-                </div>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upgrade Reason</label>
+                <textarea
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  rows="2"
+                  placeholder="Reason for upgrade..."
+                  value={upgradeReason}
+                  onChange={(e) => setUpgradeReason(e.target.value)}
+                ></textarea>
+              </div>
+
+              <button
+                onClick={handleManualUpgrade}
+                disabled={loading || (viewMode === 'single' ? !userMobile : selectedUsers.length === 0) || !selectedPlanId}
+                className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <UserPlus className="w-5 h-5" />
+                )}
+                {loading ? 'Processing...' : viewMode === 'single' ? 'Upgrade User' : `Upgrade ${selectedUsers.length} Users`}
+              </button>
+
+              {viewMode === 'bulk' && selectedUsers.length > 0 && (
+                <p className="text-[11px] text-center text-gray-400 italic">
+                  Note: Bulk upgrade will process users sequentially.
+                </p>
               )}
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Upgrade To Plan <span className="text-red-500">*</span>
-            </label>
-            <select
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              value={selectedPlanId}
-              onChange={(e) => setSelectedPlanId(e.target.value)}
-              required
-            >
-              <option value="">Select a plan</option>
-              {availablePlans.map(plan => (
-                <option key={plan.subscription_id} value={plan.subscription_id}>
-                  {plan.plan_name} - ₹{plan.plan_price} ({plan.subscription_type_label})
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Upgrade Reason</label>
-            <input
-              type="text"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Reason for manual upgrade"
-              value={upgradeReason}
-              onChange={(e) => setUpgradeReason(e.target.value)}
-            />
-          </div>
-          <div className="flex items-end">
-            <button
-              onClick={handleManualUpgrade}
-              disabled={loading || !userMobile || !selectedPlanId}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <UserPlus className="w-4 h-4" />
-              )}
-              {loading ? 'Upgrading...' : 'Upgrade User'}
-            </button>
-          </div>
+
+          {/* Current Selection summary for bulk */}
+          {viewMode === 'bulk' && selectedUsers.length > 0 && (
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-2">Selected Users ({selectedUsers.length})</h4>
+              <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
+                {selectedUsers.map(mobile => (
+                  <div key={mobile} className="px-2 py-1 bg-white border border-blue-200 rounded text-[10px] text-blue-700 flex items-center gap-1">
+                    {mobile}
+                    <button onClick={() => setSelectedUsers(prev => prev.filter(m => m !== mobile))}>
+                      <XCircle className="w-3 h-3 text-red-300 hover:text-red-500" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Available Plans */}
+      {/* Available Plans Previews */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="text-lg font-semibold mb-4">Available Plans</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
+          <CheckCircle className="w-5 h-5 text-green-500" />
+          Plan Features Preview
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {availablePlans.map((plan) => (
-            <div key={plan.subscription_id} className={`p-4 rounded-lg border-2 ${selectedPlanId == plan.subscription_id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
-              }`}>
-              <div className="text-center">
-                <h4 className="text-lg font-semibold text-gray-900">{plan.plan_name}</h4>
-                <p className="text-3xl font-bold text-gray-900 mt-2">₹{plan.plan_price}</p>
-                <p className="text-sm text-gray-500">{plan.subscription_type_label} • {plan.validity_days} days</p>
-                <p className="text-xs text-gray-600 mt-1">{plan.plan_description}</p>
+            <div
+              key={plan.subscription_id}
+              className={`relative overflow-hidden p-6 rounded-xl border-2 transition-all cursor-pointer ${selectedPlanId == plan.subscription_id
+                  ? 'border-blue-500 bg-blue-50 shadow-md transform -translate-y-1'
+                  : 'border-gray-100 bg-gray-50/50 hover:bg-gray-50'
+                }`}
+              onClick={() => setSelectedPlanId(plan.subscription_id)}
+            >
+              {selectedPlanId == plan.subscription_id && (
+                <div className="absolute top-0 right-0 bg-blue-500 text-white p-1 rounded-bl-lg">
+                  <CheckCircle className="w-4 h-4" />
+                </div>
+              )}
+              <div className="mb-4">
+                <h4 className="text-sm font-bold text-blue-600 uppercase tracking-widest">{plan.plan_name}</h4>
+                <div className="flex items-baseline gap-1 mt-1">
+                  <span className="text-3xl font-black text-gray-900">₹{plan.plan_price}</span>
+                  <span className="text-xs text-gray-500">/ {plan.validity_days} Days</span>
+                </div>
+                <p className="text-xs text-gray-400 mt-1">{plan.subscription_type_label}</p>
               </div>
-              <ul className="mt-4 space-y-2">
-                {plan.features?.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-center text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    {feature}
+
+              <ul className="space-y-2.5">
+                {plan.features?.slice(0, 4).map((feature, featureIndex) => (
+                  <li key={featureIndex} className="flex items-start text-[11px] text-gray-600">
+                    <CheckCircle className="w-3 h-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="leading-tight">{feature}</span>
                   </li>
                 ))}
+                {plan.features?.length > 4 && (
+                  <li className="text-[10px] text-gray-400 pl-5">+{plan.features.length - 4} more features...</li>
+                )}
               </ul>
             </div>
           ))}
