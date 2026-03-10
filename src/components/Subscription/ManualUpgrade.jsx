@@ -73,9 +73,6 @@ const ManualUpgrade = () => {
       const response = await apiService.getAvailablePlans();
       if (response.success) {
         setAvailablePlans(response.data.plans || []);
-        if (response.data.plans && response.data.plans.length > 0) {
-          setSelectedPlanId(response.data.plans[0].subscription_id);
-        }
       }
     } catch (error) {
       setError('Failed to fetch available plans');
@@ -747,8 +744,8 @@ const ManualUpgrade = () => {
             <div
               key={plan.subscription_id}
               className={`relative overflow-hidden p-6 rounded-xl border-2 transition-all cursor-pointer ${selectedPlanId == plan.subscription_id
-                  ? 'border-blue-500 bg-blue-50 shadow-md transform -translate-y-1'
-                  : 'border-gray-100 bg-gray-50/50 hover:bg-gray-50'
+                ? 'border-blue-500 bg-blue-50 shadow-md transform -translate-y-1'
+                : 'border-gray-100 bg-gray-50/50 hover:bg-gray-50'
                 }`}
               onClick={() => setSelectedPlanId(plan.subscription_id)}
             >
