@@ -69,11 +69,17 @@ const UserManagement = () => {
   const [error, setError] = useState(null);
   const [totalUsers, setTotalUsers] = useState(0);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit, setLimit] = useState(20);
+
   // UI states
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('created');
-  const [activeTab, setActiveTab] = useState('all'); // 'all', 'free', 'paid'
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'free', 'paid', 'expired', etc.
 
   // Modal states
   const [showSuspendModal, setShowSuspendModal] = useState(false);
@@ -85,18 +91,35 @@ const UserManagement = () => {
 
   const navigate = useNavigate();
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setCurrentPage(1); // Reset to first page on search
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Fetch users data from API
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
         setError(null);
-        // Pass activeTab as filter_status to the API
-        const response = await apiService.getAllUsersWithAccounts({ filter_status: activeTab });
+        // Pass parameters to the API for backend pagination and search
+        const params = {
+          filter_status: activeTab,
+          search_query: debouncedSearch,
+          page: currentPage,
+          limit: limit
+        };
+
+        const response = await apiService.getAllUsersWithAccounts(params);
 
         if (response && response.success) {
           setUsers(Array.isArray(response.users) ? response.users : []);
-          setTotalUsers(response.total_users || 0);
+          setTotalUsers(response.pagination?.total_users || response.total_users || 0);
+          setTotalPages(response.pagination?.total_pages || 1);
         } else {
           setError('Failed to fetch users data');
         }
@@ -111,44 +134,47 @@ const UserManagement = () => {
     };
 
     fetchUsers();
-  }, [activeTab]);
+  }, [activeTab, debouncedSearch, currentPage, limit]);
 
-  // Filter and sort users
-  const filteredUsers = users
-    .filter(user => {
-      const searchTerm = searchQuery || '';
-      const userName = user.name || '';
-      const userEmail = user.email || '';
-      const userMobile = user.mobile || '';
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
 
-      const matchesSearch =
-        userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        userMobile.includes(searchTerm);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo(0, 0);
+    }
+  };
 
-      const matchesFilter =
-        filterType === 'all' ||
-        (filterType === 'active' && user.active_flag === 1) ||
-        (filterType === 'inactive' && user.active_flag === 0) ||
-        (filterType === 'complete' && user.profile_complete === 1) ||
-        (filterType === 'incomplete' && user.profile_complete === 0);
+  // Sort users (client-side sorting for the current page)
+  const sortedUsers = [...users].sort((a, b) => {
+    switch (sortBy) {
+      case 'name':
+        return (a.name || '').localeCompare(b.name || '');
+      case 'email':
+        return (a.email || '').localeCompare(b.email || '');
+      case 'created':
+        return new Date(b.createtime || 0) - new Date(a.createtime || 0);
+      case 'accounts':
+        return (b.account_counts?.total || 0) - (a.account_counts?.total || 0);
+      default:
+        return 0;
+    }
+  });
 
-      return matchesSearch && matchesFilter;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'name':
-          return (a.name || '').localeCompare(b.name || '');
-        case 'email':
-          return (a.email || '').localeCompare(b.email || '');
-        case 'created':
-          return new Date(b.createtime || 0) - new Date(a.createtime || 0);
-        case 'accounts':
-          return (b.account_counts?.total || 0) - (a.account_counts?.total || 0);
-        default:
-          return 0;
-      }
-    });
+  const filteredUsers = sortedUsers.filter(user => {
+    // Secondary client-side filters if needed (currently handling status on backend)
+    const matchesFilter =
+      filterType === 'all' ||
+      (filterType === 'active' && user.active_flag === 1) ||
+      (filterType === 'inactive' && user.active_flag === 0) ||
+      (filterType === 'complete' && user.profile_complete === 1) ||
+      (filterType === 'incomplete' && user.profile_complete === 0);
+
+    return matchesFilter;
+  });
 
   // Get account type icon
   const getAccountTypeIcon = (type) => {
@@ -432,7 +458,7 @@ const UserManagement = () => {
       {/* Tabs */}
       <div className="flex space-x-2 sm:space-x-4 mb-4 sm:mb-6 overflow-x-auto pb-2 sm:pb-0">
         <button
-          onClick={() => setActiveTab('all')}
+          onClick={() => handleTabChange('all')}
           className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'all'
             ? 'bg-blue-600 text-white shadow-sm'
             : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -441,7 +467,7 @@ const UserManagement = () => {
           All Users
         </button>
         <button
-          onClick={() => setActiveTab('free')}
+          onClick={() => handleTabChange('free')}
           className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'free'
             ? 'bg-blue-600 text-white shadow-sm'
             : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -450,7 +476,7 @@ const UserManagement = () => {
           Free Users
         </button>
         <button
-          onClick={() => setActiveTab('paid')}
+          onClick={() => handleTabChange('paid')}
           className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'paid'
             ? 'bg-blue-600 text-white shadow-sm'
             : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -459,7 +485,16 @@ const UserManagement = () => {
           Paid Users
         </button>
         <button
-          onClick={() => setActiveTab('active')}
+          onClick={() => handleTabChange('expired')}
+          className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'expired'
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'bg-white text-gray-600 hover:bg-gray-100'
+            }`}
+        >
+          Expired Users
+        </button>
+        <button
+          onClick={() => handleTabChange('active')}
           className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'active'
             ? 'bg-blue-600 text-white shadow-sm'
             : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -468,7 +503,7 @@ const UserManagement = () => {
           Active Users
         </button>
         <button
-          onClick={() => setActiveTab('inactive')}
+          onClick={() => handleTabChange('inactive')}
           className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'inactive'
             ? 'bg-blue-600 text-white shadow-sm'
             : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -477,7 +512,7 @@ const UserManagement = () => {
           Inactive Users
         </button>
         <button
-          onClick={() => setActiveTab('profile_complete')}
+          onClick={() => handleTabChange('profile_complete')}
           className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'profile_complete'
             ? 'bg-blue-600 text-white shadow-sm'
             : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -486,7 +521,7 @@ const UserManagement = () => {
           Profile Complete
         </button>
         <button
-          onClick={() => setActiveTab('profile_incomplete')}
+          onClick={() => handleTabChange('profile_incomplete')}
           className={`px-4 py-2 font-medium text-sm rounded-md transition-colors whitespace-nowrap ${activeTab === 'profile_incomplete'
             ? 'bg-blue-600 text-white shadow-sm'
             : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -818,6 +853,67 @@ const UserManagement = () => {
             <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
             <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+            <div className="flex-1 flex justify-between sm:hidden">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing <span className="font-medium">{(currentPage - 1) * limit + 1}</span> to <span className="font-medium">{Math.min(currentPage * limit, totalUsers)}</span> of <span className="font-medium">{totalUsers}</span> results
+                </p>
+              </div>
+              <div>
+                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    <span className="sr-only">Previous</span>
+                    <Clock className="h-5 w-5 rotate-180" /> {/* Using rotate clock as back icon if Chevron is not available */}
+                  </button>
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => handlePageChange(i + 1)}
+                      className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === i + 1
+                        ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                        : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                        }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    <span className="sr-only">Next</span>
+                    <Clock className="h-5 w-5" />
+                  </button>
+                </nav>
+              </div>
+            </div>
           </div>
         )}
       </div>
