@@ -164,6 +164,7 @@ const config = {
     SUSPEND_USER: '/admin/suspend_user',
     UNSUSPEND_USER: '/admin/unsuspend_user',
     MANAGE_USER_STATUS: '/admin/manage_user_status',
+    FORCE_LOGOUT: '/admin/force_logout',
 
     // FAQ System Endpoints
     GET_FAQ_CATEGORIES: '/get_faq_categories',

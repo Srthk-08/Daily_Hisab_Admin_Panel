@@ -26,7 +26,8 @@ import {
   ShieldOff,
   Save,
   UserCheck,
-  UserX
+  UserX,
+  LogOut
 } from 'lucide-react';
 import apiService from '../services/api';
 import { formatDate } from '../utils/dateUtils';
@@ -358,6 +359,55 @@ const UserManagement = () => {
     }
   };
 
+  const handleForceLogout = async (user) => {
+    if (!window.confirm(`Are you sure you want to force logout ${user.name || 'this user'}? Their current session will be terminated immediately.`)) {
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      const response = await apiService.forceLogoutUsers({
+        user_ids: [user.user_id],
+        select_all: false
+      });
+      
+      if (response && response.success) {
+        alert(response.msg[0] || 'Force logout initiated successfully');
+      } else {
+        alert(response?.msg?.[0] || 'Failed to initiate force logout');
+      }
+    } catch (err) {
+      console.error('Error in force logout:', err);
+      alert('An error occurred while initiating force logout');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleForceLogoutAll = async () => {
+    if (!window.confirm('WARNING: Are you sure you want to force logout ALL mobile users? This will terminate all active sessions.')) {
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      const response = await apiService.forceLogoutUsers({
+        select_all: true
+      });
+      
+      if (response && response.success) {
+        alert(response.msg[0] || 'Force logout initiated for all users');
+      } else {
+        alert(response?.msg?.[0] || 'Failed to initiate force logout for all users');
+      }
+    } catch (err) {
+      console.error('Error in force logout all:', err);
+      alert('An error occurred while initiating force logout for all users');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const closeModals = () => {
     setShowSuspendModal(false);
     setShowDeleteModal(false);
@@ -569,6 +619,16 @@ const UserManagement = () => {
               <span className="hidden sm:inline">Export ({filteredUsers.length})</span>
               <span className="sm:hidden">Export</span>
             </button>
+
+            <button
+              onClick={handleForceLogoutAll}
+              className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+              title="Force Logout All Users"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Force Logout All</span>
+              <span className="sm:hidden">Logout All</span>
+            </button>
           </div>
         </div>
       </div>
@@ -716,6 +776,13 @@ const UserManagement = () => {
                             </button>
                           )}
                           <button
+                            onClick={() => handleForceLogout(user)}
+                            className="text-red-500 hover:text-red-700 p-1"
+                            title="Force Logout User"
+                          >
+                            <LogOut className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => handleDeleteUser(user)}
                             className="text-red-600 hover:text-red-900 p-1"
                             title="Permanently Delete User"
@@ -833,6 +900,13 @@ const UserManagement = () => {
                           <UserCheck className="w-4 h-4" />
                         </button>
                       )}
+                      <button
+                        onClick={() => handleForceLogout(user)}
+                        className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50"
+                        title="Force Logout User"
+                      >
+                        <LogOut className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleDeleteUser(user)}
                         className="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50"

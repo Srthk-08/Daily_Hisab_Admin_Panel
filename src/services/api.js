@@ -937,6 +937,16 @@ const apiService = {
     }
   },
 
+  forceLogoutUsers: async (userData) => {
+    try {
+      const response = await api.post(config.API_ENDPOINTS.FORCE_LOGOUT, userData);
+      return response.data;
+    } catch (error) {
+      console.error('Error force logging out users:', error);
+      throw error;
+    }
+  },
+
   // FAQ System APIs
   getFaqCategories: async () => {
     try {
