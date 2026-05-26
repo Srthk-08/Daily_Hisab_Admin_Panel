@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { UserPlus, Search, Mail, Phone, Calendar, Download, AlertCircle, CheckCircle, XCircle, Loader2, User, Filter, ChevronLeft, ChevronRight, CheckSquare, Square } from 'lucide-react';
 import apiService from '../../services/api';
 
@@ -16,8 +16,12 @@ const ManualUpgrade = () => {
   const [bulkUsers, setBulkUsers] = useState([]);
   const [activeBulkTab, setActiveBulkTab] = useState('all');
   const [bulkSearchQuery, setBulkSearchQuery] = useState('');
+  const [debouncedBulkSearchQuery, setDebouncedBulkSearchQuery] = useState('');
   const [bulkLoading, setBulkLoading] = useState(false);
-  const [bulkPagination, setBulkPagination] = useState({ page: 1, totalPages: 1 });
+  const [bulkPagination, setBulkPagination] = useState({ page: 1, totalPages: 1, totalUsers: 0 });
+
+  const listRef = useRef(null);
+  const isFetchingRef = useRef(false);
 
   // Search state (for functionality, card removed from UI)
   const [searchMobile, setSearchMobile] = useState('');
@@ -59,12 +63,23 @@ const ManualUpgrade = () => {
     fetchUpgradeStats();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Fetch bulk users when in bulk mode or tab changes
+  // Debounce bulk search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedBulkSearchQuery(bulkSearchQuery);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [bulkSearchQuery]);
+
+  // Fetch bulk users when in bulk mode or tab/search query changes
   useEffect(() => {
     if (viewMode === 'bulk') {
       fetchBulkUsers();
+      if (listRef.current) {
+        listRef.current.scrollTop = 0;
+      }
     }
-  }, [viewMode, activeBulkTab, bulkSearchQuery, bulkPagination.page]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [viewMode, activeBulkTab, debouncedBulkSearchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch available plans
   const fetchAvailablePlans = async () => {
@@ -204,27 +219,65 @@ const ManualUpgrade = () => {
 
   // Fetch bulk users with filtering
   const fetchBulkUsers = async () => {
+    if (isFetchingRef.current) return;
     try {
+      isFetchingRef.current = true;
       setBulkLoading(true);
       const params = {
         filter_status: activeBulkTab,
-        search_query: bulkSearchQuery,
-        page: bulkPagination.page,
-        limit: 10
+        search_query: debouncedBulkSearchQuery,
+        page: 1,
+        limit: 50000 // Fetch all matching users at once
       };
 
       const response = await apiService.getAllUsersWithAccounts(params);
       if (response && response.success) {
-        setBulkUsers(response.users || []);
-        setBulkPagination(prev => ({
-          ...prev,
-          totalPages: response.pagination?.total_pages || 1
-        }));
+        const fetchedUsers = response.users || [];
+        setBulkUsers(fetchedUsers);
+        setBulkPagination({
+          page: 1,
+          totalPages: 1,
+          totalUsers: response.pagination?.total_users || response.total_users || fetchedUsers.length
+        });
       }
     } catch (err) {
       console.error('Error fetching bulk users:', err);
     } finally {
       setBulkLoading(false);
+      isFetchingRef.current = false;
+    }
+  };
+
+  const selectAllFilteredUsers = async () => {
+    if (isFetchingRef.current || bulkLoading) return;
+    try {
+      isFetchingRef.current = true;
+      setBulkLoading(true);
+      setError(null);
+      
+      const filterToUse = activeBulkTab === 'all' ? 'expired' : activeBulkTab;
+      
+      const params = {
+        filter_status: filterToUse,
+        search_query: debouncedBulkSearchQuery,
+        page: 1,
+        limit: 50000 // Fetch a very high limit to get all numbers matching the filter
+      };
+
+      const response = await apiService.getAllUsersWithAccounts(params);
+      if (response && response.success) {
+        const allMobiles = (response.users || []).map(u => u.mobile).filter(Boolean);
+        setSelectedUsers(allMobiles);
+        setSuccess(`Successfully selected all ${allMobiles.length} ${filterToUse} users.`);
+      } else {
+        setError(`Failed to select all matching ${filterToUse} users`);
+      }
+    } catch (err) {
+      console.error('Error selecting all matching users:', err);
+      setError('An error occurred while selecting all users');
+    } finally {
+      setBulkLoading(false);
+      isFetchingRef.current = false;
     }
   };
 
@@ -554,7 +607,6 @@ const ManualUpgrade = () => {
                     key={tab}
                     onClick={() => {
                       setActiveBulkTab(tab);
-                      setBulkPagination(prev => ({ ...prev, page: 1 }));
                     }}
                     className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all whitespace-nowrap ${activeBulkTab === tab ? 'bg-blue-600 border-blue-600 text-white shadow-sm' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                       }`}
@@ -571,87 +623,107 @@ const ManualUpgrade = () => {
                     <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
                   </div>
                 ) : (
-                  <div className="max-h-96 overflow-y-auto divide-y divide-gray-100">
-                    {bulkUsers.length > 0 ? bulkUsers.map((user) => (
-                      <div
-                        key={user.user_id}
-                        className={`px-4 py-3 flex items-center gap-3 hover:bg-blue-50 transition-colors cursor-pointer ${selectedUsers.includes(user.mobile) ? 'bg-blue-50/50' : ''
-                          }`}
-                        onClick={() => {
-                          if (selectedUsers.includes(user.mobile)) {
-                            setSelectedUsers(prev => prev.filter(m => m !== user.mobile));
-                          } else {
-                            setSelectedUsers(prev => [...prev, user.mobile]);
-                          }
-                        }}
-                      >
-                        <div className="flex-shrink-0">
-                          {selectedUsers.includes(user.mobile) ? (
-                            <CheckSquare className="w-5 h-5 text-blue-600" />
-                          ) : (
-                            <Square className="w-5 h-5 text-gray-300" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium text-gray-900 truncate">{user.name || 'Unknown'}</p>
-                            {user.is_paid_user === 1 ? (
-                              <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold">PAID</span>
-                            ) : (
-                              <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-full font-bold">FREE</span>
-                            )}
+                  <div 
+                    ref={listRef}
+                    className="max-h-96 overflow-y-auto divide-y divide-gray-100"
+                  >
+                    {bulkUsers.length > 0 ? (
+                      <>
+                        {bulkUsers.map((user) => (
+                          <div
+                            key={user.user_id}
+                            className={`px-4 py-3 flex items-center gap-3 hover:bg-blue-50 transition-colors cursor-pointer ${selectedUsers.includes(user.mobile) ? 'bg-blue-50/50' : ''
+                              }`}
+                            onClick={() => {
+                              if (selectedUsers.includes(user.mobile)) {
+                                setSelectedUsers(prev => prev.filter(m => m !== user.mobile));
+                              } else {
+                                setSelectedUsers(prev => [...prev, user.mobile]);
+                              }
+                            }}
+                          >
+                            <div className="flex-shrink-0">
+                              {selectedUsers.includes(user.mobile) ? (
+                                <CheckSquare className="w-5 h-5 text-blue-600" />
+                              ) : (
+                                <Square className="w-5 h-5 text-gray-300" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-medium text-gray-900 truncate">{user.name || 'Unknown'}</p>
+                                {user.subscription_status === 'PAID' && (
+                                  <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold">PAID</span>
+                                )}
+                                {user.subscription_status === 'EXPIRED' && (
+                                  <span className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-800 rounded-full font-bold">EXPIRED</span>
+                                )}
+                                {(user.subscription_status === 'FREE' || !user.subscription_status) && (
+                                  <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-full font-bold">FREE</span>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-500 truncate">{user.mobile}</p>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <p className="text-[10px] text-gray-400">Created</p>
+                              <p className="text-xs text-gray-600">{new Date(user.createtime).toLocaleDateString()}</p>
+                            </div>
                           </div>
-                          <p className="text-xs text-gray-500 truncate">{user.mobile}</p>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-[10px] text-gray-400">Created</p>
-                          <p className="text-xs text-gray-600">{new Date(user.createtime).toLocaleDateString()}</p>
-                        </div>
-                      </div>
-                    )) : (
+                        ))}
+                        {bulkLoading && bulkUsers.length > 0 && (
+                          <div className="flex items-center justify-center py-4 bg-gray-50/50 border-t">
+                            <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                            <span className="ml-2 text-xs text-gray-500">Refreshing users...</span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
                       <div className="py-12 text-center text-gray-500 text-sm">No users found match your criteria.</div>
                     )}
                   </div>
                 )}
               </div>
 
-              {/* Bulk Selection Footer / Pagination */}
+              {/* Bulk Selection Footer */}
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setSelectedUsers(bulkUsers.map(u => u.mobile))}
-                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
-                  >
-                    Select All on Page
-                  </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  {activeBulkTab === 'all' ? (
+                    <>
+                      <button
+                        onClick={() => setSelectedUsers(bulkUsers.map(u => u.mobile))}
+                        className="text-xs text-blue-600 hover:text-blue-800 font-semibold"
+                      >
+                        Select All Users ({bulkUsers.length})
+                      </button>
+                      <span className="text-gray-300">|</span>
+                      <button
+                        onClick={selectAllFilteredUsers}
+                        className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
+                        disabled={bulkLoading}
+                      >
+                        {bulkLoading && isFetchingRef.current && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                        Select All Expired Users
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => setSelectedUsers(bulkUsers.map(u => u.mobile))}
+                      className="text-xs text-blue-600 hover:text-blue-800 font-semibold"
+                    >
+                      Select All {activeBulkTab.charAt(0).toUpperCase() + activeBulkTab.slice(1)} Users ({bulkUsers.length})
+                    </button>
+                  )}
                   <span className="text-gray-300">|</span>
                   <button
                     onClick={() => setSelectedUsers([])}
-                    className="text-xs text-red-600 hover:text-red-800 font-medium"
+                    className="text-xs text-red-600 hover:text-red-800 font-semibold"
                   >
                     Clear All
                   </button>
                 </div>
-
-                {bulkPagination.totalPages > 1 && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setBulkPagination(p => ({ ...p, page: Math.max(1, p.page - 1) }))}
-                      disabled={bulkPagination.page === 1}
-                      className="p-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <span className="text-xs text-gray-600">Page {bulkPagination.page} of {bulkPagination.totalPages}</span>
-                    <button
-                      onClick={() => setBulkPagination(p => ({ ...p, page: Math.min(p.totalPages, p.page + 1) }))}
-                      disabled={bulkPagination.page === bulkPagination.totalPages}
-                      className="p-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
+                <div className="text-xs text-gray-500">
+                  Showing {bulkUsers.length} of {bulkPagination.totalUsers || 0} users
+                </div>
               </div>
             </div>
           )}

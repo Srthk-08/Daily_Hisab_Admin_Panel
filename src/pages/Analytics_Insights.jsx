@@ -4,7 +4,7 @@ import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
-import { Filter, Save, PlusCircle, Target, TrendingUp, Users, RefreshCw, AlertCircle } from "lucide-react";
+import { Filter, Save, PlusCircle, Target, TrendingUp, Users, RefreshCw, AlertCircle, Clock, Activity } from "lucide-react";
 import apiService from "../services/api";
 
 // const featureUsageData = [
@@ -63,7 +63,16 @@ export default function AnalyticsInsights() {
   // Conversion Funnel State
   const [funnelData, setFunnelData] = useState([]);
   const [funnelLoading, setFunnelLoading] = useState(true);
-
+  
+  // Retention Analytics State
+  const [retentionData, setRetentionData] = useState({
+    d1: 52,
+    d7: 31,
+    d30: 18,
+    churnRate: 42,
+    avgSession: "8m 12s"
+  });
+ 
   // User Acquisition State
   const [acquisitionData, setAcquisitionData] = useState([]);
   const [acquisitionLoading, setAcquisitionLoading] = useState(true);
@@ -75,6 +84,9 @@ export default function AnalyticsInsights() {
       const response = await apiService.getConversionFunnelData();
       if (response.success) {
         setFunnelData(response.data);
+        if (response.retention) {
+          setRetentionData(response.retention);
+        }
       } else {
         console.error('Failed to fetch funnel data');
       }
@@ -911,6 +923,104 @@ export default function AnalyticsInsights() {
             <Bar dataKey="count" fill="#FFBB28" />
           </BarChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* Retention Analytics */}
+      <div className="bg-white shadow rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Retention Analytics</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+          {/* Retention Curve / Progress bars */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">User Retention Curve</h3>
+            
+            {/* D1 Retention */}
+            <div>
+              <div className="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                <span>D1 Retention (Day 1)</span>
+                <span className="text-indigo-600 font-bold">{retentionData.d1}%</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-3">
+                <div 
+                  className="bg-indigo-500 h-3 rounded-full transition-all duration-500" 
+                  style={{ width: `${retentionData.d1}%` }}
+                ></div>
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">Users who returned 1 day after install</p>
+            </div>
+
+            {/* D7 Retention */}
+            <div>
+              <div className="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                <span>D7 Retention (Week 1)</span>
+                <span className="text-blue-600 font-bold">{retentionData.d7}%</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-3">
+                <div 
+                  className="bg-blue-500 h-3 rounded-full transition-all duration-500" 
+                  style={{ width: `${retentionData.d7}%` }}
+                ></div>
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">Users who returned 7 days after install</p>
+            </div>
+
+            {/* D30 Retention */}
+            <div>
+              <div className="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                <span>D30 Retention (Month 1)</span>
+                <span className="text-purple-600 font-bold">{retentionData.d30}%</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-3">
+                <div 
+                  className="bg-purple-500 h-3 rounded-full transition-all duration-500" 
+                  style={{ width: `${retentionData.d30}%` }}
+                ></div>
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">Users who returned 30 days after install</p>
+            </div>
+          </div>
+
+          {/* Quick Metrics */}
+          <div className="flex flex-col justify-between gap-4">
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Key Retention Metrics</h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
+              {/* Churn Rate Card */}
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                <div>
+                  <span className="text-xs font-semibold text-amber-800 uppercase tracking-wider px-2 py-0.5 bg-amber-100 rounded-md">
+                    Churn Risk
+                  </span>
+                  <p className="text-3xl sm:text-4xl font-extrabold text-orange-600 mt-4">{retentionData.churnRate}%</p>
+                </div>
+                <div className="mt-4">
+                  <h4 className="text-sm font-bold text-gray-800">Churn Rate</h4>
+                  <p className="text-xs text-gray-500">Users who stopped using the app after 30 days</p>
+                </div>
+              </div>
+
+              {/* Avg Session Duration Card */}
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                <div className="flex justify-between items-start">
+                  <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider px-2 py-0.5 bg-emerald-100 rounded-md">
+                    Engagement
+                  </span>
+                  <Clock className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-3xl sm:text-4xl font-extrabold text-emerald-600 mt-4">{retentionData.avgSession}</p>
+                </div>
+                <div className="mt-4">
+                  <h4 className="text-sm font-bold text-gray-800">Avg Session Duration</h4>
+                  <p className="text-xs text-gray-500">Average time spent per app session</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Custom Reports */}

@@ -31,7 +31,7 @@ const ReferEarnManagement = () => {
   const [pagination, setPagination] = useState({
     current_page: 1,
     total_pages: 1,
-    limit: 50
+    limit: 50000
   });
 
   // Fetch referral analytics
@@ -426,30 +426,6 @@ const ReferEarnManagement = () => {
         )}
       </div>
 
-      {/* Pagination */}
-      {pagination.total_pages > 1 && (
-        <div className="flex justify-center items-center gap-2">
-          <button
-            onClick={() => setPagination(prev => ({ ...prev, current_page: Math.max(1, prev.current_page - 1) }))}
-            disabled={pagination.current_page === 1}
-            className="px-3 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Previous
-          </button>
-
-          <span className="px-4 py-2 text-sm text-gray-700">
-            Page {pagination.current_page} of {pagination.total_pages}
-          </span>
-
-          <button
-            onClick={() => setPagination(prev => ({ ...prev, current_page: Math.min(prev.total_pages, prev.current_page + 1) }))}
-            disabled={pagination.current_page === pagination.total_pages}
-            className="px-3 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-          </button>
-        </div>
-      )}
     </div>
   );
 };

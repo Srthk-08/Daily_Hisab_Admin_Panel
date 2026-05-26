@@ -308,6 +308,7 @@ export default function Notification() {
       message: campaign.message || "",
       notification_type: campaign.notification_type || "message",
       target_audience: mappedTargetAudience,
+      target_language: campaign.target_language || "",
     });
     setShowCreateModal(true);
   };
