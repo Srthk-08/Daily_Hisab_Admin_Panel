@@ -1025,6 +1025,26 @@ const apiService = {
     }
   },
 
+  updateFaqCategory: async (categoryId, categoryData) => {
+    try {
+      const response = await api.put(`${config.API_ENDPOINTS.UPDATE_FAQ_CATEGORY}/${categoryId}`, categoryData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating FAQ category:', error);
+      throw error;
+    }
+  },
+
+  deleteFaqCategory: async (categoryId) => {
+    try {
+      const response = await api.delete(`${config.API_ENDPOINTS.DELETE_FAQ_CATEGORY}/${categoryId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting FAQ category:', error);
+      throw error;
+    }
+  },
+
   createFaqItem: async (faqData) => {
     try {
       const response = await api.post(config.API_ENDPOINTS.CREATE_FAQ_ITEM, faqData);

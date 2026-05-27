@@ -4,8 +4,8 @@
 const config = {
   // API Configuration
   // API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
-  API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
-  //API_BASE_URL: 'http://localhost:3000/daliyhisab/server',
+  // API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  API_BASE_URL: 'http://localhost:3000/daliyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
   SPECIAL_PLANS: {
@@ -174,6 +174,8 @@ const config = {
     GET_ALL_FAQ_CATEGORIES: '/admin/get_all_faq_categories',
     GET_ALL_FAQS: '/admin/get_all_faqs',
     CREATE_FAQ_CATEGORY: '/admin/create_faq_category',
+    UPDATE_FAQ_CATEGORY: '/admin/update_faq_category',
+    DELETE_FAQ_CATEGORY: '/admin/delete_faq_category',
     CREATE_FAQ_ITEM: '/admin/create_faq_item',
     UPDATE_FAQ_ITEM: '/admin/update_faq_item',
     DELETE_FAQ_ITEM: '/admin/delete_faq_item',
@@ -351,6 +353,8 @@ const config = {
       GET_ALL_FAQ_CATEGORIES: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_FAQ_CATEGORIES}`,
       GET_ALL_FAQS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_FAQS}`,
       CREATE_FAQ_CATEGORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_FAQ_CATEGORY}`,
+      UPDATE_FAQ_CATEGORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_FAQ_CATEGORY}`,
+      DELETE_FAQ_CATEGORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_FAQ_CATEGORY}`,
       CREATE_FAQ_ITEM: `${this.API_BASE_URL}${this.API_ENDPOINTS.CREATE_FAQ_ITEM}`,
       UPDATE_FAQ_ITEM: `${this.API_BASE_URL}${this.API_ENDPOINTS.UPDATE_FAQ_ITEM}`,
       DELETE_FAQ_ITEM: `${this.API_BASE_URL}${this.API_ENDPOINTS.DELETE_FAQ_ITEM}`,
