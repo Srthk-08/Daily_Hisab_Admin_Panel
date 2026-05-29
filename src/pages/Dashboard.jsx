@@ -279,7 +279,7 @@ export default function Dashboard() {
         >
           <Users className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500 flex-shrink-0" />
           <div className="min-w-0 flex-1">
-            <p className="text-gray-500 text-xs sm:text-sm truncate">Total Active Users</p>
+            <p className="text-gray-500 text-xs sm:text-sm truncate">Total Registered Users</p>
             <h2 className="text-lg sm:text-xl lg:text-2xl font-bold truncate">{totalActiveUsers.toLocaleString()}</h2>
           </div>
         </div>
