@@ -910,26 +910,80 @@ export default function AnalyticsInsights() {
         </div>
       </div>
 
-      {/* Conversion Funnel */}
-      <div className="bg-white shadow rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-        <h2 className="text-base sm:text-lg font-semibold mb-3">Conversion Funnel</h2>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={funnelData} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" />
-            <YAxis type="category" dataKey="stage" />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="count" fill="#FFBB28" />
-          </BarChart>
-        </ResponsiveContainer>
+      <div className="bg-white shadow rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+        <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-indigo-600" />
+          Conversion Funnel
+        </h2>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Chart Section */}
+          <div className="lg:col-span-2 bg-gray-50 rounded-xl p-3 sm:p-4">
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={funnelData} layout="vertical" margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11 }} />
+                <YAxis type="category" dataKey="stage" axisLine={false} tickLine={false} tick={{ fill: '#4B5563', fontSize: 12, fontWeight: 500 }} width={100} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                  cursor={{ fill: 'rgba(229, 231, 235, 0.4)' }}
+                />
+                <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={24}>
+                  {funnelData.map((entry, index) => {
+                    const colors = {
+                      "Installs": "#6366F1",
+                      "Sign Up": "#3B82F6",
+                      "Active Users": "#10B981",
+                      "Inactive Users": "#6B7280",
+                      "Free Users": "#F59E0B",
+                      "Paid Users": "#8B5CF6"
+                    };
+                    return <Cell key={`cell-${index}`} fill={colors[entry.stage] || "#9CA3AF"} />;
+                  })}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Cards Section */}
+          <div className="flex flex-col justify-between gap-3 max-h-[320px] overflow-y-auto pr-1">
+            {funnelData.map((item, index) => {
+              const installsCount = funnelData.find(f => f.stage === "Installs")?.count || 1;
+              const conversionRate = installsCount > 0 ? ((item.count / installsCount) * 100).toFixed(1) : "0.0";
+              
+              const stageDetails = {
+                "Installs": { desc: "App downloaded", color: "indigo", bg: "bg-indigo-50 text-indigo-700 border-indigo-100" },
+                "Sign Up": { desc: "Account created", color: "blue", bg: "bg-blue-50 text-blue-700 border-blue-100" },
+                "Active Users": { desc: "Used app in last 7 days", color: "emerald", bg: "bg-emerald-50 text-emerald-700 border-emerald-100" },
+                "Inactive Users": { desc: "Installed but not opening app", color: "gray", bg: "bg-gray-100 text-gray-700 border-gray-200" },
+                "Free Users": { desc: "Active but not subscribed", color: "amber", bg: "bg-amber-50 text-amber-700 border-amber-100" },
+                "Paid Users": { desc: "Subscription active", color: "purple", bg: "bg-purple-50 text-purple-700 border-purple-100" }
+              };
+
+              const details = stageDetails[item.stage] || { desc: "User stage", color: "gray", bg: "bg-gray-50 text-gray-700 border-gray-100" };
+
+              return (
+                <div key={item.stage} className={`border rounded-xl p-3 flex justify-between items-center transition-all hover:translate-x-1 ${details.bg}`}>
+                  <div>
+                    <h3 className="text-sm font-bold truncate">{item.stage}</h3>
+                    <p className="text-xs opacity-75">{details.desc}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-base font-extrabold">{item.count.toLocaleString()}</p>
+                    <p className="text-[10px] font-medium opacity-75">{conversionRate}% conv.</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Retention Analytics */}
       <div className="bg-white shadow rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
         <div className="flex items-center gap-2 mb-4">
           <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Retention Analytics</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Retention Overview</h2>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
